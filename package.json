@@ -1,0 +1,21 @@
+{
+    "name": "buildyourownlisp-gitbook",
+    "version": "0.0.1",
+    "description": "",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/TheThirdOne/BuildYourOwnLispGitbook.git"
+    },
+    "author": "Benjamin Landers <benjaminrlanders@gmail.com>",
+    "license": "Creative Commons",
+    "dependencies": {},
+    "devDependencies": {
+        "grunt": "~0.4.1",
+        "grunt-gitbook": "0.1.1",
+        "grunt-gh-pages": "0.9.1",
+        "grunt-contrib-clean": "~0.5.0"
+    },
+    "peerDependencies": {
+        "grunt": "~0.4.1"
+    }
+}
