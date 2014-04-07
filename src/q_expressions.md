@@ -1,67 +1,74 @@
 Q-Expressions
 =============
 
-<h2>Adding Features</h2> <hr/>
+Adding Features</h2> <hr/>
 
-<p>You'll notice that the following chapters will all follow a similar pattern. This pattern is the typical approach used to add new features to a language. It consists of a number of steps that bring a feature from start to finish. These are listed below, and are exactly what we're going to do in this chapter, to introduce a new feature called a Q-Expression.</p>
+You'll notice that the following chapters will all follow a similar pattern. This pattern is the typical approach used to add new features to a language. It consists of a number of steps that bring a feature from start to finish. These are listed below, and are exactly what we're going to do in this chapter, to introduce a new feature called a Q-Expression.
 
 <table class='table'>
   <tr><td><strong>Step 0 &bull; Syntax</strong></td><td>Add new rule to the language grammar for this feature.</td></tr>
   <tr><td><strong>Step 1 &bull; Representation</strong></td><td>Add new data type variation to represent this feature.</td></tr>
-  <tr><td><strong>Step 2 &bull; Parsing</strong></td><td>Add new functions for reading this feature from the <em>abstract syntax tree</em>.</td></tr>
+  <tr><td><strong>Step 2 &bull; Parsing</strong></td><td>Add new functions for reading this feature from the *abstract syntax tree*.</td></tr>
   <tr><td><strong>Step 3 &bull; Semantics</strong></td><td>Add new functions for evaluating and manipulating this feature.</td></tr>
 </table>
 
-<h2>Quoted Expressions</h2> <hr/>
+Quoted Expressions</h2> <hr/>
 
-<p>In this chapter we'll implement a new type of Lisp Value called a Q-Expression.</p>
+In this chapter we'll implement a new type of Lisp Value called a Q-Expression.
 
-<p>This stands for <em>quoted expression</em>, and is a type of Lisp Expression that is not evaluated by the standard Lisp mechanics. When encountered by the evaluation function Q-expressions are left exactly as they are. This makes them ideal for a number of purposes. We can use them to store and manipulate other Lisp values such as numbers, symbols, or other S-Expressions themselves!</p>
+This stands for *quoted expression*, and is a type of Lisp Expression that is not evaluated by the standard Lisp mechanics. When encountered by the evaluation function Q-expressions are left exactly as they are. This makes them ideal for a number of purposes. We can use them to store and manipulate other Lisp values such as numbers, symbols, or other S-Expressions themselves!
 
-<p>After we've added Q-Expressions we are going to implement a concise set of operators to manipulate them. Like the arithmetic operators these will prove fundamental in how we think about and play with expressions.</p>
+After we've added Q-Expressions we are going to implement a concise set of operators to manipulate them. Like the arithmetic operators these will prove fundamental in how we think about and play with expressions.
 
-<p>The syntax for Q-Expressions is very similar to that of S-Expressions. The only difference is that instead of parenthesis <code>()</code> Q-Expressions are surrounded by curly brackets <code>{}</code>. We can add this to our grammar as follows.</p>
+The syntax for Q-Expressions is very similar to that of S-Expressions. The only difference is that instead of parenthesis `()` Q-Expressions are surrounded by curly brackets `{}`. We can add this to our grammar as follows.
 
 <div class="alert alert-warning">
-  <p><strong>I've never heard of Q-Expressions.</strong></p>
+  <strong>I've never heard of Q-Expressions.</strong>
 
-  <p>Q-Expressions don't exist in other Lisps. Other Lisps use <em>Macros</em> to stop evaluation. These look like normal functions, but they do not evaluate their arguments. A special Macro called quote <code>'</code> exists, which can be used to stop the evaluation of almost anything. This is the inspiration for Q-Expressions, which are unique to our Lisp, and will be used instead of Macros for doing all the same tasks and more.</p>
+  Q-Expressions don't exist in other Lisps. Other Lisps use *Macros* to stop evaluation. These look like normal functions, but they do not evaluate their arguments. A special Macro called quote `'` exists, which can be used to stop the evaluation of almost anything. This is the inspiration for Q-Expressions, which are unique to our Lisp, and will be used instead of Macros for doing all the same tasks and more.
 
-  <p>The way I've used <em>S-Expression</em> and <em>Q-Expression</em> in this book is a slight abuse of terminology, but I hope this misdemeanor makes the behaviour of our Lisp clearer.</p>
+  The way I've used *S-Expression* and *Q-Expression* in this book is a slight abuse of terminology, but I hope this misdemeanor makes the behaviour of our Lisp clearer.
 </div>
 
-<pre><code data-language='c'>mpc_parser_t* Number = mpc_new(&quot;number&quot;);
-mpc_parser_t* Symbol = mpc_new(&quot;symbol&quot;);
-mpc_parser_t* Sexpr  = mpc_new(&quot;sexpr&quot;);
-mpc_parser_t* Qexpr  = mpc_new(&quot;qexpr&quot;);
-mpc_parser_t* Expr   = mpc_new(&quot;expr&quot;);
-mpc_parser_t* Lispy  = mpc_new(&quot;lispy&quot;);
+```c
+mpc_parser_t* Number = mpc_new("number");
+mpc_parser_t* Symbol = mpc_new("symbol");
+mpc_parser_t* Sexpr  = mpc_new("sexpr");
+mpc_parser_t* Qexpr  = mpc_new("qexpr");
+mpc_parser_t* Expr   = mpc_new("expr");
+mpc_parser_t* Lispy  = mpc_new("lispy");
 
 mpca_lang(MPC_LANG_DEFAULT,
-  &quot;                                                    \
+  "                                                    \
     number : /-?[0-9]+/ ;                              \
-    symbol : &#39;+&#39; | &#39;-&#39; | &#39;*&#39; | &#39;/&#39; ;                   \
-    sexpr  : &#39;(&#39; &lt;expr&gt;* &#39;)&#39; ;                         \
-    qexpr  : &#39;{&#39; &lt;expr&gt;* &#39;}&#39; ;                         \
-    expr   : &lt;number&gt; | &lt;symbol&gt; | &lt;sexpr&gt; | &lt;qexpr&gt; ; \
-    lispy  : /^/ &lt;expr&gt;* /$/ ;                         \
-  &quot;,
-  Number, Symbol, Sexpr, Qexpr, Expr, Lispy);</code></pre>
+    symbol : '+' | '-' | '*' | '/' ;                   \
+    sexpr  : '(' <expr>* ')' ;                         \
+    qexpr  : '{' <expr>* '}' ;                         \
+    expr   : <number> | <symbol> | <sexpr> | <qexpr> ; \
+    lispy  : /^/ <expr>* /$/ ;                         \
+  ",
+  Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
+```
 
-<p>We also must remember to update our cleanup function to deal with the new rule we've added.</p>
+We also must remember to update our cleanup function to deal with the new rule we've added.
 
-<pre><code data-language='c'>mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);</code></pre>
+```c
+mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
+```
 
 
-<h2>Reading Q-Expressions</h2> <hr/>
+Reading Q-Expressions</h2> <hr/>
 
-<p>Because Q-Expressions are so similar S-Expressions much of their internal behaviour is going to be the same. We're going to reuse our S-Expression data fields to represent Q-Expressions, but we still need to add a separate type to the enumeration.</p>
+Because Q-Expressions are so similar S-Expressions much of their internal behaviour is going to be the same. We're going to reuse our S-Expression data fields to represent Q-Expressions, but we still need to add a separate type to the enumeration.
 
-<pre><code data-language='C'>enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_SEXPR, LVAL_QEXPR };</code></pre>
+```c
+enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_SEXPR, LVAL_QEXPR };
+```
 
-<p>We can also add a constructor for this variation.</p>
+We can also add a constructor for this variation.
 
-<pre><code data-language='C'>/* A pointer to a new empty Qexpr lval */
+```c
+/* A pointer to a new empty Qexpr lval */
 lval* lval_qexpr(void) {
   lval* v = malloc(sizeof(lval));
   v->type = LVAL_QEXPR;
@@ -69,11 +76,12 @@ lval* lval_qexpr(void) {
   v->cell = NULL;
   return v;
 }
-</code></pre>
+```
 
-<p>To print and delete Q-Expressions we do essentially the same thing as with S-Expressions. We can add the relevant lines to our functions for printing and deletion as follows.</p>
+To print and delete Q-Expressions we do essentially the same thing as with S-Expressions. We can add the relevant lines to our functions for printing and deletion as follows.
 
-<pre><code data-language='C'>void lval_del(lval* v) {
+```c
+void lval_del(lval* v) {
 
   switch (v->type) {
     case LVAL_NUM: break;
@@ -93,8 +101,10 @@ lval* lval_qexpr(void) {
 
   free(v);
 }
-</code></pre>
-<pre><code data-language='C'>void lval_print(lval* v) {
+```
+
+```c
+void lval_print(lval* v) {
   switch (v->type) {
     case LVAL_NUM:   printf("%li", v->num); break;
     case LVAL_ERR:   printf("Error: %s", v->err); break;
@@ -103,104 +113,109 @@ lval* lval_qexpr(void) {
     case LVAL_QEXPR: lval_expr_print(v, '{', '}'); break;
   }
 }
-</code></pre>
+```
 
-<p>Using these simple changes we can update our reading function <code>lval_read</code> to be able to read in in Q-Expressions. Because we reused all the S-Expression data fields for our Q-Expression type, we can also reuse all of the functions for S-Expressions such as <code>lval_add</code>. Therefore to read in Q-Expressions we just need to add a special case for constructing an empty Q-Expression to <code>lval_read</code> just below where we detect and create empty S-Expressions from the <em>abstract syntax tree</em>.</p>
 
-<pre><code data-language='C'>if (strstr(t->tag, "qexpr"))  { x = lval_qexpr(); }</code></pre>
+Using these simple changes we can update our reading function `lval_read` to be able to read in in Q-Expressions. Because we reused all the S-Expression data fields for our Q-Expression type, we can also reuse all of the functions for S-Expressions such as `lval_add`. Therefore to read in Q-Expressions we just need to add a special case for constructing an empty Q-Expression to `lval_read` just below where we detect and create empty S-Expressions from the *abstract syntax tree*.
 
-<p>Because there is no special method of evaluating Q-Expressions, we don't need to edit any of the evaluation functions. Our Q-Expressions should be ready to try. Compile and run the program. See if you can use them as a new data type. Ensure they are not evaluated.</p>
+```c
+if (strstr(t->tag, "qexpr"))  { x = lval_qexpr(); }
+```
 
-<pre><code data-language='lispy'>lispy&gt; {1 2 3 4}
+Because there is no special method of evaluating Q-Expressions, we don't need to edit any of the evaluation functions. Our Q-Expressions should be ready to try. Compile and run the program. See if you can use them as a new data type. Ensure they are not evaluated.
+
+```lispy
+lispy> {1 2 3 4}
 {1 2 3 4}
-lispy&gt; {1 2 (+ 5 6) 4}
+lispy> {1 2 (+ 5 6) 4}
 {1 2 (+ 5 6) 4}
-lispy&gt; {{2 3 4} {1}}
+lispy> {{2 3 4} {1}}
 {{2 3 4} {1}}
-lispy&gt;
-</code></pre>
+lispy>
+```
 
-<h2>Builtin Functions</h2> <hr/>
+Builtin Functions</h2> <hr/>
 
-<p>We can read in Q-Expressions but they are still somewhat useless. We need some way to manipulate them.</p>
+We can read in Q-Expressions but they are still somewhat useless. We need some way to manipulate them.
 
-<p>For this we can define some built-in operators to work on our list type. Choosing a concise set of these is important. If we implement a few fundamental operations then we can use these to define new operations without adding extra C code. There are a few ways to pick these fundamental operators but I've chosen a set that will allow us to do everything we need. They are defined as follows.</p>
+For this we can define some built-in operators to work on our list type. Choosing a concise set of these is important. If we implement a few fundamental operations then we can use these to define new operations without adding extra C code. There are a few ways to pick these fundamental operators but I've chosen a set that will allow us to do everything we need. They are defined as follows.
 
 <table class='table'>
-  <tr><td><code>list</code></td><td>Takes one or more arguments and returns a new Q-Expression containing the arguments</td></tr>
-  <tr><td><code>head</code></td><td>Takes a Q-Expression and returns a Q-Expression with only of the first element</td></tr>
-  <tr><td><code>tail</code></td><td>Takes a Q-Expression and returns a Q-Expression with the first element removed</td></tr>
-  <tr><td><code>join</code></td><td>Takes one or more Q-Expressions and returns a Q-Expression of them conjoined together</td></tr>
-  <tr><td><code>eval</code></td><td>Takes a Q-Expression and evaluates it as if it were a S-Expression</td></tr>
+  <tr><td>`list`</td><td>Takes one or more arguments and returns a new Q-Expression containing the arguments</td></tr>
+  <tr><td>`head`</td><td>Takes a Q-Expression and returns a Q-Expression with only of the first element</td></tr>
+  <tr><td>`tail`</td><td>Takes a Q-Expression and returns a Q-Expression with the first element removed</td></tr>
+  <tr><td>`join`</td><td>Takes one or more Q-Expressions and returns a Q-Expression of them conjoined together</td></tr>
+  <tr><td>`eval`</td><td>Takes a Q-Expression and evaluates it as if it were a S-Expression</td></tr>
 </table>
 
-<p>Like with our mathematical operators we should add these functions as possible valid symbols. Afterward we can go about trying to define their behaviour in a similar way to <code>builtin_op</code>.</p>
+Like with our mathematical operators we should add these functions as possible valid symbols. Afterward we can go about trying to define their behaviour in a similar way to `builtin_op`.
 
-<pre><code class="lang-c">mpca_lang(MPC_LANG_DEFAULT,
-  &quot;                                                                                         \
+```c
+mpca_lang(MPC_LANG_DEFAULT,
+  "                                                                                         \
     number : /-?[0-9]+/ ;                                                                   \
-    symbol : \&quot;list\&quot; | \&quot;head\&quot; | \&quot;tail\&quot; | \&quot;join\&quot; | \&quot;eval\&quot; | &#39;+&#39; | &#39;-&#39; | &#39;*&#39; | &#39;/&#39; ; \
-    sexpr  : &#39;(&#39; &lt;expr&gt;* &#39;)&#39; ;                                                              \
-    qexpr  : &#39;{&#39; &lt;expr&gt;* &#39;}&#39; ;                                                              \
-    expr   : &lt;number&gt; | &lt;symbol&gt; | &lt;sexpr&gt; | &lt;qexpr&gt; ;                                      \
-    lispy  : /^/ &lt;expr&gt;* /$/ ;                                                              \
-  &quot;,
+    symbol : \"list\" | \"head\" | \"tail\" | \"join\" | \"eval\" | '+' | '-' | '*' | '/' ; \
+    sexpr  : '(' <expr>* ')' ;                                                              \
+    qexpr  : '{' <expr>* '}' ;                                                              \
+    expr   : <number> | <symbol> | <sexpr> | <qexpr> ;                                      \
+    lispy  : /^/ <expr>* /$/ ;                                                              \
+  ",
   Number, Symbol, Sexpr, Qexpr, Expr, Lispy)
-</code></pre>
+```
 
+First Attempt</h2> <hr/>
 
-<h2>First Attempt</h2> <hr/>
+Our builtin functions should have the same interface as `builtin_op`. That means the arguments should be bundled into an S-Expression which the function must use and then delete. They should return a new `lval*` as a result of the evaluation.
 
-<p>Our builtin functions should have the same interface as <code>builtin_op</code>. That means the arguments should be bundled into an S-Expression which the function must use and then delete. They should return a new <code>lval*</code> as a result of the evaluation.</p>
+The actual functionality of taking the head or tail of an Q-Expression shouldn't be too hard for us. We can make use of the existing functions we've defined for S-Expressions such as `lval_take` and `lval_pop`. But like `builtin_op` we also need to check that the inputs we get are valid.
 
-<p>The actual functionality of taking the head or tail of an Q-Expression shouldn't be too hard for us. We can make use of the existing functions we've defined for S-Expressions such as <code>lval_take</code> and <code>lval_pop</code>. But like <code>builtin_op</code> we also need to check that the inputs we get are valid.</p>
+Lets take a look at `head` and `tail` first. These functions have a number of conditions under which they can't act. First of all we must ensure they are only passed a single argument, and that that argument is a Q-Expression. Then we need to ensure that this Q-Expression isn't empty and actually has some elements.
 
-<p>Lets take a look at <code>head</code> and <code>tail</code> first. These functions have a number of conditions under which they can't act. First of all we must ensure they are only passed a single argument, and that that argument is a Q-Expression. Then we need to ensure that this Q-Expression isn't empty and actually has some elements.</p>
+The `head` function can repeatedly pop and delete the item at index `1` until there is nothing else left in the list.
 
-<p>The <code>head</code> function can repeatedly pop and delete the item at index <code>1</code> until there is nothing else left in the list.</p>
+The `tail` function is even more simple. It can pop and delete the item at index `0`, leaving the tail remaining. An initial attempt at these functions might look like this.
 
-<p>The <code>tail</code> function is even more simple. It can pop and delete the item at index <code>0</code>, leaving the tail remaining. An initial attempt at these functions might look like this.</p>
-
-<pre><code class="lang-c">lval* builtin_head(lval* a) {
+```c
+lval* builtin_head(lval* a) {
   /* Check Error Conditions */
-  if (a-&gt;count != 1) {
+  if (a->count != 1) {
     lval_del(a);
-    return lval_err(&quot;Function &#39;head&#39; passed too many arguments!&quot;);
+    return lval_err("Function 'head' passed too many arguments!");
   }
 
-  if (a-&gt;cell[0]-&gt;type != LVAL_QEXPR) {
+  if (a->cell[0]->type != LVAL_QEXPR) {
     lval_del(a);
-    return lval_err(&quot;Function &#39;head&#39; passed incorrect types!&quot;);
+    return lval_err("Function 'head' passed incorrect types!");
   }
 
-  if (a-&gt;cell[0]-&gt;count == 0) {
+  if (a->cell[0]->count == 0) {
     lval_del(a);
-    return lval_err(&quot;Function &#39;head&#39; passed {}!&quot;);
+    return lval_err("Function 'head' passed {}!");
   }
 
   /* Otherwise take first argument */
   lval* v = lval_take(a, 0);
 
   /* Delete all elements that are not head and return */
-  while (v-&gt;count &gt; 1) { lval_del(lval_pop(v, 1)); }
+  while (v->count > 1) { lval_del(lval_pop(v, 1)); }
   return v;
 }
 
 lval* builtin_tail(lval* a) {
   /* Check Error Conditions */
-  if (a-&gt;count != 1) {
+  if (a->count != 1) {
     lval_del(a);
-    return lval_err(&quot;Function &#39;tail&#39; passed too many arguments!&quot;);
+    return lval_err("Function 'tail' passed too many arguments!");
   }
 
-  if (a-&gt;cell[0]-&gt;type != LVAL_QEXPR) {
+  if (a->cell[0]->type != LVAL_QEXPR) {
     lval_del(a);
-    return lval_err(&quot;Function &#39;tail&#39; passed incorrect types!&quot;);
+    return lval_err("Function 'tail' passed incorrect types!");
   }
 
-  if (a-&gt;cell[0]-&gt;count == 0) {
+  if (a->cell[0]->count == 0) {
     lval_del(a);
-    return lval_err(&quot;Function &#39;tail&#39; passed {}!&quot;);
+    return lval_err("Function 'tail' passed {}!");
   }
 
   /* Take first argument */
@@ -209,87 +224,96 @@ lval* builtin_tail(lval* a) {
   /* Delete first element and return */
   lval_del(lval_pop(v, 0));
   return v;
-}</code></pre>
+}
+```
 
 
-<h2>Macros</h2> <hr/>
+Macros</h2> <hr/>
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/strawberry.png" alt="strawberry"/>
-  <p><small>Strawberry &bull; A delicious macro.</small></p>
+  <small>Strawberry &bull; A delicious macro.</small>
 </div>
 
-<p>These <code>head</code> and <code>tail</code> functions do the correct thing, but the code pretty unclear, and long. There is so much error checking that the functionality is hard to see. One method we can use to clean it up is to use a <em>Macro</em>.</p>
+These `head` and `tail` functions do the correct thing, but the code pretty unclear, and long. There is so much error checking that the functionality is hard to see. One method we can use to clean it up is to use a *Macro*.
 
-<p>A Macro is a <em>preprocessor</em> statement for creating function-like-things that are evaluated before the program is compiled. It can be used for many different things, one of which is what we need to do here, clean up code.</p>
+A Macro is a *preprocessor* statement for creating function-like-things that are evaluated before the program is compiled. It can be used for many different things, one of which is what we need to do here, clean up code.
 
-<p>Macros work by taking some arguments (which can be almost anything), and copying and pasting them into some given pattern. By changing the pattern or the arguments we can change what different code is generated by the Macro. To define macros we use the <code>#define</code> preprocessor directive. After this we write the name of the macro, followed by the argument names in parenthesis. After this the pattern is specified, to declare what code should be generated for the given arguments.</p>
+Macros work by taking some arguments (which can be almost anything), and copying and pasting them into some given pattern. By changing the pattern or the arguments we can change what different code is generated by the Macro. To define macros we use the `#define` preprocessor directive. After this we write the name of the macro, followed by the argument names in parenthesis. After this the pattern is specified, to declare what code should be generated for the given arguments.
 
-<p>We can design a macro to help with our error conditions called <code>LASSERT</code>. Macros are typically given names in all caps to help distinguish them from normal C functions. This macro take in three arguments <code>args</code>, <code>cond</code> and <code>err</code>. It then generates code as shown on the right hand side, but with these variables pasted in at the locations where they are named. This pattern is a good fit for all of our error conditions.</p>
+We can design a macro to help with our error conditions called `LASSERT`. Macros are typically given names in all caps to help distinguish them from normal C functions. This macro take in three arguments `args`, `cond` and `err`. It then generates code as shown on the right hand side, but with these variables pasted in at the locations where they are named. This pattern is a good fit for all of our error conditions.
 
-<pre><code class="lang-c">#define LASSERT(args, cond, err) if (!(cond)) { lval_del(args); return lval_err(err); }</code></pre>
 
-<p>We can use this to change how our above functions are written, without actually changing what code is generated by the compiler. This makes it much easier to read for the programmer, and saves a bit of typing. The rest of the error conditions for our functions should become a piece of cake to write too!</p>
+```c
+#define LASSERT(args, cond, err) if (!(cond)) { lval_del(args); return lval_err(err); }
+```
+
+We can use this to change how our above functions are written, without actually changing what code is generated by the compiler. This makes it much easier to read for the programmer, and saves a bit of typing. The rest of the error conditions for our functions should become a piece of cake to write too!
 
 <h3>Head &amp; Tail</h3>
 
-<p>Using this our <code>head</code> and <code>tail</code> functions are defined as follows. Notice how much clearer their real functionality is.</p>
+Using this our `head` and `tail` functions are defined as follows. Notice how much clearer their real functionality is.
 
-<pre><code class="lang-c">lval* builtin_head(lval* a) {
-  LASSERT(a, (a-&gt;count == 1                 ), &quot;Function &#39;head&#39; passed too many arguments!&quot;);
-  LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR), &quot;Function &#39;head&#39; passed incorrect type!&quot;);
-  LASSERT(a, (a-&gt;cell[0]-&gt;count != 0        ), &quot;Function &#39;head&#39; passed {}!&quot;);
+```c
+lval* builtin_head(lval* a) {
+  LASSERT(a, (a->count == 1                 ), "Function 'head' passed too many arguments!");
+  LASSERT(a, (a->cell[0]->type == LVAL_QEXPR), "Function 'head' passed incorrect type!");
+  LASSERT(a, (a->cell[0]->count != 0        ), "Function 'head' passed {}!");
 
   lval* v = lval_take(a, 0);
-  while (v-&gt;count &gt; 1) { lval_del(lval_pop(v, 1)); }
+  while (v->count > 1) { lval_del(lval_pop(v, 1)); }
   return v;
 }
 
 lval* builtin_tail(lval* a) {
-  LASSERT(a, (a-&gt;count == 1                 ), &quot;Function &#39;tail&#39; passed too many arguments!&quot;);
-  LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR), &quot;Function &#39;tail&#39; passed incorrect type!&quot;);
-  LASSERT(a, (a-&gt;cell[0]-&gt;count != 0        ), &quot;Function &#39;tail&#39; passed {}!&quot;);
+  LASSERT(a, (a->count == 1                 ), "Function 'tail' passed too many arguments!");
+  LASSERT(a, (a->cell[0]->type == LVAL_QEXPR), "Function 'tail' passed incorrect type!");
+  LASSERT(a, (a->cell[0]->count != 0        ), "Function 'tail' passed {}!");
 
   lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, 0));
   return v;
-}</code></pre>
+}
+```
 
 <h3>List &amp; Eval</h3>
 
-<p>The <code>list</code> function is dead simple. It just converts the input S-Expression to a Q-Expression and returns it.</p>
+The `list` function is dead simple. It just converts the input S-Expression to a Q-Expression and returns it.
 
-<p>The <code>eval</code> function is somewhat like the opposite. It takes as input some single Q-Expression, which it converts to an S-Expression, and evaluates using <code>lval_eval</code>.</p>
+The `eval` function is somewhat like the opposite. It takes as input some single Q-Expression, which it converts to an S-Expression, and evaluates using `lval_eval`.
 
-<pre><code data-language='c'>lval* builtin_list(lval* a) {
-  a-&gt;type = LVAL_QEXPR;
+```c
+lval* builtin_list(lval* a) {
+  a->type = LVAL_QEXPR;
   return a;
 }
 
 lval* builtin_eval(lval* a) {
-  LASSERT(a, (a-&gt;count == 1                 ), &quot;Function &#39;eval&#39; passed too many arguments!&quot;);
-  LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR), &quot;Function &#39;eval&#39; passed incorrect type!&quot;);
+  LASSERT(a, (a->count == 1                 ), "Function 'eval' passed too many arguments!");
+  LASSERT(a, (a->cell[0]->type == LVAL_QEXPR), "Function 'eval' passed incorrect type!");
 
   lval* x = lval_take(a, 0);
-  x-&gt;type = LVAL_SEXPR;
+  x->type = LVAL_SEXPR;
   return lval_eval(x);
-}</code></pre>
+}
+```
 
 <h3>Join</h3>
 
-<p>The <code>join</code> function is our final function to define.</p>
+The `join` function is our final function to define.
 
-<p>Unlike the others it can take multiple arguments, so its structure looks somewhat more like that of <code>builtin_op</code>. First we check that all of the arguments are Q-Expressions and then we join them together one-by-one. To do this we use the function <code>lval_join</code>. This works by repeatedly popping each item from <code>y</code> and adding it to <code>x</code> until <code>y</code> is empty. It then deletes <code>y</code> and returns <code>x</code>.</p>
+Unlike the others it can take multiple arguments, so its structure looks somewhat more like that of `builtin_op`. First we check that all of the arguments are Q-Expressions and then we join them together one-by-one. To do this we use the function `lval_join`. This works by repeatedly popping each item from `y` and adding it to `x` until `y` is empty. It then deletes `y` and returns `x`.
 
-<pre><code class="lang-c">lval* builtin_join(lval* a) {
+```c
+lval* builtin_join(lval* a) {
 
-  for (int i = 0; i &lt; a-&gt;count; i++) {
-    LASSERT(a, (a-&gt;cell[i]-&gt;type == LVAL_QEXPR), "Function 'join' passed incorrect type.");
+  for (int i = 0; i < a->count; i++) {
+    LASSERT(a, (a->cell[i]->type == LVAL_QEXPR), "Function 'join' passed incorrect type.");
   }
 
   lval* x = lval_pop(a, 0);
 
-  while (a-&gt;count) {
+  while (a->count) {
     x = lval_join(x, lval_pop(a, 0));
   }
 
@@ -300,55 +324,62 @@ lval* builtin_eval(lval* a) {
 lval* lval_join(lval* x, lval* y) {
 
   /* For each cell in 'y' add it to 'x' */
-  while (y-&gt;count) {
+  while (y->count) {
     x = lval_add(x, lval_pop(y, 0));
   }
 
   /* Delete the empty 'y' and return 'x' */
   lval_del(y);
   return x;
-}</code></pre>
+}
+```
 
 
-<h2>Builtins Lookup</h2> <hr/>
+Builtins Lookup</h2> <hr/>
 
-<p>We've now got all of our builtin functions defined. We need to make a function that can call the correct one depending on what symbol it encounters in evaluation. We can do this using <code>strcmp</code> and <code>strstr</code>.</p>
+We've now got all of our builtin functions defined. We need to make a function that can call the correct one depending on what symbol it encounters in evaluation. We can do this using `strcmp` and `strstr`.
 
-<pre><code data-language='c'>lval* builtin(lval* a, char* func) {
-  if (strcmp(&quot;list&quot;, func) == 0) { return builtin_list(a); }
-  if (strcmp(&quot;head&quot;, func) == 0) { return builtin_head(a); }
-  if (strcmp(&quot;tail&quot;, func) == 0) { return builtin_tail(a); }
-  if (strcmp(&quot;join&quot;, func) == 0) { return builtin_join(a); }
-  if (strcmp(&quot;eval&quot;, func) == 0) { return builtin_eval(a); }
-  if (strstr(&quot;+-/*&quot;, func)) { return builtin_op(a, func); }
+```c
+lval* builtin(lval* a, char* func) {
+  if (strcmp("list", func) == 0) { return builtin_list(a); }
+  if (strcmp("head", func) == 0) { return builtin_head(a); }
+  if (strcmp("tail", func) == 0) { return builtin_tail(a); }
+  if (strcmp("join", func) == 0) { return builtin_join(a); }
+  if (strcmp("eval", func) == 0) { return builtin_eval(a); }
+  if (strstr("+-/*", func)) { return builtin_op(a, func); }
   lval_del(a);
-  return lval_err(&quot;Unknown Function!&quot;);
-}</code></pre>
+  return lval_err("Unknown Function!");
+}
+```
 
-<p>Then we can change our evaluation line in <code>lval_eval_sexpr</code> to call <code>builtin</code> rather than <code>builtin_op</code>.</p>
+Then we can change our evaluation line in `lval_eval_sexpr` to call `builtin` rather than `builtin_op`.
 
-<pre><code data-language='c'>/* Call builtin with operator */
-lval* result = builtin(v, func-&gt;sym);
+```c
+/* Call builtin with operator */
+lval* result = builtin(v, func->sym);
 lval_del(func);
-return result;</code></pre>
+return result;
+```
 
-<p>Finally Q-Expressions should be fully supported in our language! Compile and run the latest version and see what you can do with the new list operators. Try putting code and symbols into our lists and evaluating them in different ways. The ability to put S-Expressions inside a list using Q-Expressions is pretty awesome. It means we can treat code like data itself. This is a flagship feature of Lisps, and something that really cannot be done in languages such as C!</p>
+Finally Q-Expressions should be fully supported in our language! Compile and run the latest version and see what you can do with the new list operators. Try putting code and symbols into our lists and evaluating them in different ways. The ability to put S-Expressions inside a list using Q-Expressions is pretty awesome. It means we can treat code like data itself. This is a flagship feature of Lisps, and something that really cannot be done in languages such as C!
 
-<pre><code data-language='lispy'>lispy&gt; list 1 2 3 4
+```lispy
+lispy> list 1 2 3 4
 {1 2 3 4}
-lispy&gt; {head (list 1 2 3 4)}
+lispy> {head (list 1 2 3 4)}
 {head (list 1 2 3 4)}
-lispy&gt; eval {head (list 1 2 3 4)}
+lispy> eval {head (list 1 2 3 4)}
 {1}
-lispy&gt; tail {tail tail tail}
+lispy> tail {tail tail tail}
 {tail tail}
-lispy&gt; eval (tail {tail tail {5 6 7}})
+lispy> eval (tail {tail tail {5 6 7}})
 {6 7}
-lispy&gt; eval (head {(+ 1 2) (+ 10 20)})
-3</code></pre>
+lispy> eval (head {(+ 1 2) (+ 10 20)})
+3
+```
 
 
-<h2>Reference</h2> <hr/>
+Reference</h2> <hr/>
 
 <div class="panel-group alert alert-warning" id="accordion">
   <div class="panel panel-default">
@@ -361,14 +392,15 @@ lispy&gt; eval (head {(+ 1 2) (+ 10 20)})
     </div>
     <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
-<pre><code data-language='c'>#include "mpc.h"
+```c
+#include "mpc.h"
 
 #ifdef _WIN32
 
 static char buffer[2048];
 
 char* readline(char* prompt) {
-  fputs("lispy&gt; ", stdout);
+  fputs("lispy> ", stdout);
   fgets(buffer, 2048, stdin);
   char* cpy = malloc(strlen(buffer)+1);
   strcpy(cpy, buffer);
@@ -380,8 +412,8 @@ void add_history(char* unused) {}
 
 #else
 
-#include &lt;editline/readline.h&gt;
-#include &lt;editline/history.h&gt;
+#include <editline/readline.h>
+#include <editline/history.h>
 
 #endif
 
@@ -402,59 +434,59 @@ typedef struct lval {
 
 lval* lval_num(long x) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_NUM;
-  v-&gt;num = x;
+  v->type = LVAL_NUM;
+  v->num = x;
   return v;
 }
 
 lval* lval_err(char* m) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_ERR;
-  v-&gt;err = malloc(strlen(m) + 1);
-  strcpy(v-&gt;err, m);
+  v->type = LVAL_ERR;
+  v->err = malloc(strlen(m) + 1);
+  strcpy(v->err, m);
   return v;
 }
 
 lval* lval_sym(char* s) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SYM;
-  v-&gt;sym = malloc(strlen(s) + 1);
-  strcpy(v-&gt;sym, s);
+  v->type = LVAL_SYM;
+  v->sym = malloc(strlen(s) + 1);
+  strcpy(v->sym, s);
   return v;
 }
 
 lval* lval_sexpr(void) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
+  v->type = LVAL_SEXPR;
+  v->count = 0;
+  v->cell = NULL;
   return v;
 }
 
 /* A pointer to a new empty Qexpr lval */
 lval* lval_qexpr(void) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_QEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
+  v->type = LVAL_QEXPR;
+  v->count = 0;
+  v->cell = NULL;
   return v;
 }
 
 void lval_del(lval* v) {
 
-  switch (v-&gt;type) {
+  switch (v->type) {
     case LVAL_NUM: break;
-    case LVAL_ERR: free(v-&gt;err); break;
-    case LVAL_SYM: free(v-&gt;sym); break;
+    case LVAL_ERR: free(v->err); break;
+    case LVAL_SYM: free(v->sym); break;
 
     /* If Qexpr or Sexpr then delete all elements inside */
     case LVAL_QEXPR:
     case LVAL_SEXPR:
-      for (int i = 0; i &lt; v-&gt;count; i++) {
-        lval_del(v-&gt;cell[i]);
+      for (int i = 0; i < v->count; i++) {
+        lval_del(v->cell[i]);
       }
       /* Also free the memory allocated to contain the pointers */
-      free(v-&gt;cell);
+      free(v->cell);
     break;
   }
 
@@ -462,23 +494,23 @@ void lval_del(lval* v) {
 }
 
 lval* lval_add(lval* v, lval* x) {
-  v-&gt;count++;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
-  v-&gt;cell[v-&gt;count-1] = x;
+  v->count++;
+  v->cell = realloc(v->cell, sizeof(lval*) * v->count);
+  v->cell[v->count-1] = x;
   return v;
 }
 
 lval* lval_pop(lval* v, int i) {
-  lval* x = v-&gt;cell[i];
-  memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval*) * (v-&gt;count-i-1));
-  v-&gt;count--;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
+  lval* x = v->cell[i];
+  memmove(&amp;v->cell[i], &amp;v->cell[i+1], sizeof(lval*) * (v->count-i-1));
+  v->count--;
+  v->cell = realloc(v->cell, sizeof(lval*) * v->count);
   return x;
 }
 
 lval* lval_join(lval* x, lval* y) {
 
-  while (y-&gt;count) {
+  while (y->count) {
     x = lval_add(x, lval_pop(y, 0));
   }
 
@@ -496,11 +528,11 @@ void lval_print(lval* v);
 
 void lval_expr_print(lval* v, char open, char close) {
   putchar(open);
-  for (int i = 0; i &lt; v-&gt;count; i++) {
+  for (int i = 0; i < v->count; i++) {
 
-    lval_print(v-&gt;cell[i]);
+    lval_print(v->cell[i]);
 
-    if (i != (v-&gt;count-1)) {
+    if (i != (v->count-1)) {
       putchar(' ');
     }
   }
@@ -508,10 +540,10 @@ void lval_expr_print(lval* v, char open, char close) {
 }
 
 void lval_print(lval* v) {
-  switch (v-&gt;type) {
-    case LVAL_NUM:   printf("%li", v-&gt;num); break;
-    case LVAL_ERR:   printf("Error: %s", v-&gt;err); break;
-    case LVAL_SYM:   printf("%s", v-&gt;sym); break;
+  switch (v->type) {
+    case LVAL_NUM:   printf("%li", v->num); break;
+    case LVAL_ERR:   printf("Error: %s", v->err); break;
+    case LVAL_SYM:   printf("%s", v->sym); break;
     case LVAL_SEXPR: lval_expr_print(v, '(', ')'); break;
     case LVAL_QEXPR: lval_expr_print(v, '{', '}'); break;
   }
@@ -524,24 +556,24 @@ void lval_println(lval* v) { lval_print(v); putchar('\n'); }
 lval* lval_eval(lval* v);
 
 lval* builtin_list(lval* a) {
-  a-&gt;type = LVAL_QEXPR;
+  a->type = LVAL_QEXPR;
   return a;
 }
 
 lval* builtin_head(lval* a) {
-  LASSERT(a, (a-&gt;count == 1                 ), "Function 'head' passed too many arguments.");
-  LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR), "Function 'head' passed incorrect type.");
-  LASSERT(a, (a-&gt;cell[0]-&gt;count != 0        ), "Function 'head' passed {}.");
+  LASSERT(a, (a->count == 1                 ), "Function 'head' passed too many arguments.");
+  LASSERT(a, (a->cell[0]->type == LVAL_QEXPR), "Function 'head' passed incorrect type.");
+  LASSERT(a, (a->cell[0]->count != 0        ), "Function 'head' passed {}.");
 
   lval* v = lval_take(a, 0);
-  while (v-&gt;count &gt; 1) { lval_del(lval_pop(v, 1)); }
+  while (v->count > 1) { lval_del(lval_pop(v, 1)); }
   return v;
 }
 
 lval* builtin_tail(lval* a) {
-  LASSERT(a, (a-&gt;count == 1                 ), "Function 'tail' passed too many arguments.");
-  LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR), "Function 'tail' passed incorrect type.");
-  LASSERT(a, (a-&gt;cell[0]-&gt;count != 0        ), "Function 'tail' passed {}.");
+  LASSERT(a, (a->count == 1                 ), "Function 'tail' passed too many arguments.");
+  LASSERT(a, (a->cell[0]->type == LVAL_QEXPR), "Function 'tail' passed incorrect type.");
+  LASSERT(a, (a->cell[0]->count != 0        ), "Function 'tail' passed {}.");
 
   lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, 0));
@@ -549,23 +581,23 @@ lval* builtin_tail(lval* a) {
 }
 
 lval* builtin_eval(lval* a) {
-  LASSERT(a, (a-&gt;count == 1                 ), "Function 'eval' passed too many arguments.");
-  LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR), "Function 'eval' passed incorrect type.");
+  LASSERT(a, (a->count == 1                 ), "Function 'eval' passed too many arguments.");
+  LASSERT(a, (a->cell[0]->type == LVAL_QEXPR), "Function 'eval' passed incorrect type.");
 
   lval* x = lval_take(a, 0);
-  x-&gt;type = LVAL_SEXPR;
+  x->type = LVAL_SEXPR;
   return lval_eval(x);
 }
 
 lval* builtin_join(lval* a) {
 
-  for (int i = 0; i &lt; a-&gt;count; i++) {
-    LASSERT(a, (a-&gt;cell[i]-&gt;type == LVAL_QEXPR), "Function 'join' passed incorrect type.");
+  for (int i = 0; i < a->count; i++) {
+    LASSERT(a, (a->cell[i]->type == LVAL_QEXPR), "Function 'join' passed incorrect type.");
   }
 
   lval* x = lval_pop(a, 0);
 
-  while (a-&gt;count) {
+  while (a->count) {
     x = lval_join(x, lval_pop(a, 0));
   }
 
@@ -575,30 +607,30 @@ lval* builtin_join(lval* a) {
 
 lval* builtin_op(lval* a, char* op) {
 
-  for (int i = 0; i &lt; a-&gt;count; i++) {
-    if (a-&gt;cell[i]-&gt;type != LVAL_NUM) {
+  for (int i = 0; i < a->count; i++) {
+    if (a->cell[i]->type != LVAL_NUM) {
       lval_del(a);
       return lval_err("Cannot operator on non number!");
     }
   }
 
   lval* x = lval_pop(a, 0);
-  if ((strcmp(op, "-") == 0) &amp;&amp; a-&gt;count == 0) { x-&gt;num = -x-&gt;num; }
+  if ((strcmp(op, "-") == 0) &amp;&amp; a->count == 0) { x->num = -x->num; }
 
-  while (a-&gt;count &gt; 0) {
+  while (a->count > 0) {
 
     lval* y = lval_pop(a, 0);
 
-    if (strcmp(op, "+") == 0) { x-&gt;num += y-&gt;num; }
-    if (strcmp(op, "-") == 0) { x-&gt;num -= y-&gt;num; }
-    if (strcmp(op, "*") == 0) { x-&gt;num *= y-&gt;num; }
+    if (strcmp(op, "+") == 0) { x->num += y->num; }
+    if (strcmp(op, "-") == 0) { x->num -= y->num; }
+    if (strcmp(op, "*") == 0) { x->num *= y->num; }
     if (strcmp(op, "/") == 0) {
-      if (y-&gt;num == 0) {
+      if (y->num == 0) {
         lval_del(x); lval_del(y); lval_del(a);
         x = lval_err("Division By Zero.");
         break;
       } else {
-        x-&gt;num /= y-&gt;num;
+        x->num /= y->num;
       }
     }
 
@@ -622,57 +654,57 @@ lval* builtin(lval* a, char* func) {
 
 lval* lval_eval_sexpr(lval* v) {
 
-  for (int i = 0; i &lt; v-&gt;count; i++) {
-    v-&gt;cell[i] = lval_eval(v-&gt;cell[i]);
+  for (int i = 0; i < v->count; i++) {
+    v->cell[i] = lval_eval(v->cell[i]);
   }
 
-  for (int i = 0; i &lt; v-&gt;count; i++) {
-    if (v-&gt;cell[i]-&gt;type == LVAL_ERR) { return lval_take(v, i); }
+  for (int i = 0; i < v->count; i++) {
+    if (v->cell[i]->type == LVAL_ERR) { return lval_take(v, i); }
   }
 
-  if (v-&gt;count == 0) { return v; }
+  if (v->count == 0) { return v; }
 
-  if (v-&gt;count == 1) { return lval_take(v, 0); }
+  if (v->count == 1) { return lval_take(v, 0); }
 
   lval* f = lval_pop(v, 0);
-  if (f-&gt;type != LVAL_SYM) {
+  if (f->type != LVAL_SYM) {
     lval_del(f); lval_del(v);
     return lval_err("S-expression Does not start with symbol.");
   }
 
   /* Call builtin with operator */
-  lval* result = builtin(v, f-&gt;sym);
+  lval* result = builtin(v, f->sym);
   lval_del(f);
   return result;
 }
 
 lval* lval_eval(lval* v) {
-  if (v-&gt;type == LVAL_SEXPR) { return lval_eval_sexpr(v); }
+  if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(v); }
   return v;
 }
 
 lval* lval_read_num(mpc_ast_t* t) {
-  long x = strtol(t-&gt;contents, NULL, 10);
+  long x = strtol(t->contents, NULL, 10);
   return errno != ERANGE ? lval_num(x) : lval_err("invalid number");
 }
 
 lval* lval_read(mpc_ast_t* t) {
 
-  if (strstr(t-&gt;tag, "number")) { return lval_read_num(t); }
-  if (strstr(t-&gt;tag, "symbol")) { return lval_sym(t-&gt;contents); }
+  if (strstr(t->tag, "number")) { return lval_read_num(t); }
+  if (strstr(t->tag, "symbol")) { return lval_sym(t->contents); }
 
   lval* x = NULL;
-  if (strcmp(t-&gt;tag, "&gt;") == 0) { x = lval_sexpr(); }
-  if (strstr(t-&gt;tag, "sexpr"))  { x = lval_sexpr(); }
-  if (strstr(t-&gt;tag, "qexpr"))  { x = lval_qexpr(); }
+  if (strcmp(t->tag, ">") == 0) { x = lval_sexpr(); }
+  if (strstr(t->tag, "sexpr"))  { x = lval_sexpr(); }
+  if (strstr(t->tag, "qexpr"))  { x = lval_qexpr(); }
 
-  for (int i = 0; i &lt; t-&gt;children_num; i++) {
-    if (strcmp(t-&gt;children[i]-&gt;contents, "(") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;contents, ")") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;contents, "}") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;contents, "{") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;tag,  "regex") == 0) { continue; }
-    x = lval_add(x, lval_read(t-&gt;children[i]));
+  for (int i = 0; i < t->children_num; i++) {
+    if (strcmp(t->children[i]->contents, "(") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, ")") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, "}") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, "{") == 0) { continue; }
+    if (strcmp(t->children[i]->tag,  "regex") == 0) { continue; }
+    x = lval_add(x, lval_read(t->children[i]));
   }
 
   return x;
@@ -691,10 +723,10 @@ int main(int argc, char** argv) {
     "                                                                                         \
       number : /-?[0-9]+/ ;                                                                   \
       symbol : \"list\" | \"head\" | \"tail\" | \"eval\" | \"join\" | '+' | '-' | '*' | '/' ; \
-      sexpr  : '(' &lt;expr&gt;* ')' ;                                                              \
-      qexpr  : '{' &lt;expr&gt;* '}' ;                                                              \
-      expr   : &lt;number&gt; | &lt;symbol&gt; | &lt;sexpr&gt; | &lt;qexpr&gt; ;                                      \
-      lispy  : /^/ &lt;expr&gt;* /$/ ;                                                              \
+      sexpr  : '(' <expr>* ')' ;                                                              \
+      qexpr  : '{' <expr>* '}' ;                                                              \
+      expr   : <number> | <symbol> | <sexpr> | <qexpr> ;                                      \
+      lispy  : /^/ <expr>* /$/ ;                                                              \
     ",
     Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
@@ -703,11 +735,11 @@ int main(int argc, char** argv) {
 
   while (1) {
 
-    char* input = readline("lispy&gt; ");
+    char* input = readline("lispy> ");
     add_history(input);
 
     mpc_result_t r;
-    if (mpc_parse("&lt;stdin&gt;", input, Lispy, &amp;r)) {
+    if (mpc_parse("<stdin>", input, Lispy, &amp;r)) {
 
       lval* x = lval_eval(lval_read(r.output));
       lval_println(x);
@@ -727,21 +759,21 @@ int main(int argc, char** argv) {
 
   return 0;
 }
-</code></pre>
+```
       </div>
     </div>
   </div>
 </div>
 
-<h2>Bonus Marks</h2> <hr/>
+Bonus Marks</h2> <hr/>
 
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; What are the four typical steps for adding new language features?</li>
     <li class="list-group-item">&rsaquo; Create a Macro specifically for testing for the incorrect number of arguments.</li>
     <li class="list-group-item">&rsaquo; Create a Macro specifically for testing for being called with the empty list.</li>
-    <li class="list-group-item">&rsaquo; Add a builtin function <code>cons</code> that takes a value and a Q-Expression and appends it to the front.</li>
-    <li class="list-group-item">&rsaquo; Add a builtin function <code>len</code> that returns the number of elements in a Q-Expression.</li>
-    <li class="list-group-item">&rsaquo; Add a builtin function <code>init</code> that returns all of a Q-Expression except the final element.</li>
+    <li class="list-group-item">&rsaquo; Add a builtin function `cons` that takes a value and a Q-Expression and appends it to the front.</li>
+    <li class="list-group-item">&rsaquo; Add a builtin function `len` that returns the number of elements in a Q-Expression.</li>
+    <li class="list-group-item">&rsaquo; Add a builtin function `init` that returns all of a Q-Expression except the final element.</li>
   </ul>
 </div>
