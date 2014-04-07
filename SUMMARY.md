@@ -6,7 +6,7 @@
 * [Languages](languages.md)
 * [Parsing](parsing.md)
 * [Evaluation](evaluation.md)
-* [Error Handeling](error_handeling.md)
+* [Error Handling](error_handling.md)
 * [S-Expressions](s_expressions.md)
 * [Q-Expressions](q_expressions.md)
 * [Variables](variables.md)

@@ -131,8 +131,8 @@
         
             <li  data-level="7">
                 
-                <a href="./error_handeling.html">
-                    <i class="fa fa-check"></i> <b>7)</b> Error Handeling
+                <a href="./error_handling.html">
+                    <i class="fa fa-check"></i> <b>7)</b> Error Handling
                 </a>
                 
                 
@@ -269,7 +269,7 @@
     
         <a href="./evaluation.html" title="Evaluation" class="chapter  new-chapter" data-progress="6" style="left: 82.3529411764706%;"></a>
     
-        <a href="./error_handeling.html" title="Error Handeling" class="chapter  new-chapter" data-progress="7" style="left: 88.23529411764706%;"></a>
+        <a href="./error_handling.html" title="Error Handling" class="chapter  new-chapter" data-progress="7" style="left: 88.23529411764706%;"></a>
     
         <a href="./s_expressions.html" title="S-Expressions" class="chapter  new-chapter" data-progress="8" style="left: 94.11764705882354%;"></a>
     
@@ -283,138 +283,99 @@
                 <section class="normal" id="section-gitbook_12">
                 
                     <h1 id="languages">Languages</h1>
-<p><h2>What is a Programming Language?</h2> <hr/></p>
+<h2 id="what-is-a-programming-language-">What is a Programming Language?</h2>
 <p>A programming language is very similar to a real language. There is a structure behind it, and some rules which dictate what is, and isn&#39;t, a valid thing to say. When we read and write natural language, we are unconsciously learning these rules, and the same is true for programming languages. We can utilise these rules to understand others, and generate our own speech, or code.</p>
-
-<p>In the 1950s the linguist <em>Noam Chomsky</em> formalised a number of <a href="http://en.wikipedia.org/wiki/Chomsky_hierarchy">important observations</a> about languages. Many of these form the basis of our understanding of language today. One of these was the observation that natural languages are built up of recursive and repeated substructures.</p>
-
+<p>In the 1950s the linguist <em>Noam Chomsky</em> formalised a number of <a href="http://en.wikipedia.org/wiki/Chomsky_hierarchy" target="_blank">important observations</a> about languages. Many of these form the basis of our understanding of language today. One of these was the observation that natural languages are built up of recursive and repeated substructures.</p>
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/cat.png" alt="cat"/>
-  <p><small>Cat &bull; cannot speak or program</small></p>
+  <small>Cat &bull; cannot speak or program</small>
 </div>
 
 <p>As an example of this, we can examine the phrase.</p>
-
 <p>&rsaquo; <code>The cat walked on the carpet.</code></p>
-
 <p>Using the rules of English, the noun <code>cat</code> can be replaced by two nouns separated by <code>and</code>.</p>
-
 <p>&rsaquo; <code>The <strong>cat and dog</strong> walked on the carpet.</code></p>
-
 <p>Each of these new nouns could in turn be replaced again. We could use the same rule as before, and replace <code>cat</code> with two new nouns joined with <code>and</code>. Or we could use a different rule and replace each of the nouns with an adjective and a noun, to add description to them.</p>
-
 <p>&rsaquo; <code>The <strong>cat and mouse</strong> and dog walked on the carpet.</code></p>
-
 <p>&rsaquo; <code>The <strong>white cat</strong> and <strong>black dog</strong> walked on the carpet.</code></p>
-
 <p>These are just two examples, but English has many different rules for how types of words can be changed, manipulated and replaced.</p>
-
 <p>We notice this exact behaviour in programming languages too. In C, the body of an <code>if</code> statement contains a list of new statements. Each of these new statements, could themselves be another <code>if</code> statement. These repeated structures and replacements are reflected in all parts of the language. These are sometimes called <em>re-write rules</em> because they tell you how one thing can be <em>re-written</em> as something else.</p>
-
 <p>&rsaquo; <code>if (x &gt; 5) { return x; }</code></p>
-
 <p>&rsaquo; <code>if (x &gt; 5) { <strong>if (x &gt; 10) { return x; }</strong> }</code></p>
-
 <p>The consequence of this observation by <em>Noam Chomsky</em> was important. It meant that although there is an infinite number of different things that can be said, or written down, in a particular language; it is still possible to process and understand all of them, with a finite number of these re-write rules. The name given to a set of these re-write rules is a <em>grammar</em>.</p>
-
 <p>We can describe re-write rules in a number of ways. One way is textual. We could say something like, &quot;a <em>sentence</em> must contain a <em>verb phrase</em>&quot;, or &quot;a <em>verb phrase</em> can be either a <em>verb</em> or, an <em>adverb</em> and a <em>verb</em>&quot;. This method is good for humans but it is too vague for computers to understand. When programming we need to write down a more formal description of a grammar.</p>
-
 <p>To write a programming language such as our Lisp we are going to need to understand grammars. For reading in the user input we need to write a <em>grammar</em> which describes it. Then we can use it along with our user input, to decide if the input is valid. We can also use it to build a structured internal representation, which will make the job of <em>understanding</em> it, and then <em>evaluating</em> it, performing the computations encoded within, much easier.</p>
-
 <p>This is where a library called <code>mpc</code> comes in.</p>
-
-
-<p><h2>Parser Combinators</h2> <hr/></p>
+<h2 id="parser-combinators">Parser Combinators</h2>
 <p><code>mpc</code> is a <em>Parser Combinator</em> library written by yours truly. This means it is a library that allows you to build programs that understand and process particular languages. These are known as <em>parsers</em>. There are many different ways of building parsers, but the nice thing about using a <em>Parser Combinator</em> library is that it lets you build <em>parsers</em> easily, just by specifying the <em>grammar</em> ... sort of.</p>
-
 <p>Many <em>Parser Combinator</em> libraries actually work by letting you write normal code that <em>looks a bit like</em> a grammar, not by actually specifying a grammar directly. In many situations this is fine, but sometimes it can get clunky and complicated. Luckily for us <code>mpc</code> allows for us to write normal code that just <em>looks like</em> a grammar, <em>or</em> we can use special notation to write a grammar directly!</p>
-
-
-<p><h2>Coding Grammars</h2> <hr/></p>
-<p>So what does code that <em>looks like</em> a grammar..<em>look like</em>? Let us take a look at <code>mpc</code> by trying to write code for a grammar that recognizes <a href="http://knowyourmeme.com/memes/doge">the language of Shiba Inu</a>. More colloquially know as <em>Doge</em>. This language we are going to define as follows.</p>
-
-<p>&rsaquo; An <em>Adjective</em> is either <em>&quot;wow&quot;</em>, <em>&quot;many&quot;</em>, <em>&quot;so&quot;</em> or <em>&quot;such&quot;</em>.</p>
-<p>&rsaquo; A <em>Noun</em> is either <em>&quot;lisp&quot;</em>, <em>&quot;language&quot;</em>, <em>&quot;c&quot;</em>, <em>&quot;book&quot;</em> or <em>&quot;build&quot;</em>.</p>
-<p>&rsaquo; A <em>Phrase</em> is an <em>Adjective</em> followed by a <em>Noun</em>.</p>
-<p>&rsaquo; A <em>Doge</em> is zero or more <em>Phrases</em>.</p>
-
+<h2 id="coding-grammars">Coding Grammars</h2>
+<p>So what does code that <em>looks like</em> a grammar..<em>look like</em>? Let us take a look at <code>mpc</code> by trying to write code for a grammar that recognizes <a href="http://knowyourmeme.com/memes/doge" target="_blank">the language of Shiba Inu</a>. More colloquially know as <em>Doge</em>. This language we are going to define as follows.</p>
+<p>&rsaquo; An <em>Adjective</em> is either <em>&quot;wow&quot;</em>, <em>&quot;many&quot;</em>, <em>&quot;so&quot;</em> or <em>&quot;such&quot;</em>.
+&rsaquo; A <em>Noun</em> is either <em>&quot;lisp&quot;</em>, <em>&quot;language&quot;</em>, <em>&quot;c&quot;</em>, <em>&quot;book&quot;</em> or <em>&quot;build&quot;</em>.
+&rsaquo; A <em>Phrase</em> is an <em>Adjective</em> followed by a <em>Noun</em>.
+&rsaquo; A <em>Doge</em> is zero or more <em>Phrases</em>.</p>
 <p>We can start by trying to define <em>Adjective</em> and <em>Noun</em>. To do this we create two new parsers, represented by the type <code>mpc_parser_t*</code>, and we store them in the variables <code>Adjective</code> and <code>Noun</code>. We use the function <code>mpc_or</code> to create a parser where one of several options should be used, and the function <code>mpc_sym</code> to wrap our initial strings.</p>
-
 <p>If you squint your eyes you could attempt to read the code as if it were the rules we specified above.</p>
-
-<pre><code data-language='c'>/* Build a new parser 'Adjective' to recognize descriptions */
-mpc_parser_t* Adjective = mpc_or(4,
-  mpc_sym("wow"), mpc_sym("many"),
-  mpc_sym("so"),  mpc_sym("such")
+<pre><code class="lang-c"><span class="hljs-comment">/* Build a new parser 'Adjective' to recognize descriptions */</span>
+mpc_parser_t* Adjective = mpc_or(<span class="hljs-number">4</span>,
+  mpc_sym(<span class="hljs-string">"wow"</span>), mpc_sym(<span class="hljs-string">"many"</span>),
+  mpc_sym(<span class="hljs-string">"so"</span>),  mpc_sym(<span class="hljs-string">"such"</span>)
 );
 
-/* Build a new parser 'Noun' to recognize things */
-mpc_parser_t* Noun = mpc_or(5,
-  mpc_sym("lisp"), mpc_sym("language"),
-  mpc_sym("c"),    mpc_sym("book"),
-  mpc_sym("build")
+<span class="hljs-comment">/* Build a new parser 'Noun' to recognize things */</span>
+mpc_parser_t* Noun = mpc_or(<span class="hljs-number">5</span>,
+  mpc_sym(<span class="hljs-string">"lisp"</span>), mpc_sym(<span class="hljs-string">"language"</span>),
+  mpc_sym(<span class="hljs-string">"c"</span>),    mpc_sym(<span class="hljs-string">"book"</span>),
+  mpc_sym(<span class="hljs-string">"build"</span>)
 );
 </code></pre>
-
 <div class="alert alert-warning">
-  <p><strong>How can I access these <code>mpc</code> functions?</strong></p>
+  <strong>How can I access these <code>mpc</code> functions?</strong>
 
-  <p>For now don&#39;t worry about compiling or running any of the sample code in this chapter. Just read it and see if you can understand the theory behind grammars. In the next chapter we&#39;ll get setup with <code>mpc</code> and use it for a language closer to our Lisp.</p>
+  For now don&#39;t worry about compiling or running any of the sample code in this chapter. Just read it and see if you can understand the theory behind grammars. In the next chapter we&#39;ll get setup with <code>mpc</code> and use it for a language closer to our Lisp.
 </div>
 
 <p>To define <code>Phrase</code> we can reference our existing parsers. We need to use the function <code>mpc_and</code>, that specifies one thing is required then another. As input we pass it <code>Adjective</code> and <code>Noun</code>, our previously defined parsers. This function also takes the arguments <code>mpcf_strfold</code> and <code>free</code>, which say how to join or delete the results of these parsers. Ignore these arguments for now.</p>
-
-<pre><code data-language='c'>mpc_parser_t* Phrase = mpc_and(2, mpcf_strfold, Adjective, Noun, free);</code></pre>
-
-<p>To define <em>Doge</em> we must specify that <em>zero or more</em> of some parser is required. For this we need to use the function <code>mpc_many</code>. As before, this function requires the special variable <code>mpcf_strfold</code> to say how the results are joined together, which we can ignore.</p>
-
-<pre><code data-language='c'>mpc_parser_t* Doge = mpc_many(mpcf_strfold, Phrase);</code></pre>
-
-<p>By creating a parser that looks for <em>zero or more</em> occurrences of another parser a cool thing has happened. Our <code>Doge</code> parser accepts inputs of any length. This means its language is <em>infinite</em>. Here are just some examples of possible strings <code>Doge</code> could accept. Just as we discovered in the first section of this chapter we have used a finite number of re-write rules to create an infinite language.</p>
-
-<pre><code data-language='c'>"wow book such language many lisp"
-"so c such build such language"
-"many build wow c"
-""
-"wow lisp wow c many language"
-"so c"
+<pre><code class="lang-c">mpc_parser_t* Phrase = mpc_and(<span class="hljs-number">2</span>, mpcf_strfold, Adjective, Noun, <span class="hljs-built_in">free</span>);
 </code></pre>
-
-<p>If we use more <code>mpc</code> functions, we can slowly build up parsers that parse more and more complicated languages. The code we use <em>sort of</em> reads like a grammar, but becomes much more messy with added complexity. Due to this, taking this approach isn&#39;t always an easy task. A whole set of helper functions that build on simple constructs to make frequent tasks easy are all documented on the <a href="http://github.com/orangeduck/mpc">mpc repository</a>. This is a good approach for complicated languages, as it allows for fine-grained control, but won&#39;t be required for our needs.</p>
-
-
-<p><h2>Natural Grammars</h2> <hr/></p>
+<p>To define <em>Doge</em> we must specify that <em>zero or more</em> of some parser is required. For this we need to use the function <code>mpc_many</code>. As before, this function requires the special variable <code>mpcf_strfold</code> to say how the results are joined together, which we can ignore.</p>
+<pre><code class="lang-c">mpc_parser_t* Doge = mpc_many(mpcf_strfold, Phrase);
+</code></pre>
+<p>By creating a parser that looks for <em>zero or more</em> occurrences of another parser a cool thing has happened. Our <code>Doge</code> parser accepts inputs of any length. This means its language is <em>infinite</em>. Here are just some examples of possible strings <code>Doge</code> could accept. Just as we discovered in the first section of this chapter we have used a finite number of re-write rules to create an infinite language.</p>
+<pre><code class="lang-c"><span class="hljs-string">"wow book such language many lisp"</span>
+<span class="hljs-string">"so c such build such language"</span>
+<span class="hljs-string">"many build wow c"</span>
+<span class="hljs-string">""</span>
+<span class="hljs-string">"wow lisp wow c many language"</span>
+<span class="hljs-string">"so c"</span>
+</code></pre>
+<p>If we use more <code>mpc</code> functions, we can slowly build up parsers that parse more and more complicated languages. The code we use <em>sort of</em> reads like a grammar, but becomes much more messy with added complexity. Due to this, taking this approach isn&#39;t always an easy task. A whole set of helper functions that build on simple constructs to make frequent tasks easy are all documented on the <a href="http://github.com/orangeduck/mpc" target="_blank">mpc repository</a>. This is a good approach for complicated languages, as it allows for fine-grained control, but won&#39;t be required for our needs.</p>
+<h2 id="natural-grammars">Natural Grammars</h2>
 <p><code>mpc</code> lets us write grammars in a more natural form too. Rather than using C functions that look less like a grammar, we can specify the whole thing in one long string. When using this method we don&#39;t have to worry about how to join or discard inputs, with functions such as <code>mpcf_strfold</code>, or <code>free</code>. All of that is done automatically for us!</p>
-
 <p>Here is how we would recreate the previous examples using this method.</p>
-
-<pre><code data-language='c'>mpc_parser_t* Adjective = mpc_new(&quot;adjective&quot;);
-mpc_parser_t* Noun      = mpc_new(&quot;noun&quot;);
-mpc_parser_t* Phrase    = mpc_new(&quot;phrase&quot;);
-mpc_parser_t* Doge      = mpc_new(&quot;doge&quot;);
+<pre><code class="lang-c">mpc_parser_t* Adjective = mpc_new(&amp;quot;adjective&amp;quot;);
+mpc_parser_t* Noun      = mpc_new(&amp;quot;noun&amp;quot;);
+mpc_parser_t* Phrase    = mpc_new(&amp;quot;phrase&amp;quot;);
+mpc_parser_t* Doge      = mpc_new(&amp;quot;doge&amp;quot;);
 
 mpca_lang(MPC_LANG_DEFAULT,
-  &quot;                                                                     \
-    adjective : \&quot;wow\&quot; | \&quot;many\&quot; | \&quot;so\&quot; | \&quot;such\&quot;;                 \
-    noun      : \&quot;lisp\&quot; | \&quot;language\&quot; | \&quot;c\&quot; | \&quot;book\&quot; | \&quot;build\&quot;; \
-    phrase    : &lt;adjective&gt; &lt;noun&gt;;                                     \
-    doge      : &lt;phrase&gt;*;                                              \
-  &quot;,
+  &amp;quot;                                                                     \
+    adjective : \&amp;quot;wow\&amp;quot; | \&amp;quot;many\&amp;quot; | \&amp;quot;so\&amp;quot; | \&amp;quot;such\&amp;quot;;                 \
+    noun      : \&amp;quot;lisp\&amp;quot; | \&amp;quot;language\&amp;quot; | \&amp;quot;c\&amp;quot; | \&amp;quot;book\&amp;quot; | \&amp;quot;build\&amp;quot;; \
+    phrase    : &amp;lt;adjective&amp;gt; &amp;lt;noun&amp;gt;;                                     \
+    doge      : &amp;lt;phrase&amp;gt;*;                                              \
+  &amp;quot;,
   Adjective, Noun, Phrase, Doge);
 
-/* Do some parsing here... */
+<span class="hljs-comment">/* Do some parsing here... */</span>
 
-mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
+mpc_cleanup(<span class="hljs-number">4</span>, Adjective, Noun, Phrase, Doge);
 </code></pre>
-
 <p>Without having an exactly understanding of the syntax for that long string, it should be obvious how much <em>clearer</em> the grammar is in this format. If we learn what all the special symbols mean we barely have to squint our eyes to read it as one.</p>
-
 <p>Another thing to notice is that the process is now in two steps. First we create and name several rules using <code>mpc_new</code> and then we define them using <code>mpca_lang</code>.</p>
-
 <p>The first argument to <code>mpca_lang</code> are the options flags. For this we just use the defaults. The second is a long multi-line string in C. This is the <em>grammar</em> specification. It consists of a number of <em>re-write rules</em>. Each rule has the name of the rule on the left, a colon <code>:</code>, and on the right it&#39;s definition terminated with a semicolon <code>;</code>.</p>
-
 <p>The special symbols used to define the rules on the right hand side work as follows.</p>
-
 <table class='table'>
   <tr><td><code>&quot;ab&quot;</code></td><td>The string <code>ab</code> is required.</td></tr>
   <tr><td><code>&#39;a&#39;</code></td><td>The character <code>a</code> is required.</td></tr>
@@ -422,24 +383,19 @@ mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
   <tr><td><code>&#39;a&#39; | &#39;b&#39;</code></td><td>Either <code>&#39;a&#39;</code> is required, or <code>&#39;b&#39;</code> is required.</td></tr>
   <tr><td><code>&#39;a&#39;*</code></td><td>Zero or more <code>&#39;a&#39;</code> are required.</td></tr>
   <tr><td><code>&#39;a&#39;+</code></td><td>One or more <code>&#39;a&#39;</code> are required.</td></tr>
-  <tr><td><code>&lt;abba&gt;</code></td><td>The rule called <code>abba</code> is required.</td></tr>
+  <tr><td><code>&amp;lt;abba&amp;gt;</code></td><td>The rule called <code>abba</code> is required.</td></tr>
 </table>
 
 <div class="alert alert-warning">
-  <p><strong>Sounds familiar...</strong></p>
+  <strong>Sounds familiar...</strong>
 
-  <p>Did you notice that the description of what the input string to <code>mpca_lang</code> should look like sort of sounded like I was specifying a grammar? That&#39;s because it was! <code>mpc</code> uses itself internally to parse the input you give it to <code>mpca_lang</code>. It does it by specifying a <em>grammar</em> in code using the previous method. How neat is that..</p>
+  Did you notice that the description of what the input string to <code>mpca_lang</code> should look like sort of sounded like I was specifying a grammar? That&#39;s because it was! <code>mpc</code> uses itself internally to parse the input you give it to <code>mpca_lang</code>. It does it by specifying a <em>grammar</em> in code using the previous method. How neat is that..
 </div>
 
 <p>Using what is described above verify that what I&#39;ve written above is equal to what we specified in code.</p>
-
 <p>This method of specifying a grammar is what we are going to use in the following chapters. It might seem overwhelming at first. Grammars can be difficult to understand right away. But as we continue you will become much more familiar with how to create and edit them.</p>
-
 <p>This chapter is about theory, so if you are going to try some of the bonus marks, don&#39;t worry too much about correctness. Thinking in the right mindset is more important. Feel free to invent symbols and notation for certain concepts to make them simpler to write down. Some of the bonus marks also might require cyclic or recursive grammar stuctures, so don&#39;t worry if you have to use these!</p>
-
-
-
-<p><h2>Reference</h2> <hr/></p>
+<h2 id="reference">Reference</h2>
 <div class="panel-group alert alert-warning" id="accordion">
 
   <div class="panel panel-default">
@@ -452,34 +408,35 @@ mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
     </div>
     <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
-<pre><code data-language='c'>#include &quot;mpc.h&quot;
+<code>c
+#include &quot;mpc.h&quot;
 
-int main(int argc, char<em>* argv) {
+int main(int argc, char** argv) {
 
-  /</em> Build a new parser &#39;Adjective&#39; to recognize descriptions <em>/
-  mpc_parser_t</em> Adjective = mpc_or(4,
+  /* Build a new parser &#39;Adjective&#39; to recognize descriptions */
+  mpc_parser_t* Adjective = mpc_or(4,
     mpc_sym(&quot;wow&quot;), mpc_sym(&quot;many&quot;),
     mpc_sym(&quot;so&quot;),  mpc_sym(&quot;such&quot;)
   );
 
-  /<em> Build a new parser &#39;Noun&#39; to recognize things </em>/
-  mpc_parser_t<em> Noun = mpc_or(5,
+  /* Build a new parser &#39;Noun&#39; to recognize things */
+  mpc_parser_t* Noun = mpc_or(5,
     mpc_sym(&quot;lisp&quot;), mpc_sym(&quot;language&quot;),
     mpc_sym(&quot;c&quot;),    mpc_sym(&quot;book&quot;),
     mpc_sym(&quot;build&quot;)
   );
 
-  mpc_parser_t</em> Phrase = mpc_and(2, mpcf_strfold, Adjective, Noun, free);
+  mpc_parser_t* Phrase = mpc_and(2, mpcf_strfold, Adjective, Noun, free);
 
-  mpc_parser_t<em> Doge = mpc_many(mpcf_strfold, Phrase);
+  mpc_parser_t* Doge = mpc_many(mpcf_strfold, Phrase);
 
-  /</em> Do some parsing here... */
+  /* Do some parsing here... */
 
   mpc_delete(Doge);
 
   return 0;
 
-}</code></pre>
+}</code>
       </div>
     </div>
   </div>
@@ -494,44 +451,45 @@ int main(int argc, char<em>* argv) {
     </div>
     <div id="collapseTwo" class="panel-collapse collapse">
       <div class="panel-body">
-<pre><code data-language='c'>#include &quot;mpc.h&quot;
+<code>c
+#include &quot;mpc.h&quot;
 
-int main(int argc, char<em>* argv) {
+int main(int argc, char** argv) {
 
-  mpc_parser_t</em> Adjective = mpc_new(&quot;adjective&quot;);
-  mpc_parser_t<em> Noun      = mpc_new(&quot;noun&quot;);
-  mpc_parser_t</em> Phrase    = mpc_new(&quot;phrase&quot;);
-  mpc_parser_t<em> Doge      = mpc_new(&quot;doge&quot;);
+  mpc_parser_t* Adjective = mpc_new(&quot;adjective&quot;);
+  mpc_parser_t* Noun      = mpc_new(&quot;noun&quot;);
+  mpc_parser_t* Phrase    = mpc_new(&quot;phrase&quot;);
+  mpc_parser_t* Doge      = mpc_new(&quot;doge&quot;);
 
   mpca_lang(MPC_LANG_DEFAULT,
     &quot;                                                                     \
       adjective : \&quot;wow\&quot; | \&quot;many\&quot; | \&quot;so\&quot; | \&quot;such\&quot;;                 \
       noun      : \&quot;lisp\&quot; | \&quot;language\&quot; | \&quot;c\&quot; | \&quot;book\&quot; | \&quot;build\&quot;; \
-      phrase    : &lt;adjective&gt; &lt;noun&gt;;                                     \
-      doge      : &lt;phrase&gt;</em>;                                              \
+      phrase    : &amp;lt;adjective&amp;gt; &amp;lt;noun&amp;gt;;                                     \
+      doge      : &amp;lt;phrase&amp;gt;*;                                              \
     &quot;,
     Adjective, Noun, Phrase, Doge);
 
-  /<em> Do some parsing here... </em>/
+  /* Do some parsing here... */
 
   mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
 
   return 0;
 
-}</code></pre>
+}</code>
       </div>
     </div>
   </div>
 
 <p></div></p>
-<p><h2>Bonus Marks</h2> <hr/></p>
+<h2 id="bonus-marks">Bonus Marks</h2>
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; Write down some more examples of strings the <code>Doge</code> language contains.</li>
     <li class="list-group-item">&rsaquo; Why are there back slashes <code>\</code> in front of the quote marks <code>&quot;</code> in the grammar?</li>
     <li class="list-group-item">&rsaquo; Why are there back slashes <code>\</code> at the end of the line in the grammar?</li>
     <li class="list-group-item">&rsaquo; Describe textually a grammar for decimal numbers such as <code>0.01</code> or <code>52.221</code>.</li>
-    <li class="list-group-item">&rsaquo; Describe textually a grammar for web URLs such as <code><a href="http://www.buildyourownlisp.com" target="_blank">http://www.buildyourownlisp.com</a></code>.</li>
+    <li class="list-group-item">&rsaquo; Describe textually a grammar for web URLs such as <code>http://www.buildyourownlisp.com</code>.</li>
     <li class="list-group-item">&rsaquo; Describe textually a grammar for simple English sentences such as <code>the cat sat on the mat</code>.</li>
     <li class="list-group-item">&rsaquo; Describe more formally the above grammars. Use <code>|</code>, <code>*</code>, or any symbols of your own invention.</li>
     <li class="list-group-item">&rsaquo; If you are familiar with JSON, textually describe a grammar for it.</li>

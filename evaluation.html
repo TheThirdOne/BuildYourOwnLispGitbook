@@ -13,7 +13,7 @@
         <meta name="generator" content="www.gitbook.io">
 
         
-        <link rel="next" href="./error_handeling.html" />
+        <link rel="next" href="./error_handling.html" />
         
         
         <link rel="prev" href="./parsing.html" />
@@ -131,8 +131,8 @@
         
             <li  data-level="7">
                 
-                <a href="./error_handeling.html">
-                    <i class="fa fa-check"></i> <b>7)</b> Error Handeling
+                <a href="./error_handling.html">
+                    <i class="fa fa-check"></i> <b>7)</b> Error Handling
                 </a>
                 
                 
@@ -269,7 +269,7 @@
     
         <a href="./evaluation.html" title="Evaluation" class="chapter done new-chapter" data-progress="6" style="left: 82.3529411764706%;"></a>
     
-        <a href="./error_handeling.html" title="Error Handeling" class="chapter  new-chapter" data-progress="7" style="left: 88.23529411764706%;"></a>
+        <a href="./error_handling.html" title="Error Handling" class="chapter  new-chapter" data-progress="7" style="left: 88.23529411764706%;"></a>
     
         <a href="./s_expressions.html" title="S-Expressions" class="chapter  new-chapter" data-progress="8" style="left: 94.11764705882354%;"></a>
     
@@ -283,175 +283,137 @@
                 <section class="normal" id="section-gitbook_8">
                 
                     <h1 id="evaluation">Evaluation</h1>
-<p><h2>Trees</h2> <hr/></p>
+<h2 id="trees">Trees</h2>
 <p>Now we can read input, and we have it structured internally, but we are still unable to evaluate it. In this chapter we add the code that evaluates this structure and actually performs the computations encoded within.</p>
-
 <p>This internal structure is what we saw printed out by the program in the previous chapter. It is called an <em>Abstract Syntax Tree</em>, and it represents the structure of the program based on the input entered by the user. At the leaves of this tree are numbers and operators - the actual data to be processed. At the branches are the rules used to produce this part of the tree - the information on how to traverse and evaluate it.</p>
-
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/tree.png" alt="tree"/>
-  <p><small>Abstract Christmas Tree &bull; A seasonal variation</small></p>
+  <small>Abstract Christmas Tree &bull; A seasonal variation</small>
 </div>
 
 <p>Before working out exactly how we are going to do this traversal, lets see exactly how this structure is defined internally. If we peek inside <code>mpc.h</code> we can have a look at the definition of <code>mpc_ast_t</code>, which is the data structure we got from the parse.</p>
-
-<pre style='margin-left: 375px;'><code data-language='c'>typedef struct mpc_ast_t {
-  char* tag;
-  char* contents;
-  int children_num;
-  struct mpc_ast_t** children;
-} mpc_ast_t;</code></pre>
-
-<p>This struct has a number of fields we can access. Lets take a look at them one by one.</p>
-
-<p>The first field is <code>tag</code>. When we printed out the tree this was the information that precluded the contents of the node. It was a string containing a list of all the rules used to parse that particular item. For example <code>expr|number|regex</code>.</p>
-
-<p>This <code>tag</code> field is going to be important as it lets us see what type of thing the node is.</p>
-
-<p>The second field is <code>contents</code>. This will contain the actual contents of the node such as <code>&#39;*&#39;</code>, <code>&#39;(&#39;</code> or <code>&#39;5&#39;</code>. You&#39;ll notice for branches this is empty, but for leaves we can use it to find the operator or number to use.</p>
-
-<p>Finally we see two fields that are going to help us traverse the tree. These are <code>children_num</code> and <code>children</code>. The first field tells us how many children a node has, and the second is an array of these children.</p>
-
-<p>The type of the <code>children</code> field is <code>mpc_ast_t**</code>. This is a double pointer type. It isn&#39;t as scary as it looks and will be explained in greater detail in later chapters. For now you can think of it as a list of the child nodes of the this tree.</p>
-
-<p>We can access a child node, by accessing this field using array notation. This is done by writing the field name <code>children</code> and suffixing it with square brackets containing the index of the child to access. For example to access the first child of the node we can use <code>children[0]</code>. Notice that C counts its array indices from <code>0</code>.</p>
-
-<p>Because the type <code>mpc_ast_t*</code> is a <em>pointer</em> to a struct, there is a slightly different syntax to access its fields. We need to use an arrow <code>-&gt;</code> instead of a dot <code>.</code>. There is no fundamental reason for this switch in operators, so for now just remember that field access of pointer types uses an arrow.</p>
-
-<pre><code data-language='c'>/* Load AST from output */
-mpc_ast_t* a = r.output;
-printf("Tag: %s\n", a->tag);
-printf("Contents: %s\n", a->contents);
-printf("Number of children: %i\n", a->children_num);
-
-/* Get First Child */
-mpc_ast_t* c0 = a->children[0];
-printf("First Child Tag: %s\n", c0->tag);
-printf("First Child Contents: %s\n", c0->contents);
-printf("First Child Number of children: %i\n", c0->children_num);
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> mpc_ast_t {
+  <span class="hljs-keyword">char</span>* tag;
+  <span class="hljs-keyword">char</span>* contents;
+  <span class="hljs-keyword">int</span> children_num;
+  <span class="hljs-keyword">struct</span> mpc_ast_t** children;
+} mpc_ast_t;
 </code></pre>
+<p>This struct has a number of fields we can access. Lets take a look at them one by one.</p>
+<p>The first field is <code>tag</code>. When we printed out the tree this was the information that precluded the contents of the node. It was a string containing a list of all the rules used to parse that particular item. For example <code>expr|number|regex</code>.</p>
+<p>This <code>tag</code> field is going to be important as it lets us see what type of thing the node is.</p>
+<p>The second field is <code>contents</code>. This will contain the actual contents of the node such as <code>&#39;*&#39;</code>, <code>&#39;(&#39;</code> or <code>&#39;5&#39;</code>. You&#39;ll notice for branches this is empty, but for leaves we can use it to find the operator or number to use.</p>
+<p>Finally we see two fields that are going to help us traverse the tree. These are <code>children_num</code> and <code>children</code>. The first field tells us how many children a node has, and the second is an array of these children.</p>
+<p>The type of the <code>children</code> field is <code>mpc_ast_t**</code>. This is a double pointer type. It isn&#39;t as scary as it looks and will be explained in greater detail in later chapters. For now you can think of it as a list of the child nodes of the this tree.</p>
+<p>We can access a child node, by accessing this field using array notation. This is done by writing the field name <code>children</code> and suffixing it with square brackets containing the index of the child to access. For example to access the first child of the node we can use <code>children[0]</code>. Notice that C counts its array indices from <code>0</code>.</p>
+<p>Because the type <code>mpc_ast_t*</code> is a <em>pointer</em> to a struct, there is a slightly different syntax to access its fields. We need to use an arrow <code>-&gt;</code> instead of a dot <code>.</code>. There is no fundamental reason for this switch in operators, so for now just remember that field access of pointer types uses an arrow.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Load AST from output */</span>
+mpc_ast_t* a = r.output;
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"Tag: %s\n"</span>, a-&gt;tag);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"Contents: %s\n"</span>, a-&gt;contents);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"Number of children: %i\n"</span>, a-&gt;children_num);
 
-
-<p><h2>Recursion</h2> <hr/></p>
+<span class="hljs-comment">/* Get First Child */</span>
+mpc_ast_t* c0 = a-&gt;children[<span class="hljs-number">0</span>];
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"First Child Tag: %s\n"</span>, c0-&gt;tag);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"First Child Contents: %s\n"</span>, c0-&gt;contents);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"First Child Number of children: %i\n"</span>, c0-&gt;children_num);
+</code></pre>
+<h2 id="recursion">Recursion</h2>
 <p>There is a funny thing about this tree structure. It refers to itself. Each of its children are themselves trees again, and the children of those children are trees yet again. Just like our languages, and re-write rules, data in this structure contains repeated substructures, that resemble their parents.</p>
-
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/recursion.png" alt="recursion"/>
-  <p><small>Recursion &bull; Dangerous in a fire.</small></p>
+  <small>Recursion &bull; Dangerous in a fire.</small>
 </div>
 
 <p>This pattern of repeated substructures could go on and on. Clearly if we want a function which can work on all possible trees we can&#39;t look just a couple of nodes down, we have to define it to work on trees of any depth.</p>
-
 <p>Luckily we can do this, by exploiting the nature of how these substructures repeat, and using a technique called <em>recursion</em>.</p>
-
 <p>Put simply a <em>recursive function</em> is one that calls itself as some part of its calculation.</p>
-
 <p>It sounds weird for a function to be defined in terms of itself. But consider that functions can give different outputs when supplied with different inputs. If we give some changed, or different inputs to a recursive call to the same function, and provide a way for this function to not call itself again under certain conditions, we can be more confident this <em>recursive function</em> is doing something useful.</p>
-
 <p>As an example we can write a recursive function which will count the number of nodes in our tree structure.</p>
-
 <p>To begin we work out how it will act in the most simple case, if the input tree has no children. In this case we know the result is simply one. Now we can go on to define the more complex case, if the tree has one or more children. In this case the result will be one (for the node itself), plus the number of nodes in all of those children.</p>
-
 <p>But how do we find the number of nodes in all of the children? Well we can use the function we are in the process defining! <em>Yeah, Recursion.</em></p>
-
 <p>In C we might write it something like this.</p>
-
-<pre><code data-language='C'>int number_of_nodes(mpc_ast_t* t) {
-  if (t->children_num == 0) { return 1; }
-  if (t->children_num >= 1) {
-    int total = 1;
-    for (int i = 0; i < t->children_num; i++) {
-      total = total + number_of_nodes(t->children[i]);
+<pre><code class="lang-c"><span class="hljs-keyword">int</span> number_of_nodes(mpc_ast_t* t) {
+  <span class="hljs-keyword">if</span> (t-&gt;children_num == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>; }
+  <span class="hljs-keyword">if</span> (t-&gt;children_num &gt;= <span class="hljs-number">1</span>) {
+    <span class="hljs-keyword">int</span> total = <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; t-&gt;children_num; i++) {
+      total = total + number_of_nodes(t-&gt;children[i]);
     }
-    return total;
+    <span class="hljs-keyword">return</span> total;
   }
-}</code></pre>
-
+}
+</code></pre>
 <p>Recursive functions are weird because they require an odd leap of faith. First we have to assume we have some function which does something correctly already, and then we have to go about using this function, to write the initial function we assumed we had!</p>
-
 <p>Like most things, recursive functions almost always end up following a similar pattern. First a <em>base case</em> is defined. This is the case that ends the recursion, such as <code>t-&gt;children_num == 0</code> in our previous example. After this the <em>recursive case</em> is defined, such as <code>t-&gt;children_num &gt;= 1</code> in our previous example, which breaks down a computation into smaller parts, and calls itself recursively to compute those parts, before combining them together.</p>
-
 <p>Recursive functions can take some thought, so pause now and ensure you understand them before continuing onto other chapters because we&#39;ll be making good use of them in the rest of the book. If you are still uncertain, you can check out some of the bonus marks for this chapter to practice.</p>
-
-
-<p><h2>Evaluation</h2> <hr/></p>
+<h2 id="evaluation">Evaluation</h2>
 <p>To evaluate the parse tree we are going to write a recursive function. But before we get started, let us try and see what observations we can make about the structure of the tree we get as input. Try printing out some expressions using your program from the previous chapter. See what you can notice.</p>
-
-<pre><code data-language='lispy'>lispy> + 1 (* 5 4)
+<pre><code class="lang-lispy">lispy&gt; + <span class="hljs-number">1</span> (* <span class="hljs-number">5</span> <span class="hljs-number">4</span>)
 &gt;:
   regex:
-  operator|char: '+'
-  expr|number|regex: '1'
+  operator|<span class="hljs-keyword">char</span>: <span class="hljs-string">'+'</span>
+  expr|<span class="hljs-built_in">number</span>|regex: <span class="hljs-string">'1'</span>
   expr|&gt;:
-    char: '('
-    operator|char: '*'
-    expr|number|regex: '5'
-    expr|number|regex: '4'
-    char: ')'
+    <span class="hljs-keyword">char</span>: <span class="hljs-string">'('</span>
+    operator|<span class="hljs-keyword">char</span>: <span class="hljs-string">'*'</span>
+    expr|<span class="hljs-built_in">number</span>|regex: <span class="hljs-string">'5'</span>
+    expr|<span class="hljs-built_in">number</span>|regex: <span class="hljs-string">'4'</span>
+    <span class="hljs-keyword">char</span>: <span class="hljs-string">')'</span>
   regex:
 </code></pre>
-
 <p>One observation is that if a node is tagged with <code>number</code> it is always a number, has no children, and we can just convert the contents to an integer. This will act as the <em>base case</em> in our recursion.</p>
-
 <p>If a node is tagged with <code>expr</code>, and is <em>not</em> a <code>number</code>, we need to look at its second child (the first child is always <code>&#39;(&#39;</code>) and see which operator it is. Then we need to apply this operator to the <em>evaluation</em> of the remaining children, excluding the final child which is always <code>&#39;)&#39;</code>. This is our <em>recursive case</em>. This also needs to be done for the root node.</p>
-
 <p>When we evaluate our tree, just like when counting the nodes, we&#39;ll need to accumulate the result. To represent this result we&#39;ll use the C type <code>long</code> which means a <em>long</em> <em>integer</em>.</p>
-
-<p>To detect the tag of a node, or to get a number from a node, we will need to make use of the <code>tag</code> and <code>contents</code> fields. These are <em>string</em> fields, so we are going to have to learn a couple of string functions first.
-
+<p>To detect the tag of a node, or to get a number from a node, we will need to make use of the <code>tag</code> and <code>contents</code> fields. These are <em>string</em> fields, so we are going to have to learn a couple of string functions first.</p>
 <table class='table'>
-  <tr><td><code>atoi</code></td><td>Converts a <code>char<em></code> to a <code>long</code>.</td></tr>
-  <tr><td><code>strcmp</code></td><td>Takes as input two <code>char</em></code> and if they are equal it returns <code>0</code>.</td></tr>
+  <tr><td><code>atoi</code></td><td>Converts a <code>char*</code> to a <code>long</code>.</td></tr>
+  <tr><td><code>strcmp</code></td><td>Takes as input two <code>char*</code> and if they are equal it returns <code>0</code>.</td></tr>
   <tr><td><code>strstr</code></td><td>Takes as input two <code>char*</code> and returns a pointer to the location of the second in the first, or <code>0</code> if the second is not a sub-string of the first.</td></tr>
 </table>
 
 <p>We can use <code>strcmp</code> to check which operator to use, and <code>strstr</code> to check if a tag contains some substring. Altogether our recursive evaluation function looks like this.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">long</span> eval(mpc_ast_t* t) {
 
-<pre><code data-language='c'>long eval(mpc_ast_t* t) {
+  <span class="hljs-comment">/* If tagged as number return it directly, otherwise expression. */</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strstr</span>(t-&gt;tag, <span class="hljs-string">"number"</span>)) { <span class="hljs-keyword">return</span> atoi(t-&gt;contents); }
 
-  /* If tagged as number return it directly, otherwise expression. */
-  if (strstr(t->tag, "number")) { return atoi(t->contents); }
+  <span class="hljs-comment">/* The operator is always second child. */</span>
+  <span class="hljs-keyword">char</span>* op = t-&gt;children[<span class="hljs-number">1</span>]-&gt;contents;
 
-  /* The operator is always second child. */
-  char* op = t->children[1]->contents;
+  <span class="hljs-comment">/* We store the third child in `x` */</span>
+  <span class="hljs-keyword">long</span> x = eval(t-&gt;children[<span class="hljs-number">2</span>]);
 
-  /* We store the third child in `x` */
-  long x = eval(t->children[2]);
-
-  /* Iterate the remaining children, combining using our operator */
-  int i = 3;
-  while (strstr(t->children[i]->tag, "expr")) {
-    x = eval_op(x, op, eval(t->children[i]));
+  <span class="hljs-comment">/* Iterate the remaining children, combining using our operator */</span>
+  <span class="hljs-keyword">int</span> i = <span class="hljs-number">3</span>;
+  <span class="hljs-keyword">while</span> (<span class="hljs-built_in">strstr</span>(t-&gt;children[i]-&gt;tag, <span class="hljs-string">"expr"</span>)) {
+    x = eval_op(x, op, eval(t-&gt;children[i]));
     i++;
   }
 
-  return x;
-}</code></pre>
-
+  <span class="hljs-keyword">return</span> x;
+}
+</code></pre>
 <p>We can define the <code>eval_op</code> function as follows. It takes in a number, an operator string, and another number. It tests for which operator is passed in, an performs the corresponding C operation on the inputs.</p>
-
-<pre><code data-language='c'>/* Use operator string to see which operation to perform */
-long eval_op(long x, char* op, long y) {
-  if (strcmp(op, &quot;+&quot;) == 0) { return x + y; }
-  if (strcmp(op, &quot;-&quot;) == 0) { return x - y; }
-  if (strcmp(op, &quot;*&quot;) == 0) { return x * y; }
-  if (strcmp(op, &quot;/&quot;) == 0) { return x / y; }
-  return 0;
-}</code></pre>
-
-
-<p><h2>Printing</h2> <hr/></p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Use operator string to see which operation to perform */</span>
+<span class="hljs-keyword">long</span> eval_op(<span class="hljs-keyword">long</span> x, <span class="hljs-keyword">char</span>* op, <span class="hljs-keyword">long</span> y) {
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;+&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x + y; }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;-&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x - y; }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;*&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x * y; }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;/&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x / y; }
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<h2 id="printing">Printing</h2>
 <p>Instead of printing the tree we now want to print the result of the evaluation. Therefore we need to pass the tree into our <code>eval</code> function, and print the result we get using <code>printf</code> and the specifier <code>%li</code>, which is used for <code>long</code> type.</p>
-
 <p>We also need to remember to delete the output tree after we are done evaluating it.</p>
-
-<pre><code data-language='c'>long result = eval(r.output);
-printf(&quot;%li\n&quot;, result);
-mpc_ast_delete(r.output);</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">long</span> result = eval(r.output);
+<span class="hljs-built_in">printf</span>(&amp;quot;%li\n&amp;quot;, result);
+mpc_ast_delete(r.output);
+</code></pre>
 <p>If all of this is successful we should be able to do some basic maths with our new programming language!</p>
-
-<pre><code data-language='lispy'>Lispy Version 0.0.0.0.3
+<pre><code class="lang-lispy">Lispy Version 0.0.0.0.3
 Press Ctrl+c to Exit
 
 lispy&gt; + 5 6
@@ -459,11 +421,10 @@ lispy&gt; + 5 6
 lispy&gt; - (* 10 10) (+ 1 1 1)
 97
 lispy&gt; - (/ 10 2) 20
--15
-lispy&gt;</code></pre>
-
-
-<p><h2>Reference</h2> <hr/></p>
+-<span class="ruby"><span class="hljs-number">15</span>
+</span>lispy&gt;
+</code></pre>
+<h2 id="reference">Reference</h2>
 <div class="panel-group alert alert-warning" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -475,22 +436,23 @@ lispy&gt;</code></pre>
     </div>
     <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
-<pre><code data-language='c'>#include &quot;mpc.h&quot;
+<code>c
+#include &quot;mpc.h&quot;
 
 #ifdef _WIN32
 
 static char buffer[2048];
 
-char<em> readline(char</em> prompt) {
+char* readline(char* prompt) {
   fputs(&quot;lispy&gt; &quot;, stdout);
   fgets(buffer, 2048, stdin);
-  char<em> cpy = malloc(strlen(buffer)+1);
+  char* cpy = malloc(strlen(buffer)+1);
   strcpy(cpy, buffer);
   cpy[strlen(cpy)-1] = &#39;\0&#39;;
   return cpy;
 }
 
-void add_history(char</em> unused) {}
+void add_history(char* unused) {}
 
 #else
 
@@ -499,27 +461,27 @@ void add_history(char</em> unused) {}
 
 #endif
 
-/<em> Use operator string to see which operation to perform </em>/
-long eval_op(long x, char<em> op, long y) {
+/* Use operator string to see which operation to perform */
+long eval_op(long x, char* op, long y) {
   if (strcmp(op, &quot;+&quot;) == 0) { return x + y; }
   if (strcmp(op, &quot;-&quot;) == 0) { return x - y; }
-  if (strcmp(op, &quot;</em>&quot;) == 0) { return x <em> y; }
+  if (strcmp(op, &quot;*&quot;) == 0) { return x * y; }
   if (strcmp(op, &quot;/&quot;) == 0) { return x / y; }
   return 0;
 }
 
-long eval(mpc_ast_t</em> t) {
+long eval(mpc_ast_t* t) {
 
-  /<em> If tagged as number return it directly, otherwise expression. </em>/
+  /* If tagged as number return it directly, otherwise expression. */
   if (strstr(t-&gt;tag, &quot;number&quot;)) { return atoi(t-&gt;contents); }
 
-  /<em> The operator is always second child. </em>/
-  char<em> op = t-&gt;children[1]-&gt;contents;
+  /* The operator is always second child. */
+  char* op = t-&gt;children[1]-&gt;contents;
 
-  /</em> We store the third child in <code>x</code> <em>/
+  /* We store the third child in `x` */
   long x = eval(t-&gt;children[2]);
 
-  /</em> Iterate the remaining children, combining using our operator <em>/
+  /* Iterate the remaining children, combining using our operator */
   int i = 3;
   while (strstr(t-&gt;children[i]-&gt;tag, &quot;expr&quot;)) {
     x = eval_op(x, op, eval(t-&gt;children[i]));
@@ -531,15 +493,15 @@ long eval(mpc_ast_t</em> t) {
 
 int main(int argc, char** argv) {
 
-  mpc_parser_t</em> Number = mpc_new(&quot;number&quot;);
-  mpc_parser_t<em> Operator = mpc_new(&quot;operator&quot;);
-  mpc_parser_t</em> Expr = mpc_new(&quot;expr&quot;);
-  mpc_parser_t<em> Lispy = mpc_new(&quot;lispy&quot;);
+  mpc_parser_t* Number = mpc_new(&quot;number&quot;);
+  mpc_parser_t* Operator = mpc_new(&quot;operator&quot;);
+  mpc_parser_t* Expr = mpc_new(&quot;expr&quot;);
+  mpc_parser_t* Lispy = mpc_new(&quot;lispy&quot;);
 
   mpca_lang(MPC_LANG_DEFAULT,
     &quot;                                                     \
       number   : /-?[0-9]+/ ;                             \
-      operator : &#39;+&#39; | &#39;-&#39; | &#39;</em>&#39; | &#39;/&#39; ;                  \
+      operator : &#39;+&#39; | &#39;-&#39; | &#39;*&#39; | &#39;/&#39; ;                  \
       expr     : &lt;number&gt; | &#39;(&#39; &lt;operator&gt; &lt;expr&gt;+ &#39;)&#39; ;  \
       lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
     &quot;,
@@ -572,13 +534,13 @@ int main(int argc, char** argv) {
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
 
   return 0;
-}</code></pre>
+}&lt;</code>
       </div>
     </div>
   </div>
 </div>
 
-<p><h2>Bonus Marks</h2> <hr/></p>
+<h2 id="bonus-marks">Bonus Marks</h2>
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; Write a recursive function to compute the number of leaves of a tree.</li>
@@ -602,7 +564,7 @@ int main(int argc, char** argv) {
     
         
             
-            <a href="./error_handeling.html" class="navigation-link next">Next</a>
+            <a href="./error_handling.html" class="navigation-link next">Next</a>
             
         
     
