@@ -1,4 +1,5 @@
-<h1>Parsing <small>&bull; Chapter 6</small></h1>
+Parsing
+=======
 
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
@@ -74,7 +75,7 @@
   <p><strong>Hold on, don't you mean <code>#include &lt;mpc.h&gt;</code>?</strong></p>
 
   <p>There are actually two ways to include files in C. One is using angular brackets <code>&lt;&gt;</code> as we've seen so far, and the other is with quotation marks <code>""</code>.</p>
-  
+
   <p>The only difference between the two is that using angular brackets searches the system locations for headers first, while quotation marks searches the current directory first. Because of this system headers such as <code>&lt;stdio.h&gt;</code> are typically put in angular brackets, while local headers such as <code>"mpc.h"</code> are typically put in quotation marks.</p>
 </div>
 
@@ -201,13 +202,13 @@ void add_history(char* unused) {}
 #endif
 
 int main(int argc, char** argv) {
-  
+
   /* Create Some Parsers */
   mpc_parser_t* Number   = mpc_new("number");
   mpc_parser_t* Operator = mpc_new("operator");
   mpc_parser_t* Expr     = mpc_new("expr");
   mpc_parser_t* Lispy    = mpc_new("lispy");
-  
+
   /* Define them with the following Language */
   mpca_lang(MPC_LANG_DEFAULT,
     "                                                     \
@@ -217,15 +218,15 @@ int main(int argc, char** argv) {
       lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
     ",
     Number, Operator, Expr, Lispy);
-  
+
   puts("Lispy Version 0.0.0.0.2");
   puts("Press Ctrl+c to Exit\n");
-  
+
   while (1) {
-  
+
     char* input = readline("lispy&gt; ");
     add_history(input);
-    
+
     /* Attempt to parse the user input */
     mpc_result_t r;
     if (mpc_parse("&lt;stdin&gt;", input, Lispy, &amp;r)) {
@@ -237,13 +238,13 @@ int main(int argc, char** argv) {
       mpc_err_print(r.error);
       mpc_err_delete(r.error);
     }
-    
+
     free(input);
   }
-  
+
   /* Undefine and delete our parsers */
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
-  
+
   return 0;
 }</code></pre>
       </div>
@@ -266,13 +267,3 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; Use the grammar from the previous chapter to parse <code>Doge</code>. You must add <em>start</em> and <em>end</em> of input!</li>
   </ul>
 </div>
-
-<h2>Navigation</h2>
-
-<table class="table" style='table-layout: fixed;'>
-  <tr>
-    <td class="text-left"><a href="chapter5_languages.html"><h4>&lsaquo; Languages</h4></a></td>
-    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
-    <td class="text-right"><a href="chapter7_evaluation.html"><h4>Evaluation &rsaquo;</h4></a></td>
-  </tr>
-</table>

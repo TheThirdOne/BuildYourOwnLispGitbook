@@ -1,4 +1,5 @@
-<h1>Evaluation <small>&bull; Chapter 7</small></h1>
+Evaluation
+==========
 
 
 <h2>Trees</h2> <hr/>
@@ -129,24 +130,24 @@ printf("First Child Number of children: %i\n", c0->children_num);
 <p>We can use <code>strcmp</code> to check which operator to use, and <code>strstr</code> to check if a tag contains some substring. Altogether our recursive evaluation function looks like this.</p>
 
 <pre><code data-language='c'>long eval(mpc_ast_t* t) {
-  
-  /* If tagged as number return it directly, otherwise expression. */ 
+
+  /* If tagged as number return it directly, otherwise expression. */
   if (strstr(t->tag, "number")) { return atoi(t->contents); }
-  
+
   /* The operator is always second child. */
   char* op = t->children[1]->contents;
-  
+
   /* We store the third child in `x` */
   long x = eval(t->children[2]);
-  
+
   /* Iterate the remaining children, combining using our operator */
   int i = 3;
   while (strstr(t->children[i]->tag, "expr")) {
     x = eval_op(x, op, eval(t->children[i]));
     i++;
   }
-  
-  return x;  
+
+  return x;
 }</code></pre>
 
 <p>We can define the <code>eval_op</code> function as follows. It takes in a number, an operator string, and another number. It tests for which operator is passed in, an performs the corresponding C operation on the inputs.</p>
@@ -232,33 +233,33 @@ long eval_op(long x, char* op, long y) {
 }
 
 long eval(mpc_ast_t* t) {
-  
-  /* If tagged as number return it directly, otherwise expression. */ 
+
+  /* If tagged as number return it directly, otherwise expression. */
   if (strstr(t->tag, "number")) { return atoi(t->contents); }
-  
+
   /* The operator is always second child. */
   char* op = t->children[1]->contents;
-  
+
   /* We store the third child in `x` */
   long x = eval(t->children[2]);
-  
+
   /* Iterate the remaining children, combining using our operator */
   int i = 3;
   while (strstr(t->children[i]->tag, "expr")) {
     x = eval_op(x, op, eval(t->children[i]));
     i++;
   }
-  
-  return x;  
+
+  return x;
 }
 
 int main(int argc, char** argv) {
-  
+
   mpc_parser_t* Number = mpc_new("number");
   mpc_parser_t* Operator = mpc_new("operator");
   mpc_parser_t* Expr = mpc_new("expr");
   mpc_parser_t* Lispy = mpc_new("lispy");
-  
+
   mpca_lang(MPC_LANG_DEFAULT,
     "                                                     \
       number   : /-?[0-9]+/ ;                             \
@@ -267,33 +268,33 @@ int main(int argc, char** argv) {
       lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
     ",
     Number, Operator, Expr, Lispy);
-  
+
   puts("Lispy Version 0.0.0.0.3");
   puts("Press Ctrl+c to Exit\n");
-  
+
   while (1) {
-  
+
     char* input = readline("lispy&gt; ");
     add_history(input);
-    
+
     mpc_result_t r;
     if (mpc_parse("&lt;stdin&gt;", input, Lispy, &amp;r)) {
-      
+
       long result = eval(r.output);
       printf("%li\n", result);
       mpc_ast_delete(r.output);
-      
-    } else {    
+
+    } else {
       mpc_err_print(r.error);
       mpc_err_delete(r.error);
     }
-    
+
     free(input);
-    
+
   }
-  
+
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
-  
+
   return 0;
 }</code></pre>
       </div>
@@ -317,14 +318,3 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; Change the minus operator <code>-</code> so that when it receives one argument it negates it.</li>
   </ul>
 </div>
-
-
-<h2>Navigation</h2>
-
-<table class="table" style='table-layout: fixed;'>
-  <tr>
-    <td class="text-left"><a href="chapter6_parsing.html"><h4>&lsaquo; Parsing</h4></a></td>
-    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
-    <td class="text-right"><a href="chapter8_error_handling.html"><h4>Error Handling &rsaquo;</h4></a></td>
-  </tr>
-</table>

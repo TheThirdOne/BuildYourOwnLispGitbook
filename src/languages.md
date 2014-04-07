@@ -1,4 +1,5 @@
-<h1>Languages <small>&bull; Chapter 5</small></h1>
+Languages
+=========
 
 
 <h2>What is a Programming Language?</h2> <hr/>
@@ -64,7 +65,7 @@
 <p>If you squint your eyes you could attempt to read the code as if it were the rules we specified above.</p>
 
 <pre><code data-language='c'>/* Build a new parser 'Adjective' to recognize descriptions */
-mpc_parser_t* Adjective = mpc_or(4, 
+mpc_parser_t* Adjective = mpc_or(4,
   mpc_sym("wow"), mpc_sym("many"),
   mpc_sym("so"),  mpc_sym("such")
 );
@@ -79,7 +80,7 @@ mpc_parser_t* Noun = mpc_or(5,
 
 <div class="alert alert-warning">
   <p><strong>How can I access these <code>mpc</code> functions?</strong></p>
-  
+
   <p>For now don't worry about compiling or running any of the sample code in this chapter. Just read it and see if you can understand the theory behind grammars. In the next chapter we'll get setup with <code>mpc</code> and use it for a language closer to our Lisp.</p>
 </div>
 
@@ -164,7 +165,7 @@ mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
 <h2>Reference</h2> <hr/>
 
 <div class="panel-group alert alert-warning" id="accordion">
-  
+
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
@@ -180,7 +181,7 @@ mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
 int main(int argc, char** argv) {
 
   /* Build a new parser 'Adjective' to recognize descriptions */
-  mpc_parser_t* Adjective = mpc_or(4, 
+  mpc_parser_t* Adjective = mpc_or(4,
     mpc_sym("wow"), mpc_sym("many"),
     mpc_sym("so"),  mpc_sym("such")
   );
@@ -191,22 +192,22 @@ int main(int argc, char** argv) {
     mpc_sym("c"),    mpc_sym("book"),
     mpc_sym("build")
   );
-  
+
   mpc_parser_t* Phrase = mpc_and(2, mpcf_strfold, Adjective, Noun, free);
-  
+
   mpc_parser_t* Doge = mpc_many(mpcf_strfold, Phrase);
 
   /* Do some parsing here... */
-  
+
   mpc_delete(Doge);
-  
+
   return 0;
-  
+
 }</code></pre>
       </div>
     </div>
   </div>
-  
+
   <div class="panel panel-default">
     <div class="panel-heading">
       <h4 class="panel-title">
@@ -238,14 +239,14 @@ int main(int argc, char** argv) {
   /* Do some parsing here... */
 
   mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
-  
+
   return 0;
-  
+
 }</code></pre>
       </div>
     </div>
   </div>
-  
+
 </div>
 
 
@@ -263,14 +264,3 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; If you are familiar with JSON, textually describe a grammar for it.</li>
   </ul>
 </div>
-
-
-<h2>Navigation</h2>
-
-<table class="table" style='table-layout: fixed;'>
-  <tr>
-    <td class="text-left"><a href="chapter4_interactive_prompt.html"><h4>&lsaquo; An Interactive Prompt</h4></a></td>
-    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
-    <td class="text-right"><a href="chapter6_parsing.html"><h4>Parsing &rsaquo;</h4></a></td>
-  </tr>
-</table>

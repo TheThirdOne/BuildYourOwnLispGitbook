@@ -1,4 +1,5 @@
-<h1>S-Expressions <small>&bull; Chapter 9</small></h1>
+S-Expressions
+=============
 
 
 <h2>Lists and Lisps</h2> <hr/>
@@ -113,7 +114,7 @@ enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_SEXPR };
 
 <p>S-Expressions are variable length <em>lists</em> of other S-Expressions. As we learnt at the beginning of this chapter we can't create variable length structs, so we are going to need to use a pointer. We are going to create a pointer field <code>cell</code> which points to a location where we store a list of <code>lval*</code>. These are pointers to the other individual <code>lval</code>. Our field should therefore be a double pointer type <code>lval**</code>. A <em>pointer to <code>lval</code> pointers</em>.</p>
 
-<p>We will also need to keep track of how many <code>lval*</code> are in this list, so we add an extra field <code>count</code> to record this.</p> 
+<p>We will also need to keep track of how many <code>lval*</code> are in this list, so we add an extra field <code>count</code> to record this.</p>
 
 <div class="alert alert-warning">
   <p><strong>Are there ever pointers to pointers to pointers?</strong></p>
@@ -121,7 +122,7 @@ enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_SEXPR };
   <p>There is an old programming joke (and by <em>programming joke</em> I mean <em>silly anecdote</em>), which says you can rate C programmers by how many stars are on their pointers.</p>
 
   <p>Beginners program might only use <code>char*</code> or the odd <code>int*</code>, so they were called <em>one star programmer</em>. Most intermediate programs contain double pointer types such as <code>lval**</code>. These programmers are therefore called <em>two star programmers</em>. To spot a triple pointer is something special. You would be viewing the work of someone grand and terrible, writing code not meant to be read with mortal eyes. As such being called a <em>three star programmer</em> is rarely a compliment.</p>
-  
+
   <p>As far as I know, a quadruple pointer has never been seen in the wild.</p>
 </div>
 
@@ -154,7 +155,7 @@ enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_SEXPR };
 
 <p>When we construct an <code>lval</code> its fields may contain pointers to other things that have been allocated on the heap. This means we need to be careful. Whenever we are done with an <code>lval</code> we also need to delete the things it points to on the heap. We will have to make a rule to ourselves. Whenever we free the memory allocated for an <code>lval</code>, we also free all the things it points to.</p>
 
-<pre><code data-language='c'>/* Construct a pointer to a new Number lval */ 
+<pre><code data-language='c'>/* Construct a pointer to a new Number lval */
 lval* lval_num(long x) {
   lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_NUM;
@@ -162,7 +163,7 @@ lval* lval_num(long x) {
   return v;
 }
 
-/* Construct a pointer to a new Error lval */ 
+/* Construct a pointer to a new Error lval */
 lval* lval_err(char* m) {
   lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_ERR;
@@ -171,7 +172,7 @@ lval* lval_err(char* m) {
   return v;
 }
 
-/* Construct a pointer to a new Symbol lval */ 
+/* Construct a pointer to a new Symbol lval */
 lval* lval_sym(char* s) {
   lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_SYM;
@@ -200,7 +201,7 @@ lval* lval_sexpr(void) {
   <p><strong>Why are you using <code>strlen(s) + 1</code>?</strong></p>
 
   <p>In C strings are <em>null terminated</em>. This means that the final character of them is always the zero character <code>\0</code>. This is a convention in C to signal the end of a string. It is important that all strings are stored this way otherwise programs will break in nasty ways.</p>
-  
+
   <p>The <code>strlen</code> function only returns the number of bytes in a string <em>excluding</em> the null terminator. This is why we need to add one, to ensure there is enough allocated space for it all!</p>
 </div>
 
@@ -229,8 +230,8 @@ lval* lval_sexpr(void) {
   /* Finally free the memory allocated for the &quot;lval&quot; struct itself */
   free(v);
 }</code></pre>
-    
-    
+
+
 <h2>Reading Expressions</h2> <hr/>
 
 <p>First we are going to <em>read</em> in the program and construct an <code>lval*</code> that represents it all. Then we are going to <em>evaluate</em> this <code>lval*</code> to get the result of our program. This first stage should convert the <em>abstract syntax tree</em> into an S-Expression, and the second stage should evaluate this S-Expression using our normal Lisp rules.</p>
@@ -245,7 +246,7 @@ lval* lval_sexpr(void) {
   <p><strong>Don't Lisps use <a href="http://en.wikipedia.org/wiki/Cons">Cons cells</a>?</strong></p>
 
   <p>Other Lisps have a slightly different definition of what an S-Expression is. In most other Lisps S-Expressions are defined inductively as either an <em>atom</em> such as a symbol of number, or two other S-Expressions joined, or <em>cons</em>, together.</p>
-  
+
   <p>This naturally leads to an implementation using <em>linked lists</em>, a different data structure to the one we are using. I choose to represent S-Expressions as a variable sized array in this book for the purposes of simplicity, but it is important to be aware that the official definition, and typical implementation are both subtly different.</p>
 </div>
 
@@ -269,7 +270,7 @@ lval* lval_read(mpc_ast_t* t) {
 
   /* If root (&gt;) or sexpr then create empty list */
   lval* x = NULL;
-  if (strcmp(t-&gt;tag, &quot;&gt;&quot;) == 0) { x = lval_sexpr(); } 
+  if (strcmp(t-&gt;tag, &quot;&gt;&quot;) == 0) { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, &quot;sexpr&quot;))  { x = lval_sexpr(); }
 
   /* Fill this list with any valid expression contained within */
@@ -321,7 +322,7 @@ void lval_println(lval* v) { lval_print(v); putchar(&#39;\n&#39;); }</code></pre
   <p><strong>I can't declare these functions because they call each other.</strong></p>
 
   <p>The <code>lval_expr_print</code> function calls the <code>lval_print</code> function and vice-versa. There is no way we can order them in the source file to resolve this dependency. Instead we need to <em>forward declare</em> one of them. This is declaring a function without giving it a body. It lets other functions call it, while allowing you to define it properly later on. To write a forward declaration write the function definition but instead of the body put a semicolon <code>;</code>. In this example we should put <code>void lval_print(lval* v);</code> somewhere in the source file before <code>lval_expr_print</code>.</p>
-  
+
   <p>You'll definitely run into this later, and I won't always alert you about it, so try to remember how to fix it!</p>
 </div>
 
@@ -429,7 +430,7 @@ lval* lval_take(lval* v, int i) {
 <p>If there have been no errors the input arguments are deleted and the new expression returned.</p>
 
 <pre><code class="lang-c">lval* builtin_op(lval* a, char* op) {
-  
+
   /* Ensure all arguments are numbers */
   for (int i = 0; i < a->count; i++) {
     if (a-&gt;cell[i]-&gt;type != LVAL_NUM) {
@@ -437,7 +438,7 @@ lval* lval_take(lval* v, int i) {
       return lval_err(&quot;Cannot operator on non number!&quot;);
     }
   }
-  
+
   /* Pop the first element */
   lval* x = lval_pop(a, 0);
 
@@ -538,18 +539,18 @@ typedef struct lval {
   int type;
 
   long num;
-  
+
   /* Error and Symbol types have some string data */
   char* err;
   char* sym;
-  
+
   /* Count and Pointer to a list of &quot;lval*&quot; */
   int count;
   struct lval** cell;
-  
+
 } lval;
 
-/* Construct a pointer to a new Number lval */ 
+/* Construct a pointer to a new Number lval */
 lval* lval_num(long x) {
   lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_NUM;
@@ -557,7 +558,7 @@ lval* lval_num(long x) {
   return v;
 }
 
-/* Construct a pointer to a new Error lval */ 
+/* Construct a pointer to a new Error lval */
 lval* lval_err(char* m) {
   lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_ERR;
@@ -566,7 +567,7 @@ lval* lval_err(char* m) {
   return v;
 }
 
-/* Construct a pointer to a new Symbol lval */ 
+/* Construct a pointer to a new Symbol lval */
 lval* lval_sym(char* s) {
   lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_SYM;
@@ -589,11 +590,11 @@ void lval_del(lval* v) {
   switch (v-&gt;type) {
     /* Do nothing special for number type */
     case LVAL_NUM: break;
-    
+
     /* For Err or Sym free the string data */
     case LVAL_ERR: free(v-&gt;err); break;
     case LVAL_SYM: free(v-&gt;sym); break;
-    
+
     /* If Sexpr then delete all elements inside */
     case LVAL_SEXPR:
       for (int i = 0; i &lt; v-&gt;count; i++) {
@@ -603,7 +604,7 @@ void lval_del(lval* v) {
       free(v-&gt;cell);
     break;
   }
-  
+
   /* Finally free the memory allocated for the "lval" struct itself */
   free(v);
 }
@@ -618,13 +619,13 @@ lval* lval_add(lval* v, lval* x) {
 lval* lval_pop(lval* v, int i) {
   /* Find the item at "i" */
   lval* x = v-&gt;cell[i];
-  
+
   /* Shift the memory following the item at "i" over the top of it */
   memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval*) * (v-&gt;count-i-1));
-  
+
   /* Decrease the count of items in the list */
   v-&gt;count--;
-  
+
   /* Reallocate the memory used */
   v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
   return x;
@@ -641,10 +642,10 @@ void lval_print(lval* v);
 void lval_expr_print(lval* v, char open, char close) {
   putchar(open);
   for (int i = 0; i &lt; v-&gt;count; i++) {
-    
+
     /* Print Value contained within */
     lval_print(v-&gt;cell[i]);
-    
+
     /* Don't print trailing space if last element */
     if (i != (v-&gt;count-1)) {
       putchar(' ');
@@ -665,7 +666,7 @@ void lval_print(lval* v) {
 void lval_println(lval* v) { lval_print(v); putchar('\n'); }
 
 lval* builtin_op(lval* a, char* op) {
-  
+
   /* Ensure all arguments are numbers */
   for (int i = 0; i &lt; a-&gt;count; i++) {
     if (a-&gt;cell[i]-&gt;type != LVAL_NUM) {
@@ -673,19 +674,19 @@ lval* builtin_op(lval* a, char* op) {
       return lval_err("Cannot operator on non number!");
     }
   }
-  
+
   /* Pop the first element */
   lval* x = lval_pop(a, 0);
-  
+
   /* If no arguments and sub then perform unary negation */
   if ((strcmp(op, "-") == 0) &amp;&amp; a-&gt;count == 0) { x-&gt;num = -x-&gt;num; }
-  
+
   /* While there are still elements remaining */
   while (a-&gt;count &gt; 0) {
-  
+
     /* Pop the next element */
     lval* y = lval_pop(a, 0);
-    
+
     /* Perform operation */
     if (strcmp(op, "+") == 0) { x-&gt;num += y-&gt;num; }
     if (strcmp(op, "-") == 0) { x-&gt;num -= y-&gt;num; }
@@ -699,11 +700,11 @@ lval* builtin_op(lval* a, char* op) {
         x-&gt;num /= y-&gt;num;
       }
     }
-    
+
     /* Delete element now finished with */
     lval_del(y);
   }
-  
+
   /* Delete input expression and return result */
   lval_del(a);
   return x;
@@ -712,30 +713,30 @@ lval* builtin_op(lval* a, char* op) {
 lval* lval_eval(lval* v);
 
 lval* lval_eval_sexpr(lval* v) {
-  
+
   /* Evaluate Children */
   for (int i = 0; i &lt; v-&gt;count; i++) {
     v-&gt;cell[i] = lval_eval(v-&gt;cell[i]);
   }
-  
+
   /* Error Checking */
   for (int i = 0; i &lt; v-&gt;count; i++) {
     if (v-&gt;cell[i]-&gt;type == LVAL_ERR) { return lval_take(v, i); }
   }
-  
+
   /* Empty Expression */
   if (v-&gt;count == 0) { return v; }
-  
+
   /* Single Expression */
   if (v-&gt;count == 1) { return lval_take(v, 0); }
-  
+
   /* Ensure First Element is Symbol */
   lval* f = lval_pop(v, 0);
   if (f-&gt;type != LVAL_SYM) {
     lval_del(f); lval_del(v);
     return lval_err("S-expression Does not start with symbol.");
   }
-  
+
   /* Call builtin with operator */
   lval* result = builtin_op(v, f-&gt;sym);
   lval_del(f);
@@ -755,16 +756,16 @@ lval* lval_read_num(mpc_ast_t* t) {
 }
 
 lval* lval_read(mpc_ast_t* t) {
-  
+
   /* If Symbol or Number return conversion to that type */
   if (strstr(t-&gt;tag, "number")) { return lval_read_num(t); }
   if (strstr(t-&gt;tag, "symbol")) { return lval_sym(t-&gt;contents); }
-  
+
   /* If root (&gt;) or sexpr then create empty list */
   lval* x = NULL;
-  if (strcmp(t-&gt;tag, "&gt;") == 0) { x = lval_sexpr(); } 
+  if (strcmp(t-&gt;tag, "&gt;") == 0) { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, "sexpr"))  { x = lval_sexpr(); }
-  
+
   /* Fill this list with any valid expression contained within */
   for (int i = 0; i &lt; t-&gt;children_num; i++) {
     if (strcmp(t-&gt;children[i]-&gt;contents, "(") == 0) { continue; }
@@ -774,18 +775,18 @@ lval* lval_read(mpc_ast_t* t) {
     if (strcmp(t-&gt;children[i]-&gt;tag,  "regex") == 0) { continue; }
     x = lval_add(x, lval_read(t-&gt;children[i]));
   }
-  
+
   return x;
 }
 
 int main(int argc, char** argv) {
-  
+
   mpc_parser_t* Number = mpc_new("number");
   mpc_parser_t* Symbol = mpc_new("symbol");
   mpc_parser_t* Sexpr  = mpc_new("sexpr");
   mpc_parser_t* Expr   = mpc_new("expr");
   mpc_parser_t* Lispy  = mpc_new("lispy");
-  
+
   mpca_lang(MPC_LANG_DEFAULT,
     "                                          \
       number : /-?[0-9]+/ ;                    \
@@ -795,34 +796,34 @@ int main(int argc, char** argv) {
       lispy  : /^/ &lt;expr&gt;* /$/ ;               \
     ",
     Number, Symbol, Sexpr, Expr, Lispy);
-  
+
   puts("Lispy Version 0.0.0.0.5");
   puts("Press Ctrl+c to Exit\n");
-  
+
   while (1) {
-  
+
     char* input = readline("lispy&gt; ");
     add_history(input);
-    
+
     mpc_result_t r;
     if (mpc_parse("&lt;stdin&gt;", input, Lispy, &amp;r)) {
-      
+
       lval* x = lval_eval(lval_read(r.output));
       lval_println(x);
       lval_del(x);
-      
+
       mpc_ast_delete(r.output);
-    } else {    
+    } else {
       mpc_err_print(r.error);
       mpc_err_delete(r.error);
     }
-    
+
     free(input);
-    
+
   }
-  
+
   mpc_cleanup(5, Number, Symbol, Sexpr, Expr, Lispy);
-  
+
   return 0;
 }
 </code></pre>
@@ -845,14 +846,3 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; Extend parsing and evaluation to support decimal types using a <code>double</code> field.</li>
   </ul>
 </div>
-
-
-<h2>Navigation</h2>
-
-<table class="table" style='table-layout: fixed;'>
-  <tr>
-    <td class="text-left"><a href="chapter8_error_handling.html"><h4>&lsaquo; Error Handling</h4></a></td>
-    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
-    <td class="text-right"><a href="chapter10_q_expressions.html"><h4>Q-Expressions &rsaquo;</h4></a></td>
-  </tr>
-</table>

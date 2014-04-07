@@ -1,4 +1,5 @@
-<h1>Bonus Projects <small>&bull; Chapter 16</small></h1>
+Bonus Projects
+==============
 
 
 <h2>Only the Beginning</h2> <hr/>
@@ -58,7 +59,7 @@
 
 <p>A more efficient way to do this is to implement a <em>Hash Table</em>. This technique converts the variable name to some integer and uses this to index into an array of a known size to find the value associated with this symbol. This is a really important data structure in programming and will crop up everywhere because of its fantastic performance under heavy loads.</p>
 
-<p>Anyone who is interested in learning more about data structures and algorithms would be smart to take a shot at implementing this data structure or one of its variations.</p> 
+<p>Anyone who is interested in learning more about data structures and algorithms would be smart to take a shot at implementing this data structure or one of its variations.</p>
 
 
 <h2>Pool Allocation</h2> <hr/>
@@ -119,14 +120,3 @@
 <p>Many thanks for following along with this book. I hope you've found something of interest in its pages. If you did enjoy it please tell your friends about it! If you are going to continue developing your language then best of luck and I hope you learn many more cool things about C, programming languages, and computer science.</p>
 
 <p>Most of all I hope you've had fun building your own Lisp. Until next time!</p>
-
-
-<h2>Navigation</h2>
-
-<table class="table" style='table-layout: fixed;'>
-  <tr>
-    <td class="text-left"><a href="chapter15_standard_library.html"><h4>&lsaquo; Standard Library</h4></a></td>
-    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
-    <td class="text-right"><a href="credits.html"><h4>Credits &rsaquo;</h4></a></td>
-  </tr>
-</table>

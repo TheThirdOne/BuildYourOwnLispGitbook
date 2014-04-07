@@ -1,4 +1,5 @@
-<h1>Standard Library <small>&bull; Chapter 15</small></h1>
+Standard Library
+================
 
 <h2>Minimalism</h2> <hr/>
 
@@ -240,7 +241,7 @@ lispy&gt;</code></pre>
 
 <pre><code data-language='lispy'>&#59; Fold Left
 (fun {foldl f z l} {
-  if (== l {}) 
+  if (== l {})
     {z}
     {foldl f (f z (fst l)) (tail l)}
 })</code></pre>
@@ -380,7 +381,7 @@ lispy&gt;</code></pre>
 &#59; Minimum of Arguments
 (fun {min & xs} {
   if (== (tail xs) {}) {fst xs}
-    {do 
+    {do
       (= {rest} (unpack min (tail xs)))
       (= {item} (fst xs))
       (if (< item rest) {item} {rest})
@@ -390,11 +391,11 @@ lispy&gt;</code></pre>
 &#59; Minimum of Arguments
 (fun {max & xs} {
   if (== (tail xs) {}) {fst xs}
-    {do 
+    {do
       (= {rest} (unpack max (tail xs)))
       (= {item} (fst xs))
       (if (> item rest) {item} {rest})
-    }  
+    }
 })
 
 &#59;&#59;&#59; Conditional Functions
@@ -474,14 +475,14 @@ lispy&gt;</code></pre>
 
 &#59; Fold Left
 (fun {foldl f z l} {
-  if (== l {}) 
+  if (== l {})
     {z}
     {foldl f (f z (fst l)) (tail l)}
 })
 
 &#59; Fold Right
 (fun {foldr f z l} {
-  if (== l {}) 
+  if (== l {})
     {z}
     {f (fst l) (foldr f z (tail l))}
 })
@@ -584,14 +585,3 @@ lispy&gt;</code></pre>
     <li class="list-group-item">&rsaquo; Write some test cases for each of the functions in your standard library.</li>
   </ul>
 </div>
-
-
-<h2>Navigation</h2>
-
-<table class="table" style='table-layout: fixed;'>
-  <tr>
-    <td class="text-left"><a href="chapter14_strings.html"><h4>&lsaquo; Strings</h4></a></td>
-    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
-    <td class="text-right"><a href="chapter16_bonus_projects.html"><h4>Bonus Projects &rsaquo;</h4></a></td>
-  </tr>
-</table>

@@ -1,5 +1,5 @@
-<h1>Error Handling <small>&bull; Chapter 8</small></h1>
-
+Error Handling
+==============
 
 <h2>Crashes</h2> <hr/>
 
@@ -139,23 +139,23 @@ void lval_println(lval v) { lval_print(v); putchar(&#39;\n&#39;); }</code></pre>
 <p>In this case we use the <code>strtol</code> function to convert from string to <code>long</code>. This allows us to check a special variable <code>errno</code> to ensure the conversion goes correctly. This is a more robust way to convert numbers than our previous method using <code>atoi</code>.</p>
 
 <pre><code data-language='c'>lval eval(mpc_ast_t* t) {
-  
+
   if (strstr(t-&gt;tag, "number")) {
     /* Check if there is some error in conversion */
     long x = strtol(t-&gt;contents, NULL, 10);
     return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
   }
-  
-  char* op = t-&gt;children[1]-&gt;contents;  
+
+  char* op = t-&gt;children[1]-&gt;contents;
   lval x = eval(t-&gt;children[2]);
-  
+
   int i = 3;
   while (strstr(t-&gt;children[i]-&gt;tag, "expr")) {
     x = eval_op(x, op, eval(t-&gt;children[i]));
     i++;
   }
-  
-  return x;  
+
+  return x;
 }</code></pre>
 
 <p>The final small step is to change how we print the result found by our evaluation to use our newly defined printing function which can print any type of <code>lval</code>.</p>
@@ -263,7 +263,7 @@ void lval_print(lval v) {
   switch (v.type) {
     /* In the case the type is a number print it, then 'break' out of the switch. */
     case LVAL_NUM: printf("%li", v.num); break;
-    
+
     /* In the case the type is an error */
     case LVAL_ERR:
       /* Check What exact type of error it is and print it */
@@ -278,11 +278,11 @@ void lval_print(lval v) {
 void lval_println(lval v) { lval_print(v); putchar('\n'); }
 
 lval eval_op(lval x, char* op, lval y) {
-  
+
   /* If either value is an error return it */
   if (x.type == LVAL_ERR) { return x; }
   if (y.type == LVAL_ERR) { return y; }
-  
+
   /* Otherwise do maths on the number values */
   if (strcmp(op, "+") == 0) { return lval_num(x.num + y.num); }
   if (strcmp(op, "-") == 0) { return lval_num(x.num - y.num); }
@@ -291,37 +291,37 @@ lval eval_op(lval x, char* op, lval y) {
     /* If second operand is zero return error instead of result */
     return y.num == 0 ? lval_err(LERR_DIV_ZERO) : lval_num(x.num / y.num);
   }
-  
+
   return lval_err(LERR_BAD_OP);
 }
 
 lval eval(mpc_ast_t* t) {
-  
+
   if (strstr(t-&gt;tag, "number")) {
     /* Check if there is some error in conversion */
     long x = strtol(t-&gt;contents, NULL, 10);
     return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
   }
-  
-  char* op = t-&gt;children[1]->contents;  
+
+  char* op = t-&gt;children[1]->contents;
   lval x = eval(t-&gt;children[2]);
-  
+
   int i = 3;
   while (strstr(t-&gt;children[i]-&gt;tag, "expr")) {
     x = eval_op(x, op, eval(t-&gt;children[i]));
     i++;
   }
-  
-  return x;  
+
+  return x;
 }
 
 int main(int argc, char** argv) {
-  
+
   mpc_parser_t* Number = mpc_new("number");
   mpc_parser_t* Operator = mpc_new("operator");
   mpc_parser_t* Expr = mpc_new("expr");
   mpc_parser_t* Lispy = mpc_new("lispy");
-  
+
   mpca_lang(MPC_LANG_DEFAULT,
     "                                                     \
       number   : /-?[0-9]+/ ;                             \
@@ -330,33 +330,33 @@ int main(int argc, char** argv) {
       lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
     ",
     Number, Operator, Expr, Lispy);
-  
+
   puts("Lispy Version 0.0.0.0.4");
   puts("Press Ctrl+c to Exit\n");
-  
+
   while (1) {
-  
+
     char* input = readline("lispy> ");
     add_history(input);
-    
+
     mpc_result_t r;
     if (mpc_parse("&lt;stdin&gt;", input, Lispy, &amp;r)) {
-      
+
       lval result = eval(r.output);
       lval_println(result);
       mpc_ast_delete(r.output);
-      
-    } else {    
+
+    } else {
       mpc_err_print(r.error);
       mpc_err_delete(r.error);
     }
-    
+
     free(input);
-    
+
   }
-  
+
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
-  
+
   return 0;
 }
 </code></pre>
@@ -377,14 +377,3 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; Extend parsing and evaluation to support decimal types using a <code>double</code> field.</li>
   </ul>
 </div>
-
-
-<h2>Navigation</h2>
-
-<table class="table" style='table-layout: fixed;'>
-  <tr>
-    <td class="text-left"><a href="chapter7_evaluation.html"><h4>&lsaquo; Evaluation</h4></a></td>
-    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
-    <td class="text-right"><a href="chapter9_s_expressions.html"><h4>S-Expressions &rsaquo;</h4></a></td>
-  </tr>
-</table>
