@@ -55,20 +55,14 @@ Hello World
 Now that your environment is set up, start by opening your text editor and inputting the following program. Create a directory where you are going to put your work for this book, and save this file as `hello_world.c`. This is your first C program!
 
 ```c
-#include &lt;stdio.h&gt;
+#include <stdio.h>
 
 int main(int argc, char** argv) {
-  puts(&quot;Hello, world!&quot;);
+  puts("Hello, world!");
   return 0;
 }
 ```
 
-<!--
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/toast.png" alt="toast"/>
-  <small>Toast &bull; A typical toast</small>
-</div>
--->
 
 This may look like a lot of crazy symbols that make very little sense. I'll try to explain it step by step.
 
@@ -76,7 +70,7 @@ In the first line we *include* what is called a *header*. This statement allows 
 
 Next we *declare* a function called `main`. This function is declared to output an `int`, and take as input an `int` called `argc` and a `char**` called `argv`. All C programs must contain this function. All programs start running from this function.
 
-Inside `main` the `puts` function is *called* with the argument `&quot;Hello, world!&quot;`. This outputs the message `Hello, world!` to the command line. The function `puts` is short for *put string*. The second statement inside the function is `return 0;`. This tells the `main` function to finish and return `0`. When a C program returns `0` this indicates there have been no errors running the program.
+Inside `main` the `puts` function is *called* with the argument `"Hello, world!"`. This outputs the message `Hello, world!` to the command line. The function `puts` is short for *put string*. The second statement inside the function is `return 0;`. This tells the `main` function to finish and return `0`. When a C program returns `0` this indicates there have been no errors running the program.
 
 
 Compilation
@@ -147,7 +141,7 @@ Reference
     <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
 ```c
-#include &lt;stdio.h&gt;
+#include <stdio.h>
 
 int main(int argc, char** argv) {
   puts("Hello, world!");

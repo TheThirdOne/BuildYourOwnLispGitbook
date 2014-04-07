@@ -1,0 +1,278 @@
+<h1>Parsing <small>&bull; Chapter 6</small></h1>
+
+
+<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
+  <img src="static/img/polish_man.png" alt="polish man"/>
+  <p><small>A Polish Nobleman &bull; A typical Polish Notation user</small></p>
+</div>
+
+
+<h2>Polish Notation</h2> <hr/>
+
+<p>To try out <code>mpc</code> we're going to implement a simple grammar that resembles a mathematical subset of our Lisp. It's called <a href="http://en.wikipedia.org/wiki/Polish_notation">Polish Notation</a> and is a notation for arithmetic where the operator comes before the operands.</p>
+
+<p>For example...</p>
+
+<table class='table' style='display: inline'>
+  <tr><td><code>1 + 2 + 6</code></td><td><em>is</em></td><td><code>+ 1 2 6</code></td></tr>
+  <tr><td><code>6 + (2 * 9)</code></td><td><em>is</em></td><td><code>+ 6 (* 2 9)</code></td></tr>
+  <tr><td><code>(10 * 2) / (4 + 2)</code></td><td><em>is</em></td><td><code>/ (* 10 2) (+ 4 2)</code></td></tr>
+  <tr><td></td><td></td><td></td></tr>
+</table>
+
+<p>We need to work out a grammar which describes this notation. We can begin by describing it <em>textually</em> and then later formalise our thoughts.</p>
+
+<p>To start, we observe that in polish notation the operator always comes first in an expression, followed by either numbers or other expressions in parenthesis. This means we can say "a <em>program</em> is an <em>operator</em> followed by one or more <em>expressions</em>," where "an <em>expression</em> is either a <em>number</em>, or, in parenthesis, an <em>operator</em> followed by one or more <em>expressions</em>".</p>
+
+<p>More formally...</p>
+
+<table class='table'>
+  <tr><td><code>Program</code></td><td><em>the start of input</em>, an <code>Operator</code>, one or more <code>Expression</code>, and <em>the end of input</em>.</td></tr>
+  <tr><td><code>Expression</code></td><td>either a <code>Number</code> <em>or</em> <code>'('</code>, an <code>Operator</code>, one or more <code>Expression</code>, and an <code>')'</code>.</td></tr>
+  <tr><td><code>Operator</code></td><td><code>'+'</code>, <code>'-'</code>, <code>'*'</code>, or <code>'/'</code>.</td></tr>
+  <tr><td><code>Number</code></td><td>an optional <code>-</code>, and one or more characters between <code>0</code> and <code>9</code></td></tr>
+</table>
+
+
+<h2>Regular Expressions</h2> <hr/>
+
+<p>We should be able to encode most of the above rules using things we know already, but <em>Number</em> and <em>Program</em> might pose some trouble. They contain a couple of constructs we've not learnt how to express yet. We don't know how to express the start or the end of input, optional characters, or range of characters.</p>
+
+<p>These can be expressed, but they require something called a <em>Regular Expression</em>. Regular expressions are a way of writing grammars for small sections of text such as words or numbers. Grammars written using regular expressions can't consist of multiple rules, but they do give precise, and concise, control over what is matched and what isn't. Here are some basic rules for writing regular expressions.</p>
+
+<table class='table'>
+  <tr><td><code>a</code></td><td>The character <code>a</code> is required.</td></tr>
+  <tr><td><code>[abcdef]</code></td><td>Any character in the set <code>abcdef</code> is required.</td></tr>
+  <tr><td><code>[a-f]</code></td><td>Any character in the range <code>a</code> to <code>f</code> is required.</td></tr>
+  <tr><td><code>a?</code></td><td>The character <code>a</code> is optional.</td></tr>
+  <tr><td><code>a*</code></td><td>Zero or more of the character <code>a</code> are required.</td></tr>
+  <tr><td><code>a+</code></td><td>One or more of the character <code>a</code> are required.</td></tr>
+  <tr><td><code>^</code></td><td>The start of input is required.</td></tr>
+  <tr><td><code>$</code></td><td>The end of input is required.</td></tr>
+</table>
+
+<p>These are all the regular expression rules we need for now. <a href="http://regex.learncodethehardway.org/">Whole books</a> have been written on learning regular expressions. For those curious much more information can be found online or from these sources. We will be using them in later chapters, so some basic knowledge will be required, but you won't need to master them for now.</p>
+
+<p>In an <code>mpc</code> grammar we write regular expressions by putting them between forward slashes <code>/</code>. Using the above guide our <em>Number</em> rule can be expressed as a regular expression using the string <code>/-?[0-9]+/</code>.</p>
+
+
+<h2>Installing mpc</h2> <hr/>
+
+<p>Before we work on writing this grammar we first need to <em>include</em> the <code>mpc</code> headers, and then <em>link</em> to the <code>mpc</code> library, just as we did for <code>editline</code> on Linux and Mac. Starting with your code from chapter 4, you can rename the file to <code>parsing.c</code> and download <code>mpc.h</code> and <code>mpc.c</code> from the <a href="http://github.com/orangeduck/mpc">mpc repo</a>. Put these in the same directory as your source file.</p>
+
+<p>To <em>include</em> <code>mpc</code> put <code>#include "mpc.h"</code> at the top of the file. To <em>link</em> to <code>mpc</code> put <code>mpc.c</code> directly into the compile command. On linux you will also have to link to the maths library by adding the flag <code>-lm</code>.</p>
+
+<p>On <strong>Linux</strong> and <strong>Mac</strong></p>
+
+<pre><code>cc -std=c99 -Wall parsing.c mpc.c -ledit -lm -o parsing</code></pre>
+
+<p>On <strong>Windows</strong></p>
+
+<pre><code>cc -std=c99 -Wall parsing.c mpc.c -o parsing</code></pre>
+
+<div class="alert alert-warning">
+  <p><strong>Hold on, don't you mean <code>#include &lt;mpc.h&gt;</code>?</strong></p>
+
+  <p>There are actually two ways to include files in C. One is using angular brackets <code>&lt;&gt;</code> as we've seen so far, and the other is with quotation marks <code>""</code>.</p>
+  
+  <p>The only difference between the two is that using angular brackets searches the system locations for headers first, while quotation marks searches the current directory first. Because of this system headers such as <code>&lt;stdio.h&gt;</code> are typically put in angular brackets, while local headers such as <code>"mpc.h"</code> are typically put in quotation marks.</p>
+</div>
+
+
+<h2>Polish Notation Grammar</h2> <hr/>
+
+<p>Formalising the above rules further, and using some regular expressions, we can write a final grammar for the language of polish notation as follows. Read the below code and verify that it matches what we had written textually, and our ideas of polish notation.</p>
+
+<pre><code data-language='c'>/* Create Some Parsers */
+mpc_parser_t* Number   = mpc_new(&quot;number&quot;);
+mpc_parser_t* Operator = mpc_new(&quot;operator&quot;);
+mpc_parser_t* Expr     = mpc_new(&quot;expr&quot;);
+mpc_parser_t* Lispy    = mpc_new(&quot;lispy&quot;);
+
+/* Define them with the following Language */
+mpca_lang(MPC_LANG_DEFAULT,
+  "                                                     \
+    number   : /-?[0-9]+/ ;                             \
+    operator : '+' | '-' | '*' | '/' ;                  \
+    expr     : &lt;number&gt; | '(' &lt;operator&gt; &lt;expr&gt;+ ')' ;  \
+    lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
+  ",
+  Number, Operator, Expr, Lispy);
+</code></pre>
+
+<p>We need to add this to the interactive prompt we started on in chapter 4. Put this code right at the beginning of the <code>main</code> function before we print the <em>Version</em> and <em>Exit</em> information. At the end of our program we also need to delete the parsers when we are done with them. Right before <code>main</code> returns we should place the following clean-up code.</p>
+
+<pre><code data-language='c'>/* Undefine and Delete our Parsers */
+mpc_cleanup(4, Number, Operator, Expr, Lispy);</code></pre>
+
+<div class="alert alert-warning">
+  <p><strong>I'm getting an error <code>undefined reference to `mpc_lang'</code></strong></p>
+
+  <p>That should be <code>mpca_lang</code>, with an <code>a</code> at the end!</p>
+</div>
+
+<h2>Parsing User Input</h2> <hr/>
+
+<p>Our new code creates a <code>mpc</code> parser for our <em>Polish Notation</em> language, but we still need to actually <em>use</em> it on the user input supplied each time from the prompt. We need to edit our <code>while</code> loop so that rather than just echoing user input back, it actually attempts to parse the input using our parser. We can do this by replacing the call to <code>printf</code> with the following <code>mpc</code> code, that makes use of our program parser <code>Lispy</code>.</p>
+
+<pre><code data-language='c'>/* Attempt to Parse the user Input */
+mpc_result_t r;
+if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
+  /* On Success Print the AST */
+  mpc_ast_print(r.output);
+  mpc_ast_delete(r.output);
+} else {
+  /* Otherwise Print the Error */
+  mpc_err_print(r.error);
+  mpc_err_delete(r.error);
+}</code></pre>
+
+<p>This code calls the <code>mpc_parse</code> function with our parser <code>Lispy</code>, and the input string <code>input</code>. It copies the result of the parse into <code>r</code> and returns <code>1</code> on success and <code>0</code> on failure. We use the address of operator <code>&amp;</code> on <code>r</code> when we pass it to the function. This operator will be explained in more detail in later chapters.</p>
+
+<p>On success a internal structure is copied into <code>r</code>, in the field <code>output</code>. We can print out this structure using <code>mpc_ast_print</code> and delete it using <code>mpc_ast_delete</code>.</p>
+
+<p>Otherwise there has been an error, which is copied into <code>r</code> in the field <code>error</code>. We can print it out using <code>mpc_err_print</code> and delete it using <code>mpc_err_delete</code>.</p>
+
+<p>Compile these updates, and take this program for a spin. Try out different inputs and see how the system reacts. Correct behaviour should look like the following.</p>
+
+<pre><code data-language='lispy'>Lispy Version 0.0.0.0.2
+Press Ctrl+c to Exit
+
+lispy&gt; + 5 (* 2 2)
+&gt;:
+  regex:
+  operator|char: '+'
+  expr|number|regex: '5'
+  expr|>:
+    char: '('
+    operator|char: '*'
+    expr|number|regex: '2'
+    expr|number|regex: '2'
+    char: ')'
+  regex:
+lispy&gt; hello
+&lt;stdin&gt;:0:0: error: expected '+', '-', '*' or '/' at 'h'
+lispy&gt; / 1dog & cat
+&lt;stdin&gt;:0:3: error: expected end of input at 'd'
+lispy&gt;</code></pre>
+
+<div class="alert alert-warning">
+  <p><strong>I'm getting an error <code>&lt;stdin&gt;:0:0: error: Parser Undefined!</code>.</strong></p>
+
+  <p>This error is due to the syntax for your grammar supplied to <code>mpca_lang</code> being incorrect. See if you can work out what part of the grammar is incorrect. You can use the reference code for this chapter to help you find this, and verify how the grammar should look.</p>
+</div>
+
+
+<h2>Reference</h2> <hr/>
+
+<div class="panel-group alert alert-warning" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          parsing.c
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+<pre><code data-language='c'>#include "mpc.h"
+
+#ifdef _WIN32
+
+static char buffer[2048];
+
+char* readline(char* prompt) {
+  fputs("lispy&gt; ", stdout);
+  fgets(buffer, 2048, stdin);
+  char* cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = '\0';
+  return cpy;
+}
+
+void add_history(char* unused) {}
+
+#else
+
+#include &lt;editline/readline.h&gt;
+#include &lt;editline/history.h&gt;
+
+#endif
+
+int main(int argc, char** argv) {
+  
+  /* Create Some Parsers */
+  mpc_parser_t* Number   = mpc_new("number");
+  mpc_parser_t* Operator = mpc_new("operator");
+  mpc_parser_t* Expr     = mpc_new("expr");
+  mpc_parser_t* Lispy    = mpc_new("lispy");
+  
+  /* Define them with the following Language */
+  mpca_lang(MPC_LANG_DEFAULT,
+    "                                                     \
+      number   : /-?[0-9]+/ ;                             \
+      operator : '+' | '-' | '*' | '/' ;                  \
+      expr     : &lt;number&gt; | '(' &lt;operator&gt; &lt;expr&gt;+ ')' ;  \
+      lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
+    ",
+    Number, Operator, Expr, Lispy);
+  
+  puts("Lispy Version 0.0.0.0.2");
+  puts("Press Ctrl+c to Exit\n");
+  
+  while (1) {
+  
+    char* input = readline("lispy&gt; ");
+    add_history(input);
+    
+    /* Attempt to parse the user input */
+    mpc_result_t r;
+    if (mpc_parse("&lt;stdin&gt;", input, Lispy, &amp;r)) {
+      /* On success print and delete the AST */
+      mpc_ast_print(r.output);
+      mpc_ast_delete(r.output);
+    } else {
+      /* Otherwise print and delete the Error */
+      mpc_err_print(r.error);
+      mpc_err_delete(r.error);
+    }
+    
+    free(input);
+  }
+  
+  /* Undefine and delete our parsers */
+  mpc_cleanup(4, Number, Operator, Expr, Lispy);
+  
+  return 0;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h2>Bonus Marks</h2> <hr/>
+
+<div class="alert alert-warning">
+  <ul class="list-group">
+    <li class="list-group-item">&rsaquo; Write a regular expression matching strings of all <code>a</code> or <code>b</code> such as <code>aababa</code> or <code>bbaa</code>.</li>
+    <li class="list-group-item">&rsaquo; Write a regular expression matching strings of consecutive <code>a</code> and <code>b</code> such as <code>ababab</code> or <code>aba</code>.</li>
+    <li class="list-group-item">&rsaquo; Write a regular expression matching <code>pit</code>, <code>pot</code> and <code>respite</code> but <em>not</em> <code>peat</code>, <code>spit</code>, or <code>part</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to add a new operator such as <code>%</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to recognize operators written in textual format <code>add</code>, <code>sub</code>, <code>mul</code>, <code>div</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to recognize decimal numbers such as <code>0.01</code>, <code>5.21</code>, or <code>10.2</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to make the operators written conventionally, between two expressions.</li>
+    <li class="list-group-item">&rsaquo; Use the grammar from the previous chapter to parse <code>Doge</code>. You must add <em>start</em> and <em>end</em> of input!</li>
+  </ul>
+</div>
+
+<h2>Navigation</h2>
+
+<table class="table" style='table-layout: fixed;'>
+  <tr>
+    <td class="text-left"><a href="chapter5_languages.html"><h4>&lsaquo; Languages</h4></a></td>
+    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
+    <td class="text-right"><a href="chapter7_evaluation.html"><h4>Evaluation &rsaquo;</h4></a></td>
+  </tr>
+</table>
