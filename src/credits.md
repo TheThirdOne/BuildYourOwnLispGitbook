@@ -1,0 +1,104 @@
+Credits
+=======
+
+<h2>Special Thanks</h2> <hr/>
+
+<p>Special thanks to my friends and family for their support, in particular <a href="https://twitter.com/chessshaw">Francesca Shaw</a> for helping me along the way, and putting up with me spending all my time on this project!</p>
+
+<p>Thanks to Miran Lipovaca, Frederic Trottier-Hebert, and Jonathan Tang, authors of <a href="http://learnyouahaskell.com/">Learn you a Haskell</a>, <a href="http://learnyousomeerlang.com/">Learn you some Erlang</a>, and <a href="http://en.wikibooks.org/wiki/Write_Yourself_a_Scheme_in_48_Hours">Write Yourself a Scheme in 48 Hours</a> for inspiration, and their ideas, and thoughts.</p>
+
+
+<h2>Beta Readers</h2> <hr/>
+
+<p>Thanks to all my Beta readers for their valuable feedback, corrections, suggestions, and encouragement. Many thanks to Reddit users
+  <a href="http://www.reddit.com/user/neelaryan">neelaryan</a>,
+  <a href="http://www.reddit.com/user/bitsbytesbikes">bitsbytesbikes</a>,
+  <a href="http://www.reddit.com/user/acesHD">acesHD</a>,
+  <a href="http://www.reddit.com/user/CodyChan">CodyChan</a>,
+  <a href="http://www.reddit.com/user/northClan">northClan</a>,
+  <a href="http://www.reddit.com/user/da4c30ff">da4c30ff</a>,
+  <a href="http://www.reddit.com/user/nowords">nowords</a>,
+  <a href="http://www.reddit.com/user/ozhank">ozhank</a>,
+  <a href="http://www.reddit.com/user/crackez">crackez</a>,
+  <a href="http://www.reddit.com/user/stubarfoo">stubarfoo</a>,
+  <a href="http://www.reddit.com/user/viezebanaan">viezebanaan</a>,
+  <a href="http://www.reddit.com/user/JMagnum86">JMagnum86</a>,
+  <a href="http://www.reddit.com/user/uNEV6X29rpf3">uNEV6X29rpf3</a>,
+  <a href="http://www.reddit.com/user/fortyninezeronine">fortyninezeronine</a>,
+  <a href="http://www.reddit.com/user/skeeto">skeeto</a>,
+  <a href="http://www.reddit.com/user/miketaylr">miketaylr</a>,
+  <a href="http://www.reddit.com/user/wonnernaus">wonnernaus</a>,
+  <a href="http://www.reddit.com/user/Barthalion">Barthalion</a>,
+  <a href="http://www.reddit.com/user/codyrioux">codyrioux</a>,
+  <a href="http://www.reddit.com/user/sigjuice">sigjuice</a>,
+  <a href="http://www.reddit.com/user/yoshiK">yoshiK</a>,
+  <a href="http://www.reddit.com/user/u-n-sky">u-n-sky</a>,
+</p>
+
+
+<h2>Image Credits</h2> <hr/>
+
+<p>Many thanks to everyone who has made their images and photos available under Creative Commons. I hope by making this book available to read online for free, I have given a small something back to the creativity and good will of the community.</p>
+
+<p>All images are licensed under <strong><a href="http://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a></strong> unless otherwise stated.</p>
+
+<ul>
+  <li><strong><a href="http://www.flickr.com/photos/maaorg/5506899613/in/photostream/">Ada Lovelace (1815-1852)</a></strong> by <a href="http://www.flickr.com/photos/maaorg/">Mathematical Association of America</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/sweetjewels/2471862881/">Fridge</a></strong> by <a href="http://www.flickr.com/photos/sweetjewels/">sweethappychick1985</a></li></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/birzer/5523787875/in/photostream/">Mike Tyson</a></strong> by <a href="http://www.flickr.com/photos/birzer/">birzer</a></li></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/brownpau/11453248476/">Amelia on MacBook Pro</a></strong> by <a href="http://www.flickr.com/photos/brownpau/">Paulo Ordoveza</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/cosmicyardsale/3505255854/">smashed Computer</a></strong> by <a href="http://www.flickr.com/photos/cosmicyardsale/">cosmic yard sale</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/double-m2/5563643510/">Cover of program, 1897, by Mucha</a></strong> by <a href="http://www.flickr.com/photos/double-m2/">Mary Margret</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/rorynolanphotos/3956684616/">German Pointer</a></strong> by <a href="http://www.flickr.com/photos/rorynolanphotos/">Rory Nolan</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/24619260@N00/7912874890/in/photostream/">Reptile Park #1</a></strong> by <a href="http://www.flickr.com/photos/24619260@N00/">Brandon Holton</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/patdavid/8477588360/">Octopus Vulgaris (I think?)</a></strong> by <a href="http://www.flickr.com/photos/patdavid/">Pat David</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/genewolf/177857670/in/photostream/">Felix</a></strong> by <a href="http://www.flickr.com/photos/genewolf/">andreavallejos</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/pagedooley/5401818933/">The Xmas tree has been drinking</a></strong> by <a href="http://www.flickr.com/photos/pagedooley/">Kevin Dooley</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/124330160/3072292718/">For understanding recursion...</a></strong> by <a href="http://www.flickr.com/photos/124330160/">Andreas.</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/salim/2772443049/in/photostream/">Plumbing APIs</a></strong> by <a href="http://www.flickr.com/photos/salim/">Salim Virji</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/bradfordcoy/3329523810/in/photostream/">Self Storage. Ghost Mural</a></strong> by <a href="http://www.flickr.com/photos/bradfordcoy/">Brad Coy</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/25143217@N05/4865529446/in/photostream/">Building site in Berlin</a></strong> by <a href="http://www.flickr.com/photos/25143217@N05/">Ingo Ronner</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/psd/4220807/in/photostream/">LISP Theory &amp; Practice</a></strong> by <a href="http://www.flickr.com/photos/psd/">Paul Downey</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/atramos/6878730173/">Strawberry Macro</a></strong> by <a href="http://www.flickr.com/photos/atramos/">atramos</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/orinrobertjohn/5569090143/">Mutant, No Explaination</a></strong> by <a href="http://www.flickr.com/photos/orinrobertjohn/5569090143/">Orin Zebest</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/home_of_chaos/6332465890/">Emergence of mysterious Black Box</a></strong> by <a href="http://www.flickr.com/photos/home_of_chaos/">thierry ehrmann</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/ulrick/3322150017/">SCF_MIT_2009</a></strong> by <a href="http://www.flickr.com/photos/ulrick/">Ulrick</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/10630381@N03/2344177551/">Curry set</a></strong> by <a href="http://www.flickr.com/photos/magical-world/">Vera &amp; Jean-Christophe</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/30461626@N07/4692936866/in/photostream/">Our Pug Is Cute When He Is Asleep</a></strong> by <a href="http://www.flickr.com/photos/30461626@N07/">VeryMotoMoto</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/syops1st/8610153820/">String in the Sun</a></strong> by <a href="http://www.flickr.com/photos/syops1st/">Syops1st</a></li>
+
+  <!--<li><strong><a href="http://www.flickr.com/photos/gdominici/266742640/">Minimalism</a></strong> by <a href="http://www.flickr.com/photos/gdominici/">Gianni Dominici</a></strong></li>-->
+
+  <li><strong><a href="http://www.flickr.com/photos/bengallagher/4100757279/">St John's College Old Library - West Side</a></strong> by <a href="http://www.flickr.com/photos/bengallagher/">ben.gallagher</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/rog2bark/3437630552/">kid to do list, list, Be happy and go home</a></strong> by <a href="http://www.flickr.com/photos/rog2bark/">Carissa Rogers</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/nggalai/6340525770/">Fat luck.</a></strong> by <a href="http://www.flickr.com/photos/nggalai/">Sascha Erni, .rb</a></li>
+
+  <li><strong><a href="http://www.flickr.com/photos/andrec/7827516246/">Static Electricity</a></strong> by <a href="http://www.flickr.com/photos/andrec/">andrechinn</a></li>
+
+  <li><strong><a href="http://commons.wikimedia.org/wiki/File:Ada_Lovelace_portrait.jpg">Ada Lovelace Portrait</a></strong> by <a href="http://en.wikipedia.org/wiki/Alfred_Edward_Chalon">Alfred Edward Chalon</a> is licensed in the <a href="http://en.wikipedia.org/wiki/Public_Domain">Public Domain</a></li>
+
+</ul>
