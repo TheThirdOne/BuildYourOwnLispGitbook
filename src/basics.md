@@ -205,7 +205,7 @@ Bonus Marks
     <li class="list-group-item">&rsaquo; Use a `while` loop to print out `Hello World!` five times.</li>
     <li class="list-group-item">&rsaquo; Declare a function that outputs `Hello World!` `n` number of times. Call this from `main`.</li>
     <li class="list-group-item">&rsaquo; What built in types are there other than the ones listed?</li>
-    <li class="list-group-item">&rsaquo; What other conditional operators are there other than *greater than* `&gt;`, and *less than* `&lt;`?</li>
+    <li class="list-group-item">&rsaquo; What other conditional operators are there other than *greater than* `>`, and *less than* `<`?</li>
     <li class="list-group-item">&rsaquo; What other mathematical operators are there other than *add* `+`, and *subtract* `-`?</li>
     <li class="list-group-item">&rsaquo; What is the `+=` operator, and how does it work?</li>
     <li class="list-group-item">&rsaquo; What is the `do` loop, and how does it work?</li>
