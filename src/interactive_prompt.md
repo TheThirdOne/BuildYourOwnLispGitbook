@@ -171,7 +171,8 @@ Instead of prompting, and getting input with `fgets`, we do it in one go using `
 
 Unlike `fgets`, the `readline` function strips the trailing newline character from the input, so we need to add this to our `printf` function. We also need to delete the input given to us by the `readline` function using `free`. This is because unlike `fgets`, which writes to some existing buffer, the `readline` function allocates new memory when it is called. When to free memory is something we cover in depth in later chapters.
 
-<h3>Compiling with Editline</h3>
+Compiling with Editline
+-----------------------
 
 If you try to compile this right away with the previous command you'll get an error. This is because you first need to install the `editline` library on your computer.
 

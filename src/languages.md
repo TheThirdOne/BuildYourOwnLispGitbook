@@ -122,21 +122,21 @@ Natural Grammars
 Here is how we would recreate the previous examples using this method.
 
 ```c
-mpc_parser_t* Adjective = mpc_new(&quot;adjective&quot;);
-mpc_parser_t* Noun      = mpc_new(&quot;noun&quot;);
-mpc_parser_t* Phrase    = mpc_new(&quot;phrase&quot;);
-mpc_parser_t* Doge      = mpc_new(&quot;doge&quot;);
+mpc_parser_t* Adjective = mpc_new("adjective");
+mpc_parser_t* Noun      = mpc_new("noun");
+mpc_parser_t* Phrase    = mpc_new("phrase");
+mpc_parser_t* Doge      = mpc_new("doge");
 
 mpca_lang(MPC_LANG_DEFAULT,
-  &quot;                                                                     \
-    adjective : \&quot;wow\&quot; | \&quot;many\&quot; | \&quot;so\&quot; | \&quot;such\&quot;;                 \
-    noun      : \&quot;lisp\&quot; | \&quot;language\&quot; | \&quot;c\&quot; | \&quot;book\&quot; | \&quot;build\&quot;; \
-    phrase    : &lt;adjective&gt; &lt;noun&gt;;                                     \
-    doge      : &lt;phrase&gt;*;                                              \
-  &quot;,
+  "                                                                     \
+    adjective : \"wow\" | \"many\" | \"so\" | \"such\";                 \
+    noun      : \"lisp\" | \"language\" | \"c\" | \"book\" | \"build\"; \
+    phrase    : <adjective> <noun>;                                     \
+    doge      : <phrase>*;                                              \
+  ",
   Adjective, Noun, Phrase, Doge);
 
-/* Do some parsing here... */
+/* Do some parsing here... */m
 
 mpc_cleanup(4, Adjective, Noun, Phrase, Doge);
 ```
@@ -156,7 +156,7 @@ The special symbols used to define the rules on the right hand side work as foll
   <tr><td>`'a' | 'b'`</td><td>Either `'a'` is required, or `'b'` is required.</td></tr>
   <tr><td>`'a'*`</td><td>Zero or more `'a'` are required.</td></tr>
   <tr><td>`'a'+`</td><td>One or more `'a'` are required.</td></tr>
-  <tr><td>`&lt;abba&gt;`</td><td>The rule called `abba` is required.</td></tr>
+  <tr><td>`<abba>`</td><td>The rule called `abba` is required.</td></tr>
 </table>
 
 <div class="alert alert-warning">
@@ -246,8 +246,8 @@ int main(int argc, char** argv) {
     "                                                                     \
       adjective : \"wow\" | \"many\" | \"so\" | \"such\";                 \
       noun      : \"lisp\" | \"language\" | \"c\" | \"book\" | \"build\"; \
-      phrase    : &lt;adjective&gt; &lt;noun&gt;;                                     \
-      doge      : &lt;phrase&gt;*;                                              \
+      phrase    : <adjective> <noun>;                                     \
+      doge      : <phrase>*;                                              \
     ",
     Adjective, Noun, Phrase, Doge);
 

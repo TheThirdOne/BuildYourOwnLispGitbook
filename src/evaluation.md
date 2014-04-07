@@ -166,10 +166,10 @@ We can define the `eval_op` function as follows. It takes in a number, an operat
 ```c
 /* Use operator string to see which operation to perform */
 long eval_op(long x, char* op, long y) {
-  if (strcmp(op, &quot;+&quot;) == 0) { return x + y; }
-  if (strcmp(op, &quot;-&quot;) == 0) { return x - y; }
-  if (strcmp(op, &quot;*&quot;) == 0) { return x * y; }
-  if (strcmp(op, &quot;/&quot;) == 0) { return x / y; }
+  if (strcmp(op, "+") == 0) { return x + y; }
+  if (strcmp(op, "-") == 0) { return x - y; }
+  if (strcmp(op, "*") == 0) { return x * y; }
+  if (strcmp(op, "/") == 0) { return x / y; }
   return 0;
 }
 ```
@@ -184,7 +184,7 @@ We also need to remember to delete the output tree after we are done evaluating 
 
 ```c
 long result = eval(r.output);
-printf(&quot;%li\n&quot;, result);
+printf("%li\n", result);
 mpc_ast_delete(r.output);
 ```
 

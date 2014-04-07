@@ -11,7 +11,7 @@ Parsing
 Polish Notation
 ---------------
 
-To try out `mpc` we're going to implement a simple grammar that resembles a mathematical subset of our Lisp. It's called <a href="http://en.wikipedia.org/wiki/Polish_notation">Polish Notation</a> and is a notation for arithmetic where the operator comes before the operands.
+To try out `mpc` we're going to implement a simple grammar that resembles a mathematical subset of our Lisp. It's called [Polish Notation](http://en.wikipedia.org/wiki/Polish_notation) and is a notation for arithmetic where the operator comes before the operands.
 
 For example...
 <table class='table' style='display: inline'>
@@ -52,7 +52,7 @@ These can be expressed, but they require something called a *Regular Expression*
   <tr><td>`$`</td><td>The end of input is required.</td></tr>
 </table>
 
-These are all the regular expression rules we need for now. <a href="http://regex.learncodethehardway.org/">Whole books</a> have been written on learning regular expressions. For those curious much more information can be found online or from these sources. We will be using them in later chapters, so some basic knowledge will be required, but you won't need to master them for now.
+These are all the regular expression rules we need for now. [Whole books](http://regex.learncodethehardway.org/) have been written on learning regular expressions. For those curious much more information can be found online or from these sources. We will be using them in later chapters, so some basic knowledge will be required, but you won't need to master them for now.
 
 In an `mpc` grammar we write regular expressions by putting them between forward slashes `/`. Using the above guide our *Number* rule can be expressed as a regular expression using the string `/-?[0-9]+/`.
 
@@ -60,7 +60,7 @@ In an `mpc` grammar we write regular expressions by putting them between forward
 Installing mpc
 --------------
 
-Before we work on writing this grammar we first need to *include* the `mpc` headers, and then *link* to the `mpc` library, just as we did for `editline` on Linux and Mac. Starting with your code from chapter 4, you can rename the file to `parsing.c` and download `mpc.h` and `mpc.c` from the <a href="http://github.com/orangeduck/mpc">mpc repo</a>. Put these in the same directory as your source file.
+Before we work on writing this grammar we first need to *include* the `mpc` headers, and then *link* to the `mpc` library, just as we did for `editline` on Linux and Mac. Starting with your code from chapter 4, you can rename the file to `parsing.c` and download `mpc.h` and `mpc.c` from the [mpc repo](http://github.com/orangeduck/mpc). Put these in the same directory as your source file.
 
 To *include* `mpc` put `#include "mpc.h"` at the top of the file. To *link* to `mpc` put `mpc.c` directly into the compile command. On linux you will also have to link to the maths library by adding the flag `-lm`.
 

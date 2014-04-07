@@ -5,20 +5,6 @@ Basics
 Overview
 ---------
 
-<!--
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/crash.png" alt="crash"/>
-  <small>Crash &bull; of course</small>
-</div>
--->
-
-<!--
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/breakfast.png" alt="breakfast"/>
-  <small>Fried Breakfast &bull; The basics in life.</small>
-</div>
--->
-
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/programs.png" alt="programs"/>
   <small>Programs &bull; Useful for the theatre.</small>

@@ -1,7 +1,8 @@
 Functions
 =========
 
-<h2>What is a Function?</h2> <hr/>
+What is a Function?
+-------------------
 
 Functions are the essence of all programming. Back in the early days of computer science they represented a naive dream. The idea was that we could reduce computation into these smaller and smaller bits of re-usable code. Given enough time, and a proper structure for libraries, eventually we would have written code required for all computational needs. No longer would people have to write their own functions, and programming would consist of an easy job of stitching together components.
 
@@ -59,7 +60,8 @@ Then we can call it by refering to it by name.
 add-together 10 20
 ```
 
-<h2>Function Type</h2> <hr/>
+Function Type
+-------------
 
 To store a function as an `lval` we need to think exactly what it consists of.
 
@@ -150,7 +152,8 @@ break;
 ```
 
 
-<h2>Lambda Function</h2> <hr/>
+Lambda Function
+---------------
 
 We can now add a builtin for our lambda function. We want it to take as input some list of symbols, and a list that represents the code. After that it should return a function `lval`. We&#39;ve defined a few of builtins now, and this one will follow the same format. Like in `def` we do some error checking to ensure the argument types and count are correct (using some newly defined Macros). Then we just pop the first two arguments from the list and pass them to our previously defined function `lval_lambda`.
 
@@ -184,7 +187,8 @@ lval* builtin_lambda(lenv* e, lval* a) {
 </div>
 
 
-<h2>Parent Environment</h2> <hr/>
+Parent Environment
+------------------
 
 We&#39;ve given functions their own environment. In this environment we will place the values that their formal arguments are set to. When we come to evaluate the body of the function we can do it in this  environment and know that those variables will have the correct values.
 
@@ -304,7 +308,8 @@ lenv_add_builtin(e, "=",   builtin_put);
 ```
 
 
-<h2>Function Calling</h2> <hr/>
+Function Calling
+----------------
 
 We need to write the code that runs when an expression gets evaluated and an function `lval` is called.
 
@@ -430,7 +435,8 @@ lispy> add-mul-10 50
 lispy>
 ```
 
-<h2>Variable Arguments</h2> <hr/>
+Variable Arguments
+------------------
 
 We've defined some of our builtin functions so they can take in a variable number of arguments. Functions like `+` and `join` can take any number of arguments, and operator on them logically. We should find a way to let user defined functions work on multiple arguments also.
 
@@ -486,7 +492,8 @@ if (f->formals->count > 0 &;&;
 ```
 
 
-<h2>Interesting Functions</h2> <hr/>
+Interesting Functions
+---------------------
 
 <h3>Function Definition</h3>
 
@@ -515,7 +522,8 @@ fun {add-together x y} {+ x y}
   <small>Currying &bull; Not as good as it sounds.</small>
 </div>
 
-<h3>Currying</h3>
+Currying
+--------
 
 At the moment functions like `+` take a variable number of arguments. In some situations that's great, but what if we instead had a list of arguments we wished to pass it. In this situation it is rendered somewhat useless.
 
@@ -554,7 +562,8 @@ lispy> add-unpacked {5 6 7}
 Have a play around and see what other interesting and powerful functions you can try to come up with. You might be a bit limited for now. In the next chapter well add conditionals which will really start to make our language more complete. But that doesn't mean you won't be able to come up with some other interesting ideas now. Our Lisp really is getting richer!
 
 
-<h2>Reference</h2> <hr/>
+Reference
+---------
 
 <div class="panel-group alert alert-warning" id="accordion">
   <div class="panel panel-default">
@@ -587,8 +596,8 @@ void add_history(char* unused) {}
 
 #else
 
-#include >editline/readline.h>
-#include >editline/history.h>
+#include <editline/readline.h>
+#include <editline/history.h>
 
 #endif
 
@@ -1241,7 +1250,7 @@ int main(int argc, char** argv) {
   mpca_lang(MPC_LANG_DEFAULT,
     "                                                     \
       number : /-?[0-9]+/ ;                               \
-      symbol  : /[a-zA-Z0-9_+\\-*\\/\\\\=>>!&;]+/ ;        \
+      symbol  : /[a-zA-Z0-9_+\\-*\\/\\\\=><!&;]+/ ;        \
       sexpr  : '(' >expr>* ')' ;                          \
       qexpr  : '{' >expr>* '}' ;                          \
       expr   : >number> | >symbol> | >sexpr> | >qexpr> ;  \
@@ -1261,7 +1270,7 @@ int main(int argc, char** argv) {
     add_history(input);
 
     mpc_result_t r;
-    if (mpc_parse(">stdin>", input, Lispy, &r)) {
+    if (mpc_parse("<stdin>", input, Lispy, &r)) {
 
       lval* x = lval_eval(e, lval_read(r.output));
       lval_println(x);
@@ -1290,7 +1299,8 @@ int main(int argc, char** argv) {
 </div>
 
 
-<h2>Bonus Marks</h2> <hr/>
+Bonus Marks
+-----------
 
 <div class="alert alert-warning">
   <ul class="list-group">
