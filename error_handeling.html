@@ -1,0 +1,674 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
+        
+        <meta charset="UTF-8">
+        <title>Error Handeling | Build Your Own Lisp</title>
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="robots" content="index, follow">
+        <meta name="author" content="TheThirdOne">
+        <meta name="description" content="Learn C and make a Lisp Dialect">
+        <meta name="keywords" content="gitbook,github" >
+        <meta name="generator" content="www.gitbook.io">
+
+        
+        <link rel="next" href="./s_expressions.html" />
+        
+        
+        <link rel="prev" href="./evaluation.html" />
+        
+
+        <meta property="og:title" content="Error Handeling | Build Your Own Lisp">
+        <meta property="og:site_name" content="Build Your Own Lisp">
+        <meta property="og:type" content="book">
+        <meta property="og:locale" content="en_US">
+
+        <meta property="book:author" content="https://github.com/TheThirdOne">
+        <meta property="book:tag" content="GitBook">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+        
+        <link rel="stylesheet" href="gitbook/style.css">
+        
+        
+    </head>
+    <body>
+        
+<div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="7">
+    <div class="book-header">
+    <!-- Actions Left -->
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook" target="_blank" class="btn pull-left"><i class="fa fa-github-alt"></i></a>
+    <a href="#" class="btn pull-left toggle-summary"><i class="fa fa-align-justify"></i></a>
+
+    <!-- Actions Right -->
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="google-plus"><i class="fa fa-google-plus"></i></a>
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="facebook"><i class="fa fa-facebook"></i></a>
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="twitter"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/stargazers" target="_blank" class="btn pull-right count-star"><i class="fa fa-star-o"></i> Star (<span>-</span>)</a>
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/watchers" target="_blank" class="btn pull-right count-watch"><i class="fa fa-eye"></i> Watch (<span>-</span>)</a>
+
+
+    <!-- Title -->
+    <h1><a href="./README.html" >Build Your Own Lisp</a></h1>
+</div>
+
+    <div class="book-summary">
+    <ul class="summary">
+        <li>
+            <a href="https://github.com/TheThirdOne" target="blank">About the author</a>
+        </li>
+        <li>
+            <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/issues" target="blank">Questions and Issues</a>
+        </li>
+        <li>
+            <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/edit/master/error_handeling.md" target="blank">Edit and Contribute</a>
+        </li>
+        <li class="divider"></li>
+        <li data-level="0">
+            <a href="./README.html"><i class="fa fa-check"></i> Introduction</a>
+        </li>
+        
+            <li  data-level="1">
+                
+                <a href="./installation.html">
+                    <i class="fa fa-check"></i> <b>1)</b> Installation
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="2">
+                
+                <a href="./basics.html">
+                    <i class="fa fa-check"></i> <b>2)</b> Basics
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="3">
+                
+                <a href="./interactive_prompt.html">
+                    <i class="fa fa-check"></i> <b>3)</b> Interactive Prompt
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="4">
+                
+                <a href="./languages.html">
+                    <i class="fa fa-check"></i> <b>4)</b> Languages
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="5">
+                
+                <a href="./parsing.html">
+                    <i class="fa fa-check"></i> <b>5)</b> Parsing
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="6">
+                
+                <a href="./evaluation.html">
+                    <i class="fa fa-check"></i> <b>6)</b> Evaluation
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="7">
+                
+                <a href="./error_handeling.html">
+                    <i class="fa fa-check"></i> <b>7)</b> Error Handeling
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="8">
+                
+                <a href="./s_expressions.html">
+                    <i class="fa fa-check"></i> <b>8)</b> S Expressions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="9">
+                
+                <a href="./q_expressions.html">
+                    <i class="fa fa-check"></i> <b>9)</b> Q Expressions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="10">
+                
+                <a href="./variables.html">
+                    <i class="fa fa-check"></i> <b>10)</b> Variables
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="11">
+                
+                <a href="./functions.html">
+                    <i class="fa fa-check"></i> <b>11)</b> Functions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="12">
+                
+                <a href="./conditionals.html">
+                    <i class="fa fa-check"></i> <b>12)</b> Conditionals
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="13">
+                
+                <a href="./strings.html">
+                    <i class="fa fa-check"></i> <b>13)</b> Strings
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="14">
+                
+                <a href="./standard_library.html">
+                    <i class="fa fa-check"></i> <b>14)</b> Standard Library
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="15">
+                
+                <a href="./bonus_projects.html">
+                    <i class="fa fa-check"></i> <b>15)</b> Bonus Projects
+                </a>
+                
+                
+            </li>
+        
+    </ul>
+</div>
+
+    <div class="book-body" tabindex="-1">
+        <div class="page-wrapper">
+            <div class="book-progress">
+    <div class="bar">
+        <div class="inner" style="width: 86.66666666666667%;min-width: 80%;"></div>
+    </div>
+    <div class="chapters">
+    
+        <a href="./README.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
+    
+        <a href="./installation.html" title="Installation" class="chapter done new-chapter" data-progress="1" style="left: 6.666666666666667%;"></a>
+    
+        <a href="./variables.html" title="Variables" class="chapter done " data-progress="10" style="left: 13.333333333333334%;"></a>
+    
+        <a href="./functions.html" title="Functions" class="chapter done " data-progress="11" style="left: 20%;"></a>
+    
+        <a href="./conditionals.html" title="Conditionals" class="chapter done " data-progress="12" style="left: 26.666666666666668%;"></a>
+    
+        <a href="./strings.html" title="Strings" class="chapter done " data-progress="13" style="left: 33.333333333333336%;"></a>
+    
+        <a href="./standard_library.html" title="Standard Library" class="chapter done " data-progress="14" style="left: 40%;"></a>
+    
+        <a href="./bonus_projects.html" title="Bonus Projects" class="chapter done " data-progress="15" style="left: 46.666666666666664%;"></a>
+    
+        <a href="./basics.html" title="Basics" class="chapter done new-chapter" data-progress="2" style="left: 53.333333333333336%;"></a>
+    
+        <a href="./interactive_prompt.html" title="Interactive Prompt" class="chapter done new-chapter" data-progress="3" style="left: 60%;"></a>
+    
+        <a href="./languages.html" title="Languages" class="chapter done new-chapter" data-progress="4" style="left: 66.66666666666667%;"></a>
+    
+        <a href="./parsing.html" title="Parsing" class="chapter done new-chapter" data-progress="5" style="left: 73.33333333333333%;"></a>
+    
+        <a href="./evaluation.html" title="Evaluation" class="chapter done new-chapter" data-progress="6" style="left: 80%;"></a>
+    
+        <a href="./error_handeling.html" title="Error Handeling" class="chapter done new-chapter" data-progress="7" style="left: 86.66666666666667%;"></a>
+    
+        <a href="./s_expressions.html" title="S Expressions" class="chapter  new-chapter" data-progress="8" style="left: 93.33333333333333%;"></a>
+    
+        <a href="./q_expressions.html" title="Q Expressions" class="chapter  new-chapter" data-progress="9" style="left: 100%;"></a>
+    
+    </div>
+</div>
+
+            <div class="page-inner">
+            
+                <section class="normal" id="section-gitbook_6">
+                
+                    <h1>Error Handling <small>&bull; Chapter 8</small></h1>
+
+
+<h2>Crashes</h2> <hr/>
+
+<p>Some of you may have noticed a problem with the previous chapter&#39;s program. Try entering this into the prompt and see what happens.</p>
+
+<pre><code data-language='lispy'>Lispy Version 0.0.0.0.3
+Press Ctrl+c to Exit
+
+lispy&gt; / 10 0</code></pre>
+
+<p>Ouch. The program crashed upon trying to divide by zero. It&#39;s okay if a program crashes during development, but our final program would hopefully never crash, and always explain to the user what went wrong.</p>
+
+<p>At the moment our program can produce syntax errors but it still has no functionality for reporting errors in the evaluation of expressions. We need to build in some kind of error handling functionality to do this. It can be awkward in C, but if we start off on the right track, it will pay off later on when our system gets more complicated.</p>
+
+
+<h2>Lisp Value</h2> <hr/>
+
+<p>There are several ways to deal with errors in C, but in this context my preferred method is to make errors a possible result of evaluating an expression. Then we can say that, in Lispy, an expression will evaluate to <em>either</em> a <em>number</em>, or an <em>error</em>. For example <code>+ 1 2</code> will evaluate to a number, but <code>/ 10 0</code> will evaluate to an error.</p>
+
+<p>For this we need a data structure that can act as either one thing or anything. For simplicity sake we are just going to use a <code>struct</code> with fields specific to each thing that can be represented, and a special field <code>type</code> to tell us exactly what fields are meaningful to access.</p>
+
+<p>This we are going to call an <code>lval</code>, which stands for <em>Lisp Value</em>.</p>
+
+<pre><code data-language='c'>/<em> Declare New lval Struct </em>/
+typedef struct {
+  int type;
+  long num;
+  int err;
+} lval;</code></pre>
+
+
+<h2>Enumerations</h2> <hr/>
+
+<p>You&#39;ll notice the type of the fields <code>type</code>, and <code>err</code>, is <code>int</code>. This means they are represented by a single integer number.</p>
+
+<p>The reason we pick <code>int</code> is because we will assign meaning to each integer value, to encode what we require. For example we can make a rule <em>&quot;If <code>type</code> is <code>0</code> then the structure is a Number.&quot;</em>, or <em>&quot;If <code>type</code> is <code>1</code> then the structure is an Error.&quot;</em> This is a good way of doing things. It is simple and effective.</p>
+
+<p>But if we litter our code with stray <code>0</code> and <code>1</code> then it is going to become increasingly unclear as to what is happening. Instead we can use named constants that have been assigned these integer values. This gives the reader an indication as to <em>why</em> one might be comparing a number to <code>0</code> or <code>1</code> and <em>what</em> is meant in this context.</p>
+
+<p>In C this is supported using something called an <code>enum</code>.</p>
+
+<pre><code data-language='c'>/<em> Create Enumeration of Possible lval Types </em>/
+enum { LVAL_NUM, LVAL_ERR };</code></pre>
+
+<p>An <code>enum</code> is a declaration of variables which under the hood are automatically assigned integer constant values. Above is how we would declare some enumerated values for the <code>type</code> field.</p>
+
+<p>We also want to declare an enumeration for the <em>error</em> field. We have three error cases in our particular program. There is division by zero, an unknown operator, or being passed a number that is too large to be represented internally using a <code>long</code>. These can be enumerated as follows.</p>
+
+<pre><code data-language='c'>/<em> Create Enumeration of Possible Error Types </em>/
+enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };</code></pre>
+
+
+<h2>Lisp Value Functions</h2> <hr/>
+
+<p>Our <code>lval</code> type is almost ready to go. Unlike the previous <code>long</code> type we have no current method for creating new instances of it. To do this we can declare two functions that construct an <code>lval</code> of either an <em>error</em> type or a <em>number</em> type.</p>
+
+<pre><code data-language='c'>/<em> Create a new number type lval </em>/
+lval lval_num(long x) {
+  lval v;
+  v.type = LVAL_NUM;
+  v.num = x;
+  return v;
+}
+
+/<em> Create a new error type lval </em>/
+lval lval_err(int x) {
+  lval v;
+  v.type = LVAL_ERR;
+  v.err = x;
+  return v;
+}</code></pre>
+
+<p>These functions first create an <code>lval</code> called <code>v</code>, and assign the fields before returning it.</p>
+
+<p>Because our <code>lval</code> function can now be one of two things we can no longer just use <code>printf</code> to output it. We will want to do different behaviour depending upon the type of the <code>lval</code> that is given. There is a concise way to do this in C using the <code>switch</code> statement. This takes some value as input and compares it to other known values, known as <em>cases</em>. When the values are equal it executes the code that follows up until the next <code>break</code> statement.</p>
+
+<p>Using this we can build a function that can print an <code>lval</code> of any type like this.</p>
+
+<pre><code data-language='c'>/<em> Print an &quot;lval&quot; </em>/
+void lval_print(lval v) {
+  switch (v.type) {
+    /<em> In the case the type is a number print it, then &#39;break&#39; out of the switch. </em>/
+    case LVAL_NUM: printf(&quot;%li&quot;, v.num); break;
+
+    /<em> In the case the type is an error </em>/
+    case LVAL_ERR:
+      /<em> Check What exact type of error it is and print it </em>/
+      if (v.err == LERR_DIV_ZERO) { printf(&quot;Error: Division By Zero!&quot;); }
+      if (v.err == LERR_BAD_OP)   { printf(&quot;Error: Invalid Operator!&quot;); }
+      if (v.err == LERR_BAD_NUM)  { printf(&quot;Error: Invalid Number!&quot;); }
+    break;
+  }
+}
+
+/<em> Print an &quot;lval&quot; followed by a newline </em>/
+void lval_println(lval v) { lval_print(v); putchar(&#39;\n&#39;); }</code></pre>
+
+
+<h2>Evaluating Errors</h2> <hr/>
+
+<p>Now that we know how to work with the <code>lval</code> type, we need to change our evaluation functions to use it instead of <code>long</code>.</p>
+
+<p>As well as changing the type signatures we need to change the functions such that they work correctly upon encountering either an <em>error</em> as input, or a <em>number</em> as input.</p>
+
+<p>In our <code>eval_op</code> function, if we encounter an error we should return it right away, and only do computation if both the arguments are numbers. We should modify our code to return an error rather than attempt to divide by zero. This will fix the crash from right at the beginning of this chapter.</p>
+
+<pre><code data-language='c'>lval eval_op(lval x, char<em> op, lval y) {
+
+  /</em> If either value is an error return it <em>/
+  if (x.type == LVAL_ERR) { return x; }
+  if (y.type == LVAL_ERR) { return y; }
+
+  /</em> Otherwise do maths on the number values <em>/
+  if (strcmp(op, &quot;+&quot;) == 0) { return lval_num(x.num + y.num); }
+  if (strcmp(op, &quot;-&quot;) == 0) { return lval_num(x.num - y.num); }
+  if (strcmp(op, &quot;</em>&quot;) == 0) { return lval_num(x.num <em> y.num); }
+  if (strcmp(op, &quot;/&quot;) == 0) {
+    /</em> If second operand is zero return error instead of result <em>/
+    return y.num == 0 ? lval_err(LERR_DIV_ZERO) : lval_num(x.num / y.num);
+  }
+
+  return lval_err(LERR_BAD_OP);
+}</code></pre>
+
+<div class="alert alert-warning">
+  <p><strong>What is that <code>?</code> doing there?</strong></p>
+
+  <p>You&#39;ll notice that for division to check if the second argument is zero we use a question mark symbol <code>?</code>, followed by a colon <code>:</code>. This is called the <em>ternary operator</em>, and it allows you to write conditional expressions on one line.</p>
+
+  <p>It works something like this. <code>&lt;condition&gt; ? &lt;then&gt; : &lt;else&gt;</code>. In other words, if the condition is true it returns what follows the <code>?</code>, otherwise it returns what follows <code>:</code>.</p>
+
+  <p>Some people dislike this operator because they believe it makes code unclear. If you are unfamiliar with the ternary operator, initially, you may feel awkward to use it; but once you get to know it there are rarely problems.</p>
+</div>
+
+<p>We need to give a similar treatment to our <code>eval</code> function. In this case because we&#39;ve defined <code>eval_op</code> to robustly handle errors we just need to add the error conditions to our number conversion function.</p>
+
+<p>In this case we use the <code>strtol</code> function to convert from string to <code>long</code>. This allows us to check a special variable <code>errno</code> to ensure the conversion goes correctly. This is a more robust way to convert numbers than our previous method using <code>atoi</code>.</p>
+
+<pre><code data-language='c'>lval eval(mpc_ast_t</em> t) {
+
+  if (strstr(t-&gt;tag, &quot;number&quot;)) {
+    /<em> Check if there is some error in conversion </em>/
+    long x = strtol(t-&gt;contents, NULL, 10);
+    return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
+  }
+
+  char<em> op = t-&gt;children[1]-&gt;contents;<br>  lval x = eval(t-&gt;children[2]);
+
+  int i = 3;
+  while (strstr(t-&gt;children[i]-&gt;tag, &quot;expr&quot;)) {
+    x = eval_op(x, op, eval(t-&gt;children[i]));
+    i++;
+  }
+
+  return x;<br>}</code></pre>
+
+<p>The final small step is to change how we print the result found by our evaluation to use our newly defined printing function which can print any type of <code>lval</code>.</p>
+
+<pre><code data-language='c'>lval result = eval(r.output);
+lval_println(result);
+mpc_ast_delete(r.output);</code></pre>
+
+<p>And we are done! Try running this new program and make sure there are no crashes when dividing by zero!</p>
+
+<pre><code data-language='lispy'>lispy&gt; / 10 0
+Error: Division By Zero!
+lispy&gt; / 10 2
+5</code></pre>
+
+
+<h2>Plumbing</h2> <hr/>
+
+<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
+  <img src="static/img/plumbing.png" alt="plumbing"/>
+  <p><small>Plumbing &bull; Harder than you think</small></p>
+</div>
+
+<p>Some of you who have gotten this far in the book may feel uncomfortable with how it is progressing. You may feel you&#39;ve managed to follow instructions well enough, but don&#39;t have a clear understanding of all of the underlying mechanisms going on behind the scenes.</p>
+
+<p>If this is the case I want to reassure you that you are doing well. If you don&#39;t understand the internals it&#39;s because I have not explained everything in sufficient depth. This is okay.</p>
+
+<p>To be able to progress and get code to work under these conditions is a really great skill in programming, and if you&#39;ve made it this far it shows you have it.</p>
+
+<p>In programming we call this <em>plumbing</em>. Roughly speaking this is following instructions to try and tie together a bunch libraries or components, without fully understanding how they work internally.</p>
+
+<p>It requires <em>faith</em> and <em>intuition</em>. <em>Faith</em> is required to believe that if the stars align, and every incantation is correctly performed for this magical machine, the right thing will really happen. And <em>intuition</em> is required to work out what has gone wrong, and how to fix things when they don&#39;t go as planned.<p>
+
+<p>Unfortunately these can&#39;t be taught directly, so if you&#39;ve made it this far then <em>congratulations!</em> You&#39;ve made it over a difficult hump, and in the following chapters I promise we&#39;ll finish up with the plumbing, and actually start to programming that feels fresh and wholesome.</p>
+
+
+<h2>Reference</h2> <hr/>
+
+<div class="panel-group alert alert-warning" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          error_handling.c
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+<pre><code data-language='c'>#include &quot;mpc.h&quot;
+
+#ifdef _WIN32
+
+static char buffer[2048];
+
+char</em> readline(char<em> prompt) {
+  fputs(&quot;lispy&gt; &quot;, stdout);
+  fgets(buffer, 2048, stdin);
+  char</em> cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = &#39;\0&#39;;
+  return cpy;
+}
+
+void add_history(char<em> unused) {}
+
+#else
+
+#include &lt;editline/readline.h&gt;
+#include &lt;editline/history.h&gt;
+
+#endif
+
+/</em> Create Enumeration of Possible Error Types <em>/
+enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
+
+/</em> Create Enumeration of Possible lval Types <em>/
+enum { LVAL_NUM, LVAL_ERR };
+
+/</em> Declare New lval Struct <em>/
+typedef struct {
+  int type;
+  long num;
+  int err;
+} lval;
+
+/</em> Create a new number type lval <em>/
+lval lval_num(long x) {
+  lval v;
+  v.type = LVAL_NUM;
+  v.num = x;
+  return v;
+}
+
+/</em> Create a new error type lval <em>/
+lval lval_err(int x) {
+  lval v;
+  v.type = LVAL_ERR;
+  v.err = x;
+  return v;
+}
+
+/</em> Print an &quot;lval&quot; <em>/
+void lval_print(lval v) {
+  switch (v.type) {
+    /</em> In the case the type is a number print it, then &#39;break&#39; out of the switch. <em>/
+    case LVAL_NUM: printf(&quot;%li&quot;, v.num); break;
+
+    /</em> In the case the type is an error <em>/
+    case LVAL_ERR:
+      /</em> Check What exact type of error it is and print it <em>/
+      if (v.err == LERR_DIV_ZERO) { printf(&quot;Error: Division By Zero!&quot;); }
+      if (v.err == LERR_BAD_OP)   { printf(&quot;Error: Invalid Operator!&quot;); }
+      if (v.err == LERR_BAD_NUM)  { printf(&quot;Error: Invalid Number!&quot;); }
+    break;
+  }
+}
+
+/</em> Print an &quot;lval&quot; followed by a newline <em>/
+void lval_println(lval v) { lval_print(v); putchar(&#39;\n&#39;); }
+
+lval eval_op(lval x, char</em> op, lval y) {
+
+  /<em> If either value is an error return it </em>/
+  if (x.type == LVAL_ERR) { return x; }
+  if (y.type == LVAL_ERR) { return y; }
+
+  /<em> Otherwise do maths on the number values </em>/
+  if (strcmp(op, &quot;+&quot;) == 0) { return lval_num(x.num + y.num); }
+  if (strcmp(op, &quot;-&quot;) == 0) { return lval_num(x.num - y.num); }
+  if (strcmp(op, &quot;<em>&quot;) == 0) { return lval_num(x.num </em> y.num); }
+  if (strcmp(op, &quot;/&quot;) == 0) {
+    /<em> If second operand is zero return error instead of result </em>/
+    return y.num == 0 ? lval_err(LERR_DIV_ZERO) : lval_num(x.num / y.num);
+  }
+
+  return lval_err(LERR_BAD_OP);
+}
+
+lval eval(mpc_ast_t<em> t) {
+
+  if (strstr(t-&gt;tag, &quot;number&quot;)) {
+    /</em> Check if there is some error in conversion <em>/
+    long x = strtol(t-&gt;contents, NULL, 10);
+    return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
+  }
+
+  char</em> op = t-&gt;children[1]-&gt;contents;<br>  lval x = eval(t-&gt;children[2]);
+
+  int i = 3;
+  while (strstr(t-&gt;children[i]-&gt;tag, &quot;expr&quot;)) {
+    x = eval_op(x, op, eval(t-&gt;children[i]));
+    i++;
+  }
+
+  return x;<br>}
+
+int main(int argc, char<em>* argv) {
+
+  mpc_parser_t</em> Number = mpc_new(&quot;number&quot;);
+  mpc_parser_t<em> Operator = mpc_new(&quot;operator&quot;);
+  mpc_parser_t</em> Expr = mpc_new(&quot;expr&quot;);
+  mpc_parser_t<em> Lispy = mpc_new(&quot;lispy&quot;);
+
+  mpca_lang(MPC_LANG_DEFAULT,
+    &quot;                                                     \
+      number   : /-?[0-9]+/ ;                             \
+      operator : &#39;+&#39; | &#39;-&#39; | &#39;</em>&#39; | &#39;/&#39; ;                  \
+      expr     : &lt;number&gt; | &#39;(&#39; &lt;operator&gt; &lt;expr&gt;+ &#39;)&#39; ;  \
+      lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
+    &quot;,
+    Number, Operator, Expr, Lispy);
+
+  puts(&quot;Lispy Version 0.0.0.0.4&quot;);
+  puts(&quot;Press Ctrl+c to Exit\n&quot;);
+
+  while (1) {
+
+    char* input = readline(&quot;lispy&gt; &quot;);
+    add_history(input);
+
+    mpc_result_t r;
+    if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
+
+      lval result = eval(r.output);
+      lval_println(result);
+      mpc_ast_delete(r.output);
+
+    } else {<br>      mpc_err_print(r.error);
+      mpc_err_delete(r.error);
+    }
+
+    free(input);
+
+  }
+
+  mpc_cleanup(4, Number, Operator, Expr, Lispy);
+
+  return 0;
+}
+</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>Bonus Marks</h2> <hr/>
+
+<div class="alert alert-warning">
+  <ul class="list-group">
+    <li class="list-group-item">&rsaquo; How do you give an <code>enum</code> a name?</li>
+    <li class="list-group-item">&rsaquo; What are <code>union</code> data types and how do they work?</li>
+    <li class="list-group-item">&rsaquo; Can you change how <code>lval</code> is defined to use <code>union</code> instead of <code>struct</code>?</li>
+    <li class="list-group-item">&rsaquo; What are the advantages over using a <code>union</code> instead of <code>struct</code>?</li>
+    <li class="list-group-item">&rsaquo; Extend parsing and evaluation to support the remainder operator <code>%</code>.</li>
+    <li class="list-group-item">&rsaquo; Extend parsing and evaluation to support decimal types using a <code>double</code> field.</li>
+  </ul>
+</div>
+
+
+<h2>Navigation</h2>
+
+<table class="table" style='table-layout: fixed;'>
+  <tr>
+    <td class="text-left"><a href="chapter7_evaluation.html"><h4>&lsaquo; Evaluation</h4></a></td>
+    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
+    <td class="text-right"><a href="chapter9_s_expressions.html"><h4>S-Expressions &rsaquo;</h4></a></td>
+  </tr>
+</table>
+
+                
+                </section>
+            
+            </div>
+
+            <div class="page-footer">
+    
+        
+            
+            <a href="./s_expressions.html" class="navigation-link next">Next</a>
+            
+        
+    
+</div>
+        </div>
+    </div>
+</div>
+
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-javascript.js"></script>
+        <script src="gitbook/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+        <script src="gitbook/app.js"></script>
+        
+    </body>
+</html>

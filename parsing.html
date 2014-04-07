@@ -1,0 +1,567 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
+        
+        <meta charset="UTF-8">
+        <title>Parsing | Build Your Own Lisp</title>
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="robots" content="index, follow">
+        <meta name="author" content="TheThirdOne">
+        <meta name="description" content="Learn C and make a Lisp Dialect">
+        <meta name="keywords" content="gitbook,github" >
+        <meta name="generator" content="www.gitbook.io">
+
+        
+        <link rel="next" href="./evaluation.html" />
+        
+        
+        <link rel="prev" href="./languages.html" />
+        
+
+        <meta property="og:title" content="Parsing | Build Your Own Lisp">
+        <meta property="og:site_name" content="Build Your Own Lisp">
+        <meta property="og:type" content="book">
+        <meta property="og:locale" content="en_US">
+
+        <meta property="book:author" content="https://github.com/TheThirdOne">
+        <meta property="book:tag" content="GitBook">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+        
+        <link rel="stylesheet" href="gitbook/style.css">
+        
+        
+    </head>
+    <body>
+        
+<div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="5">
+    <div class="book-header">
+    <!-- Actions Left -->
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook" target="_blank" class="btn pull-left"><i class="fa fa-github-alt"></i></a>
+    <a href="#" class="btn pull-left toggle-summary"><i class="fa fa-align-justify"></i></a>
+
+    <!-- Actions Right -->
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="google-plus"><i class="fa fa-google-plus"></i></a>
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="facebook"><i class="fa fa-facebook"></i></a>
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="twitter"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/stargazers" target="_blank" class="btn pull-right count-star"><i class="fa fa-star-o"></i> Star (<span>-</span>)</a>
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/watchers" target="_blank" class="btn pull-right count-watch"><i class="fa fa-eye"></i> Watch (<span>-</span>)</a>
+
+
+    <!-- Title -->
+    <h1><a href="./README.html" >Build Your Own Lisp</a></h1>
+</div>
+
+    <div class="book-summary">
+    <ul class="summary">
+        <li>
+            <a href="https://github.com/TheThirdOne" target="blank">About the author</a>
+        </li>
+        <li>
+            <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/issues" target="blank">Questions and Issues</a>
+        </li>
+        <li>
+            <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/edit/master/parsing.md" target="blank">Edit and Contribute</a>
+        </li>
+        <li class="divider"></li>
+        <li data-level="0">
+            <a href="./README.html"><i class="fa fa-check"></i> Introduction</a>
+        </li>
+        
+            <li  data-level="1">
+                
+                <a href="./installation.html">
+                    <i class="fa fa-check"></i> <b>1)</b> Installation
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="2">
+                
+                <a href="./basics.html">
+                    <i class="fa fa-check"></i> <b>2)</b> Basics
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="3">
+                
+                <a href="./interactive_prompt.html">
+                    <i class="fa fa-check"></i> <b>3)</b> Interactive Prompt
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="4">
+                
+                <a href="./languages.html">
+                    <i class="fa fa-check"></i> <b>4)</b> Languages
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="5">
+                
+                <a href="./parsing.html">
+                    <i class="fa fa-check"></i> <b>5)</b> Parsing
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="6">
+                
+                <a href="./evaluation.html">
+                    <i class="fa fa-check"></i> <b>6)</b> Evaluation
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="7">
+                
+                <a href="./error_handeling.html">
+                    <i class="fa fa-check"></i> <b>7)</b> Error Handeling
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="8">
+                
+                <a href="./s_expressions.html">
+                    <i class="fa fa-check"></i> <b>8)</b> S Expressions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="9">
+                
+                <a href="./q_expressions.html">
+                    <i class="fa fa-check"></i> <b>9)</b> Q Expressions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="10">
+                
+                <a href="./variables.html">
+                    <i class="fa fa-check"></i> <b>10)</b> Variables
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="11">
+                
+                <a href="./functions.html">
+                    <i class="fa fa-check"></i> <b>11)</b> Functions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="12">
+                
+                <a href="./conditionals.html">
+                    <i class="fa fa-check"></i> <b>12)</b> Conditionals
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="13">
+                
+                <a href="./strings.html">
+                    <i class="fa fa-check"></i> <b>13)</b> Strings
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="14">
+                
+                <a href="./standard_library.html">
+                    <i class="fa fa-check"></i> <b>14)</b> Standard Library
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="15">
+                
+                <a href="./bonus_projects.html">
+                    <i class="fa fa-check"></i> <b>15)</b> Bonus Projects
+                </a>
+                
+                
+            </li>
+        
+    </ul>
+</div>
+
+    <div class="book-body" tabindex="-1">
+        <div class="page-wrapper">
+            <div class="book-progress">
+    <div class="bar">
+        <div class="inner" style="width: 73.33333333333333%;min-width: 66.66666666666667%;"></div>
+    </div>
+    <div class="chapters">
+    
+        <a href="./README.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
+    
+        <a href="./installation.html" title="Installation" class="chapter done new-chapter" data-progress="1" style="left: 6.666666666666667%;"></a>
+    
+        <a href="./variables.html" title="Variables" class="chapter done " data-progress="10" style="left: 13.333333333333334%;"></a>
+    
+        <a href="./functions.html" title="Functions" class="chapter done " data-progress="11" style="left: 20%;"></a>
+    
+        <a href="./conditionals.html" title="Conditionals" class="chapter done " data-progress="12" style="left: 26.666666666666668%;"></a>
+    
+        <a href="./strings.html" title="Strings" class="chapter done " data-progress="13" style="left: 33.333333333333336%;"></a>
+    
+        <a href="./standard_library.html" title="Standard Library" class="chapter done " data-progress="14" style="left: 40%;"></a>
+    
+        <a href="./bonus_projects.html" title="Bonus Projects" class="chapter done " data-progress="15" style="left: 46.666666666666664%;"></a>
+    
+        <a href="./basics.html" title="Basics" class="chapter done new-chapter" data-progress="2" style="left: 53.333333333333336%;"></a>
+    
+        <a href="./interactive_prompt.html" title="Interactive Prompt" class="chapter done new-chapter" data-progress="3" style="left: 60%;"></a>
+    
+        <a href="./languages.html" title="Languages" class="chapter done new-chapter" data-progress="4" style="left: 66.66666666666667%;"></a>
+    
+        <a href="./parsing.html" title="Parsing" class="chapter done new-chapter" data-progress="5" style="left: 73.33333333333333%;"></a>
+    
+        <a href="./evaluation.html" title="Evaluation" class="chapter  new-chapter" data-progress="6" style="left: 80%;"></a>
+    
+        <a href="./error_handeling.html" title="Error Handeling" class="chapter  new-chapter" data-progress="7" style="left: 86.66666666666667%;"></a>
+    
+        <a href="./s_expressions.html" title="S Expressions" class="chapter  new-chapter" data-progress="8" style="left: 93.33333333333333%;"></a>
+    
+        <a href="./q_expressions.html" title="Q Expressions" class="chapter  new-chapter" data-progress="9" style="left: 100%;"></a>
+    
+    </div>
+</div>
+
+            <div class="page-inner">
+            
+                <section class="normal" id="section-gitbook_11">
+                
+                    <h1>Parsing <small>&bull; Chapter 6</small></h1>
+
+
+<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
+  <img src="static/img/polish_man.png" alt="polish man"/>
+  <p><small>A Polish Nobleman &bull; A typical Polish Notation user</small></p>
+</div>
+
+
+<h2>Polish Notation</h2> <hr/>
+
+<p>To try out <code>mpc</code> we&#39;re going to implement a simple grammar that resembles a mathematical subset of our Lisp. It&#39;s called <a href="http://en.wikipedia.org/wiki/Polish_notation">Polish Notation</a> and is a notation for arithmetic where the operator comes before the operands.</p>
+
+<p>For example...</p>
+
+<table class='table' style='display: inline'>
+  <tr><td><code>1 + 2 + 6</code></td><td><em>is</em></td><td><code>+ 1 2 6</code></td></tr>
+  <tr><td><code>6 + (2 <em> 9)</code></td><td><em>is</em></td><td><code>+ 6 (</em> 2 9)</code></td></tr>
+  <tr><td><code>(10 <em> 2) / (4 + 2)</code></td><td><em>is</em></td><td><code>/ (</em> 10 2) (+ 4 2)</code></td></tr>
+  <tr><td></td><td></td><td></td></tr>
+</table>
+
+<p>We need to work out a grammar which describes this notation. We can begin by describing it <em>textually</em> and then later formalise our thoughts.</p>
+
+<p>To start, we observe that in polish notation the operator always comes first in an expression, followed by either numbers or other expressions in parenthesis. This means we can say &quot;a <em>program</em> is an <em>operator</em> followed by one or more <em>expressions</em>,&quot; where &quot;an <em>expression</em> is either a <em>number</em>, or, in parenthesis, an <em>operator</em> followed by one or more <em>expressions</em>&quot;.</p>
+
+<p>More formally...</p>
+
+<table class='table'>
+  <tr><td><code>Program</code></td><td><em>the start of input</em>, an <code>Operator</code>, one or more <code>Expression</code>, and <em>the end of input</em>.</td></tr>
+  <tr><td><code>Expression</code></td><td>either a <code>Number</code> <em>or</em> <code>&#39;(&#39;</code>, an <code>Operator</code>, one or more <code>Expression</code>, and an <code>&#39;)&#39;</code>.</td></tr>
+  <tr><td><code>Operator</code></td><td><code>&#39;+&#39;</code>, <code>&#39;-&#39;</code>, <code>&#39;<em>&#39;</code>, or <code>&#39;/&#39;</code>.</td></tr>
+  <tr><td><code>Number</code></td><td>an optional <code>-</code>, and one or more characters between <code>0</code> and <code>9</code></td></tr>
+</table>
+
+
+<h2>Regular Expressions</h2> <hr/>
+
+<p>We should be able to encode most of the above rules using things we know already, but <em>Number</em> and <em>Program</em> might pose some trouble. They contain a couple of constructs we&#39;ve not learnt how to express yet. We don&#39;t know how to express the start or the end of input, optional characters, or range of characters.</p>
+
+<p>These can be expressed, but they require something called a <em>Regular Expression</em>. Regular expressions are a way of writing grammars for small sections of text such as words or numbers. Grammars written using regular expressions can&#39;t consist of multiple rules, but they do give precise, and concise, control over what is matched and what isn&#39;t. Here are some basic rules for writing regular expressions.</p>
+
+<table class='table'>
+  <tr><td><code>a</code></td><td>The character <code>a</code> is required.</td></tr>
+  <tr><td><code>[abcdef]</code></td><td>Any character in the set <code>abcdef</code> is required.</td></tr>
+  <tr><td><code>[a-f]</code></td><td>Any character in the range <code>a</code> to <code>f</code> is required.</td></tr>
+  <tr><td><code>a?</code></td><td>The character <code>a</code> is optional.</td></tr>
+  <tr><td><code>a</em></code></td><td>Zero or more of the character <code>a</code> are required.</td></tr>
+  <tr><td><code>a+</code></td><td>One or more of the character <code>a</code> are required.</td></tr>
+  <tr><td><code>^</code></td><td>The start of input is required.</td></tr>
+  <tr><td><code>$</code></td><td>The end of input is required.</td></tr>
+</table>
+
+<p>These are all the regular expression rules we need for now. <a href="http://regex.learncodethehardway.org/">Whole books</a> have been written on learning regular expressions. For those curious much more information can be found online or from these sources. We will be using them in later chapters, so some basic knowledge will be required, but you won&#39;t need to master them for now.</p>
+
+<p>In an <code>mpc</code> grammar we write regular expressions by putting them between forward slashes <code>/</code>. Using the above guide our <em>Number</em> rule can be expressed as a regular expression using the string <code>/-?[0-9]+/</code>.</p>
+
+
+<h2>Installing mpc</h2> <hr/>
+
+<p>Before we work on writing this grammar we first need to <em>include</em> the <code>mpc</code> headers, and then <em>link</em> to the <code>mpc</code> library, just as we did for <code>editline</code> on Linux and Mac. Starting with your code from chapter 4, you can rename the file to <code>parsing.c</code> and download <code>mpc.h</code> and <code>mpc.c</code> from the <a href="http://github.com/orangeduck/mpc">mpc repo</a>. Put these in the same directory as your source file.</p>
+
+<p>To <em>include</em> <code>mpc</code> put <code>#include &quot;mpc.h&quot;</code> at the top of the file. To <em>link</em> to <code>mpc</code> put <code>mpc.c</code> directly into the compile command. On linux you will also have to link to the maths library by adding the flag <code>-lm</code>.</p>
+
+<p>On <strong>Linux</strong> and <strong>Mac</strong></p>
+
+<pre><code>cc -std=c99 -Wall parsing.c mpc.c -ledit -lm -o parsing</code></pre>
+
+<p>On <strong>Windows</strong></p>
+
+<pre><code>cc -std=c99 -Wall parsing.c mpc.c -o parsing</code></pre>
+
+<div class="alert alert-warning">
+  <p><strong>Hold on, don&#39;t you mean <code>#include &lt;mpc.h&gt;</code>?</strong></p>
+
+  <p>There are actually two ways to include files in C. One is using angular brackets <code>&lt;&gt;</code> as we&#39;ve seen so far, and the other is with quotation marks <code>&quot;&quot;</code>.</p>
+
+  <p>The only difference between the two is that using angular brackets searches the system locations for headers first, while quotation marks searches the current directory first. Because of this system headers such as <code>&lt;stdio.h&gt;</code> are typically put in angular brackets, while local headers such as <code>&quot;mpc.h&quot;</code> are typically put in quotation marks.</p>
+</div>
+
+
+<h2>Polish Notation Grammar</h2> <hr/>
+
+<p>Formalising the above rules further, and using some regular expressions, we can write a final grammar for the language of polish notation as follows. Read the below code and verify that it matches what we had written textually, and our ideas of polish notation.</p>
+
+<pre><code data-language='c'>/<em> Create Some Parsers </em>/
+mpc_parser_t<em> Number   = mpc_new(&quot;number&quot;);
+mpc_parser_t</em> Operator = mpc_new(&quot;operator&quot;);
+mpc_parser_t<em> Expr     = mpc_new(&quot;expr&quot;);
+mpc_parser_t</em> Lispy    = mpc_new(&quot;lispy&quot;);
+
+/<em> Define them with the following Language </em>/
+mpca_lang(MPC_LANG_DEFAULT,
+  &quot;                                                     \
+    number   : /-?[0-9]+/ ;                             \
+    operator : &#39;+&#39; | &#39;-&#39; | &#39;<em>&#39; | &#39;/&#39; ;                  \
+    expr     : &lt;number&gt; | &#39;(&#39; &lt;operator&gt; &lt;expr&gt;+ &#39;)&#39; ;  \
+    lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
+  &quot;,
+  Number, Operator, Expr, Lispy);
+</code></pre>
+
+<p>We need to add this to the interactive prompt we started on in chapter 4. Put this code right at the beginning of the <code>main</code> function before we print the <em>Version</em> and <em>Exit</em> information. At the end of our program we also need to delete the parsers when we are done with them. Right before <code>main</code> returns we should place the following clean-up code.</p>
+
+<pre><code data-language='c'>/</em> Undefine and Delete our Parsers <em>/
+mpc_cleanup(4, Number, Operator, Expr, Lispy);</code></pre>
+
+<div class="alert alert-warning">
+  <p><strong>I&#39;m getting an error <code>undefined reference to `mpc_lang&#39;</code></strong></p>
+
+  <p>That should be <code>mpca_lang</code>, with an <code>a</code> at the end!</p>
+</div>
+
+<h2>Parsing User Input</h2> <hr/>
+
+<p>Our new code creates a <code>mpc</code> parser for our <em>Polish Notation</em> language, but we still need to actually <em>use</em> it on the user input supplied each time from the prompt. We need to edit our <code>while</code> loop so that rather than just echoing user input back, it actually attempts to parse the input using our parser. We can do this by replacing the call to <code>printf</code> with the following <code>mpc</code> code, that makes use of our program parser <code>Lispy</code>.</p>
+
+<pre><code data-language='c'>/</em> Attempt to Parse the user Input <em>/
+mpc_result_t r;
+if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
+  /</em> On Success Print the AST <em>/
+  mpc_ast_print(r.output);
+  mpc_ast_delete(r.output);
+} else {
+  /</em> Otherwise Print the Error <em>/
+  mpc_err_print(r.error);
+  mpc_err_delete(r.error);
+}</code></pre>
+
+<p>This code calls the <code>mpc_parse</code> function with our parser <code>Lispy</code>, and the input string <code>input</code>. It copies the result of the parse into <code>r</code> and returns <code>1</code> on success and <code>0</code> on failure. We use the address of operator <code>&amp;</code> on <code>r</code> when we pass it to the function. This operator will be explained in more detail in later chapters.</p>
+
+<p>On success a internal structure is copied into <code>r</code>, in the field <code>output</code>. We can print out this structure using <code>mpc_ast_print</code> and delete it using <code>mpc_ast_delete</code>.</p>
+
+<p>Otherwise there has been an error, which is copied into <code>r</code> in the field <code>error</code>. We can print it out using <code>mpc_err_print</code> and delete it using <code>mpc_err_delete</code>.</p>
+
+<p>Compile these updates, and take this program for a spin. Try out different inputs and see how the system reacts. Correct behaviour should look like the following.</p>
+
+<pre><code data-language='lispy'>Lispy Version 0.0.0.0.2
+Press Ctrl+c to Exit
+
+lispy&gt; + 5 (</em> 2 2)
+&gt;:
+  regex:
+  operator|char: &#39;+&#39;
+  expr|number|regex: &#39;5&#39;
+  expr|&gt;:
+    char: &#39;(&#39;
+    operator|char: &#39;<em>&#39;
+    expr|number|regex: &#39;2&#39;
+    expr|number|regex: &#39;2&#39;
+    char: &#39;)&#39;
+  regex:
+lispy&gt; hello
+&lt;stdin&gt;:0:0: error: expected &#39;+&#39;, &#39;-&#39;, &#39;</em>&#39; or &#39;/&#39; at &#39;h&#39;
+lispy&gt; / 1dog &amp; cat
+&lt;stdin&gt;:0:3: error: expected end of input at &#39;d&#39;
+lispy&gt;</code></pre>
+
+<div class="alert alert-warning">
+  <p><strong>I&#39;m getting an error <code>&lt;stdin&gt;:0:0: error: Parser Undefined!</code>.</strong></p>
+
+  <p>This error is due to the syntax for your grammar supplied to <code>mpca_lang</code> being incorrect. See if you can work out what part of the grammar is incorrect. You can use the reference code for this chapter to help you find this, and verify how the grammar should look.</p>
+</div>
+
+
+<h2>Reference</h2> <hr/>
+
+<div class="panel-group alert alert-warning" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          parsing.c
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+<pre><code data-language='c'>#include &quot;mpc.h&quot;
+
+#ifdef _WIN32
+
+static char buffer[2048];
+
+char<em> readline(char</em> prompt) {
+  fputs(&quot;lispy&gt; &quot;, stdout);
+  fgets(buffer, 2048, stdin);
+  char<em> cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = &#39;\0&#39;;
+  return cpy;
+}
+
+void add_history(char</em> unused) {}
+
+#else
+
+#include &lt;editline/readline.h&gt;
+#include &lt;editline/history.h&gt;
+
+#endif
+
+int main(int argc, char<em>* argv) {
+
+  /</em> Create Some Parsers <em>/
+  mpc_parser_t</em> Number   = mpc_new(&quot;number&quot;);
+  mpc_parser_t<em> Operator = mpc_new(&quot;operator&quot;);
+  mpc_parser_t</em> Expr     = mpc_new(&quot;expr&quot;);
+  mpc_parser_t<em> Lispy    = mpc_new(&quot;lispy&quot;);
+
+  /</em> Define them with the following Language <em>/
+  mpca_lang(MPC_LANG_DEFAULT,
+    &quot;                                                     \
+      number   : /-?[0-9]+/ ;                             \
+      operator : &#39;+&#39; | &#39;-&#39; | &#39;</em>&#39; | &#39;/&#39; ;                  \
+      expr     : &lt;number&gt; | &#39;(&#39; &lt;operator&gt; &lt;expr&gt;+ &#39;)&#39; ;  \
+      lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
+    &quot;,
+    Number, Operator, Expr, Lispy);
+
+  puts(&quot;Lispy Version 0.0.0.0.2&quot;);
+  puts(&quot;Press Ctrl+c to Exit\n&quot;);
+
+  while (1) {
+
+    char<em> input = readline(&quot;lispy&gt; &quot;);
+    add_history(input);
+
+    /</em> Attempt to parse the user input <em>/
+    mpc_result_t r;
+    if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
+      /</em> On success print and delete the AST <em>/
+      mpc_ast_print(r.output);
+      mpc_ast_delete(r.output);
+    } else {
+      /</em> Otherwise print and delete the Error <em>/
+      mpc_err_print(r.error);
+      mpc_err_delete(r.error);
+    }
+
+    free(input);
+  }
+
+  /</em> Undefine and delete our parsers */
+  mpc_cleanup(4, Number, Operator, Expr, Lispy);
+
+  return 0;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<h2>Bonus Marks</h2> <hr/>
+
+<div class="alert alert-warning">
+  <ul class="list-group">
+    <li class="list-group-item">&rsaquo; Write a regular expression matching strings of all <code>a</code> or <code>b</code> such as <code>aababa</code> or <code>bbaa</code>.</li>
+    <li class="list-group-item">&rsaquo; Write a regular expression matching strings of consecutive <code>a</code> and <code>b</code> such as <code>ababab</code> or <code>aba</code>.</li>
+    <li class="list-group-item">&rsaquo; Write a regular expression matching <code>pit</code>, <code>pot</code> and <code>respite</code> but <em>not</em> <code>peat</code>, <code>spit</code>, or <code>part</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to add a new operator such as <code>%</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to recognize operators written in textual format <code>add</code>, <code>sub</code>, <code>mul</code>, <code>div</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to recognize decimal numbers such as <code>0.01</code>, <code>5.21</code>, or <code>10.2</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the grammar to make the operators written conventionally, between two expressions.</li>
+    <li class="list-group-item">&rsaquo; Use the grammar from the previous chapter to parse <code>Doge</code>. You must add <em>start</em> and <em>end</em> of input!</li>
+  </ul>
+</div>
+
+<h2>Navigation</h2>
+
+<table class="table" style='table-layout: fixed;'>
+  <tr>
+    <td class="text-left"><a href="chapter5_languages.html"><h4>&lsaquo; Languages</h4></a></td>
+    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
+    <td class="text-right"><a href="chapter7_evaluation.html"><h4>Evaluation &rsaquo;</h4></a></td>
+  </tr>
+</table>
+
+                
+                </section>
+            
+            </div>
+
+            <div class="page-footer">
+    
+        
+            
+            <a href="./evaluation.html" class="navigation-link next">Next</a>
+            
+        
+    
+</div>
+        </div>
+    </div>
+</div>
+
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-javascript.js"></script>
+        <script src="gitbook/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+        <script src="gitbook/app.js"></script>
+        
+    </body>
+</html>

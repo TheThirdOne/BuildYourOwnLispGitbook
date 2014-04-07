@@ -1,0 +1,616 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
+        
+        <meta charset="UTF-8">
+        <title>Evaluation | Build Your Own Lisp</title>
+
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="robots" content="index, follow">
+        <meta name="author" content="TheThirdOne">
+        <meta name="description" content="Learn C and make a Lisp Dialect">
+        <meta name="keywords" content="gitbook,github" >
+        <meta name="generator" content="www.gitbook.io">
+
+        
+        <link rel="next" href="./error_handeling.html" />
+        
+        
+        <link rel="prev" href="./parsing.html" />
+        
+
+        <meta property="og:title" content="Evaluation | Build Your Own Lisp">
+        <meta property="og:site_name" content="Build Your Own Lisp">
+        <meta property="og:type" content="book">
+        <meta property="og:locale" content="en_US">
+
+        <meta property="book:author" content="https://github.com/TheThirdOne">
+        <meta property="book:tag" content="GitBook">
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+
+        <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
+
+        
+        <link rel="stylesheet" href="gitbook/style.css">
+        
+        
+    </head>
+    <body>
+        
+<div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="6">
+    <div class="book-header">
+    <!-- Actions Left -->
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook" target="_blank" class="btn pull-left"><i class="fa fa-github-alt"></i></a>
+    <a href="#" class="btn pull-left toggle-summary"><i class="fa fa-align-justify"></i></a>
+
+    <!-- Actions Right -->
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="google-plus"><i class="fa fa-google-plus"></i></a>
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="facebook"><i class="fa fa-facebook"></i></a>
+    <a href="#" target="_blank" class="btn pull-right" data-sharing="twitter"><i class="fa fa-twitter"></i></a>
+
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/stargazers" target="_blank" class="btn pull-right count-star"><i class="fa fa-star-o"></i> Star (<span>-</span>)</a>
+    <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/watchers" target="_blank" class="btn pull-right count-watch"><i class="fa fa-eye"></i> Watch (<span>-</span>)</a>
+
+
+    <!-- Title -->
+    <h1><a href="./README.html" >Build Your Own Lisp</a></h1>
+</div>
+
+    <div class="book-summary">
+    <ul class="summary">
+        <li>
+            <a href="https://github.com/TheThirdOne" target="blank">About the author</a>
+        </li>
+        <li>
+            <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/issues" target="blank">Questions and Issues</a>
+        </li>
+        <li>
+            <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/edit/master/evaluation.md" target="blank">Edit and Contribute</a>
+        </li>
+        <li class="divider"></li>
+        <li data-level="0">
+            <a href="./README.html"><i class="fa fa-check"></i> Introduction</a>
+        </li>
+        
+            <li  data-level="1">
+                
+                <a href="./installation.html">
+                    <i class="fa fa-check"></i> <b>1)</b> Installation
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="2">
+                
+                <a href="./basics.html">
+                    <i class="fa fa-check"></i> <b>2)</b> Basics
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="3">
+                
+                <a href="./interactive_prompt.html">
+                    <i class="fa fa-check"></i> <b>3)</b> Interactive Prompt
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="4">
+                
+                <a href="./languages.html">
+                    <i class="fa fa-check"></i> <b>4)</b> Languages
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="5">
+                
+                <a href="./parsing.html">
+                    <i class="fa fa-check"></i> <b>5)</b> Parsing
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="6">
+                
+                <a href="./evaluation.html">
+                    <i class="fa fa-check"></i> <b>6)</b> Evaluation
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="7">
+                
+                <a href="./error_handeling.html">
+                    <i class="fa fa-check"></i> <b>7)</b> Error Handeling
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="8">
+                
+                <a href="./s_expressions.html">
+                    <i class="fa fa-check"></i> <b>8)</b> S Expressions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="9">
+                
+                <a href="./q_expressions.html">
+                    <i class="fa fa-check"></i> <b>9)</b> Q Expressions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="10">
+                
+                <a href="./variables.html">
+                    <i class="fa fa-check"></i> <b>10)</b> Variables
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="11">
+                
+                <a href="./functions.html">
+                    <i class="fa fa-check"></i> <b>11)</b> Functions
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="12">
+                
+                <a href="./conditionals.html">
+                    <i class="fa fa-check"></i> <b>12)</b> Conditionals
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="13">
+                
+                <a href="./strings.html">
+                    <i class="fa fa-check"></i> <b>13)</b> Strings
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="14">
+                
+                <a href="./standard_library.html">
+                    <i class="fa fa-check"></i> <b>14)</b> Standard Library
+                </a>
+                
+                
+            </li>
+        
+            <li  data-level="15">
+                
+                <a href="./bonus_projects.html">
+                    <i class="fa fa-check"></i> <b>15)</b> Bonus Projects
+                </a>
+                
+                
+            </li>
+        
+    </ul>
+</div>
+
+    <div class="book-body" tabindex="-1">
+        <div class="page-wrapper">
+            <div class="book-progress">
+    <div class="bar">
+        <div class="inner" style="width: 80%;min-width: 73.33333333333333%;"></div>
+    </div>
+    <div class="chapters">
+    
+        <a href="./README.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
+    
+        <a href="./installation.html" title="Installation" class="chapter done new-chapter" data-progress="1" style="left: 6.666666666666667%;"></a>
+    
+        <a href="./variables.html" title="Variables" class="chapter done " data-progress="10" style="left: 13.333333333333334%;"></a>
+    
+        <a href="./functions.html" title="Functions" class="chapter done " data-progress="11" style="left: 20%;"></a>
+    
+        <a href="./conditionals.html" title="Conditionals" class="chapter done " data-progress="12" style="left: 26.666666666666668%;"></a>
+    
+        <a href="./strings.html" title="Strings" class="chapter done " data-progress="13" style="left: 33.333333333333336%;"></a>
+    
+        <a href="./standard_library.html" title="Standard Library" class="chapter done " data-progress="14" style="left: 40%;"></a>
+    
+        <a href="./bonus_projects.html" title="Bonus Projects" class="chapter done " data-progress="15" style="left: 46.666666666666664%;"></a>
+    
+        <a href="./basics.html" title="Basics" class="chapter done new-chapter" data-progress="2" style="left: 53.333333333333336%;"></a>
+    
+        <a href="./interactive_prompt.html" title="Interactive Prompt" class="chapter done new-chapter" data-progress="3" style="left: 60%;"></a>
+    
+        <a href="./languages.html" title="Languages" class="chapter done new-chapter" data-progress="4" style="left: 66.66666666666667%;"></a>
+    
+        <a href="./parsing.html" title="Parsing" class="chapter done new-chapter" data-progress="5" style="left: 73.33333333333333%;"></a>
+    
+        <a href="./evaluation.html" title="Evaluation" class="chapter done new-chapter" data-progress="6" style="left: 80%;"></a>
+    
+        <a href="./error_handeling.html" title="Error Handeling" class="chapter  new-chapter" data-progress="7" style="left: 86.66666666666667%;"></a>
+    
+        <a href="./s_expressions.html" title="S Expressions" class="chapter  new-chapter" data-progress="8" style="left: 93.33333333333333%;"></a>
+    
+        <a href="./q_expressions.html" title="Q Expressions" class="chapter  new-chapter" data-progress="9" style="left: 100%;"></a>
+    
+    </div>
+</div>
+
+            <div class="page-inner">
+            
+                <section class="normal" id="section-gitbook_7">
+                
+                    <h1>Evaluation <small>&bull; Chapter 7</small></h1>
+
+
+<h2>Trees</h2> <hr/>
+
+<p>Now we can read input, and we have it structured internally, but we are still unable to evaluate it. In this chapter we add the code that evaluates this structure and actually performs the computations encoded within.</p>
+
+<p>This internal structure is what we saw printed out by the program in the previous chapter. It is called an <em>Abstract Syntax Tree</em>, and it represents the structure of the program based on the input entered by the user. At the leaves of this tree are numbers and operators - the actual data to be processed. At the branches are the rules used to produce this part of the tree - the information on how to traverse and evaluate it.</p>
+
+<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
+  <img src="static/img/tree.png" alt="tree"/>
+  <p><small>Abstract Christmas Tree &bull; A seasonal variation</small></p>
+</div>
+
+<p>Before working out exactly how we are going to do this traversal, lets see exactly how this structure is defined internally. If we peek inside <code>mpc.h</code> we can have a look at the definition of <code>mpc_ast_t</code>, which is the data structure we got from the parse.</p>
+
+<pre style='margin-left: 375px;'><code data-language='c'>typedef struct mpc_ast_t {
+  char<em> tag;
+  char</em> contents;
+  int children_num;
+  struct mpc_ast_t<strong> children;
+} mpc_ast_t;</code></pre>
+
+<p>This struct has a number of fields we can access. Lets take a look at them one by one.</p>
+
+<p>The first field is <code>tag</code>. When we printed out the tree this was the information that precluded the contents of the node. It was a string containing a list of all the rules used to parse that particular item. For example <code>expr|number|regex</code>.</p>
+
+<p>This <code>tag</code> field is going to be important as it lets us see what type of thing the node is.</p>
+
+<p>The second field is <code>contents</code>. This will contain the actual contents of the node such as <code>&#39;*&#39;</code>, <code>&#39;(&#39;</code> or <code>&#39;5&#39;</code>. You&#39;ll notice for branches this is empty, but for leaves we can use it to find the operator or number to use.</p>
+
+<p>Finally we see two fields that are going to help us traverse the tree. These are <code>children_num</code> and <code>children</code>. The first field tells us how many children a node has, and the second is an array of these children.</p>
+
+<p>The type of the <code>children</code> field is <code>mpc_ast_t</strong></code>. This is a double pointer type. It isn&#39;t as scary as it looks and will be explained in greater detail in later chapters. For now you can think of it as a list of the child nodes of the this tree.</p>
+
+<p>We can access a child node, by accessing this field using array notation. This is done by writing the field name <code>children</code> and suffixing it with square brackets containing the index of the child to access. For example to access the first child of the node we can use <code>children[0]</code>. Notice that C counts its array indices from <code>0</code>.</p>
+
+<p>Because the type <code>mpc_ast_t<em></code> is a <em>pointer</em> to a struct, there is a slightly different syntax to access its fields. We need to use an arrow <code>-&gt;</code> instead of a dot <code>.</code>. There is no fundamental reason for this switch in operators, so for now just remember that field access of pointer types uses an arrow.</p>
+
+<pre><code data-language='c'>/</em> Load AST from output <em>/
+mpc_ast_t</em> a = r.output;
+printf(&quot;Tag: %s\n&quot;, a-&gt;tag);
+printf(&quot;Contents: %s\n&quot;, a-&gt;contents);
+printf(&quot;Number of children: %i\n&quot;, a-&gt;children_num);
+
+/<em> Get First Child </em>/
+mpc_ast_t<em> c0 = a-&gt;children[0];
+printf(&quot;First Child Tag: %s\n&quot;, c0-&gt;tag);
+printf(&quot;First Child Contents: %s\n&quot;, c0-&gt;contents);
+printf(&quot;First Child Number of children: %i\n&quot;, c0-&gt;children_num);
+</code></pre>
+
+
+<h2>Recursion</h2> <hr/>
+
+<p>There is a funny thing about this tree structure. It refers to itself. Each of its children are themselves trees again, and the children of those children are trees yet again. Just like our languages, and re-write rules, data in this structure contains repeated substructures, that resemble their parents.</p>
+
+<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
+  <img src="static/img/recursion.png" alt="recursion"/>
+  <p><small>Recursion &bull; Dangerous in a fire.</small></p>
+</div>
+
+<p>This pattern of repeated substructures could go on and on. Clearly if we want a function which can work on all possible trees we can&#39;t look just a couple of nodes down, we have to define it to work on trees of any depth.</p>
+
+<p>Luckily we can do this, by exploiting the nature of how these substructures repeat, and using a technique called <em>recursion</em>.</p>
+
+<p>Put simply a <em>recursive function</em> is one that calls itself as some part of its calculation.</p>
+
+<p>It sounds weird for a function to be defined in terms of itself. But consider that functions can give different outputs when supplied with different inputs. If we give some changed, or different inputs to a recursive call to the same function, and provide a way for this function to not call itself again under certain conditions, we can be more confident this <em>recursive function</em> is doing something useful.</p>
+
+<p>As an example we can write a recursive function which will count the number of nodes in our tree structure.</p>
+
+<p>To begin we work out how it will act in the most simple case, if the input tree has no children. In this case we know the result is simply one. Now we can go on to define the more complex case, if the tree has one or more children. In this case the result will be one (for the node itself), plus the number of nodes in all of those children.</p>
+
+<p>But how do we find the number of nodes in all of the children? Well we can use the function we are in the process defining! <em>Yeah, Recursion.</em></p>
+
+<p>In C we might write it something like this.</p>
+
+<pre><code data-language='C'>int number_of_nodes(mpc_ast_t</em> t) {
+  if (t-&gt;children_num == 0) { return 1; }
+  if (t-&gt;children_num &gt;= 1) {
+    int total = 1;
+    for (int i = 0; i &lt; t-&gt;children_num; i++) {
+      total = total + number_of_nodes(t-&gt;children[i]);
+    }
+    return total;
+  }
+}</code></pre>
+
+<p>Recursive functions are weird because they require an odd leap of faith. First we have to assume we have some function which does something correctly already, and then we have to go about using this function, to write the initial function we assumed we had!</p>
+
+<p>Like most things, recursive functions almost always end up following a similar pattern. First a <em>base case</em> is defined. This is the case that ends the recursion, such as <code>t-&gt;children_num == 0</code> in our previous example. After this the <em>recursive case</em> is defined, such as <code>t-&gt;children_num &gt;= 1</code> in our previous example, which breaks down a computation into smaller parts, and calls itself recursively to compute those parts, before combining them together.</p>
+
+<p>Recursive functions can take some thought, so pause now and ensure you understand them before continuing onto other chapters because we&#39;ll be making good use of them in the rest of the book. If you are still uncertain, you can check out some of the bonus marks for this chapter to practice.</p>
+
+
+<h2>Evaluation</h2> <hr/>
+
+<p>To evaluate the parse tree we are going to write a recursive function. But before we get started, let us try and see what observations we can make about the structure of the tree we get as input. Try printing out some expressions using your program from the previous chapter. See what you can notice.</p>
+
+<pre><code data-language='lispy'>lispy&gt; + 1 (<em> 5 4)
+&gt;:
+  regex:
+  operator|char: &#39;+&#39;
+  expr|number|regex: &#39;1&#39;
+  expr|&gt;:
+    char: &#39;(&#39;
+    operator|char: &#39;</em>&#39;
+    expr|number|regex: &#39;5&#39;
+    expr|number|regex: &#39;4&#39;
+    char: &#39;)&#39;
+  regex:
+</code></pre>
+
+<p>One observation is that if a node is tagged with <code>number</code> it is always a number, has no children, and we can just convert the contents to an integer. This will act as the <em>base case</em> in our recursion.</p>
+
+<p>If a node is tagged with <code>expr</code>, and is <em>not</em> a <code>number</code>, we need to look at its second child (the first child is always <code>&#39;(&#39;</code>) and see which operator it is. Then we need to apply this operator to the <em>evaluation</em> of the remaining children, excluding the final child which is always <code>&#39;)&#39;</code>. This is our <em>recursive case</em>. This also needs to be done for the root node.</p>
+
+<p>When we evaluate our tree, just like when counting the nodes, we&#39;ll need to accumulate the result. To represent this result we&#39;ll use the C type <code>long</code> which means a <em>long</em> <em>integer</em>.</p>
+
+<p>To detect the tag of a node, or to get a number from a node, we will need to make use of the <code>tag</code> and <code>contents</code> fields. These are <em>string</em> fields, so we are going to have to learn a couple of string functions first.
+
+<table class='table'>
+  <tr><td><code>atoi</code></td><td>Converts a <code>char<em></code> to a <code>long</code>.</td></tr>
+  <tr><td><code>strcmp</code></td><td>Takes as input two <code>char</em></code> and if they are equal it returns <code>0</code>.</td></tr>
+  <tr><td><code>strstr</code></td><td>Takes as input two <code>char<em></code> and returns a pointer to the location of the second in the first, or <code>0</code> if the second is not a sub-string of the first.</td></tr>
+</table>
+
+<p>We can use <code>strcmp</code> to check which operator to use, and <code>strstr</code> to check if a tag contains some substring. Altogether our recursive evaluation function looks like this.</p>
+
+<pre><code data-language='c'>long eval(mpc_ast_t</em> t) {
+
+  /<em> If tagged as number return it directly, otherwise expression. </em>/ 
+  if (strstr(t-&gt;tag, &quot;number&quot;)) { return atoi(t-&gt;contents); }
+
+  /<em> The operator is always second child. </em>/
+  char<em> op = t-&gt;children[1]-&gt;contents;
+
+  /</em> We store the third child in <code>x</code> <em>/
+  long x = eval(t-&gt;children[2]);
+
+  /</em> Iterate the remaining children, combining using our operator <em>/
+  int i = 3;
+  while (strstr(t-&gt;children[i]-&gt;tag, &quot;expr&quot;)) {
+    x = eval_op(x, op, eval(t-&gt;children[i]));
+    i++;
+  }
+
+  return x;<br>}</code></pre>
+
+<p>We can define the <code>eval_op</code> function as follows. It takes in a number, an operator string, and another number. It tests for which operator is passed in, an performs the corresponding C operation on the inputs.</p>
+
+<pre><code data-language='c'>/</em> Use operator string to see which operation to perform <em>/
+long eval_op(long x, char</em> op, long y) {
+  if (strcmp(op, &quot;+&quot;) == 0) { return x + y; }
+  if (strcmp(op, &quot;-&quot;) == 0) { return x - y; }
+  if (strcmp(op, &quot;<em>&quot;) == 0) { return x </em> y; }
+  if (strcmp(op, &quot;/&quot;) == 0) { return x / y; }
+  return 0;
+}</code></pre>
+
+
+<h2>Printing</h2> <hr/>
+
+<p>Instead of printing the tree we now want to print the result of the evaluation. Therefore we need to pass the tree into our <code>eval</code> function, and print the result we get using <code>printf</code> and the specifier <code>%li</code>, which is used for <code>long</code> type.</p>
+
+<p>We also need to remember to delete the output tree after we are done evaluating it.</p>
+
+<pre><code data-language='c'>long result = eval(r.output);
+printf(&quot;%li\n&quot;, result);
+mpc_ast_delete(r.output);</code></pre>
+
+<p>If all of this is successful we should be able to do some basic maths with our new programming language!</p>
+
+<pre><code data-language='lispy'>Lispy Version 0.0.0.0.3
+Press Ctrl+c to Exit
+
+lispy&gt; + 5 6
+11
+lispy&gt; - (<em> 10 10) (+ 1 1 1)
+97
+lispy&gt; - (/ 10 2) 20
+-15
+lispy&gt;</code></pre>
+
+
+<h2>Reference</h2> <hr/>
+
+<div class="panel-group alert alert-warning" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          evaluation.c
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+<pre><code data-language='c'>#include &quot;mpc.h&quot;
+
+#ifdef _WIN32
+
+static char buffer[2048];
+
+char</em> readline(char<em> prompt) {
+  fputs(&quot;lispy&gt; &quot;, stdout);
+  fgets(buffer, 2048, stdin);
+  char</em> cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = &#39;\0&#39;;
+  return cpy;
+}
+
+void add_history(char<em> unused) {}
+
+#else
+
+#include &lt;editline/readline.h&gt;
+#include &lt;editline/history.h&gt;
+
+#endif
+
+/</em> Use operator string to see which operation to perform <em>/
+long eval_op(long x, char</em> op, long y) {
+  if (strcmp(op, &quot;+&quot;) == 0) { return x + y; }
+  if (strcmp(op, &quot;-&quot;) == 0) { return x - y; }
+  if (strcmp(op, &quot;<em>&quot;) == 0) { return x </em> y; }
+  if (strcmp(op, &quot;/&quot;) == 0) { return x / y; }
+  return 0;
+}
+
+long eval(mpc_ast_t<em> t) {
+
+  /</em> If tagged as number return it directly, otherwise expression. <em>/ 
+  if (strstr(t-&gt;tag, &quot;number&quot;)) { return atoi(t-&gt;contents); }
+
+  /</em> The operator is always second child. <em>/
+  char</em> op = t-&gt;children[1]-&gt;contents;
+
+  /<em> We store the third child in <code>x</code> </em>/
+  long x = eval(t-&gt;children[2]);
+
+  /<em> Iterate the remaining children, combining using our operator </em>/
+  int i = 3;
+  while (strstr(t-&gt;children[i]-&gt;tag, &quot;expr&quot;)) {
+    x = eval_op(x, op, eval(t-&gt;children[i]));
+    i++;
+  }
+
+  return x;<br>}
+
+int main(int argc, char<em>* argv) {
+
+  mpc_parser_t</em> Number = mpc_new(&quot;number&quot;);
+  mpc_parser_t<em> Operator = mpc_new(&quot;operator&quot;);
+  mpc_parser_t</em> Expr = mpc_new(&quot;expr&quot;);
+  mpc_parser_t<em> Lispy = mpc_new(&quot;lispy&quot;);
+
+  mpca_lang(MPC_LANG_DEFAULT,
+    &quot;                                                     \
+      number   : /-?[0-9]+/ ;                             \
+      operator : &#39;+&#39; | &#39;-&#39; | &#39;</em>&#39; | &#39;/&#39; ;                  \
+      expr     : &lt;number&gt; | &#39;(&#39; &lt;operator&gt; &lt;expr&gt;+ &#39;)&#39; ;  \
+      lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
+    &quot;,
+    Number, Operator, Expr, Lispy);
+
+  puts(&quot;Lispy Version 0.0.0.0.3&quot;);
+  puts(&quot;Press Ctrl+c to Exit\n&quot;);
+
+  while (1) {
+
+    char* input = readline(&quot;lispy&gt; &quot;);
+    add_history(input);
+
+    mpc_result_t r;
+    if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
+
+      long result = eval(r.output);
+      printf(&quot;%li\n&quot;, result);
+      mpc_ast_delete(r.output);
+
+    } else {<br>      mpc_err_print(r.error);
+      mpc_err_delete(r.error);
+    }
+
+    free(input);
+
+  }
+
+  mpc_cleanup(4, Number, Operator, Expr, Lispy);
+
+  return 0;
+}</code></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2>Bonus Marks</h2> <hr/>
+
+<div class="alert alert-warning">
+  <ul class="list-group">
+    <li class="list-group-item">&rsaquo; Write a recursive function to compute the number of leaves of a tree.</li>
+    <li class="list-group-item">&rsaquo; Write a recursive function to compute the number of branches of a tree.</li>
+    <li class="list-group-item">&rsaquo; Write a recursive function to compute the most number of children spanning from one branch of a tree.</li>
+    <li class="list-group-item">&rsaquo; How would you use <code>strstr</code> to see if a node was tagged as an <code>expr</code>.</li>
+    <li class="list-group-item">&rsaquo; How would you use <code>strcmp</code> to see if a node had the contents <code>&#39;(&#39;</code> or <code>&#39;)&#39;</code>.</li>
+    <li class="list-group-item">&rsaquo; Add the operator <code>%</code>, which returns the remainder of division. For example <code>% 10 6</code> is <code>4</code>.</li>
+    <li class="list-group-item">&rsaquo; Add the operator <code>^</code>, which raises one number to another. For example <code>^ 4 2</code> is <code>16</code>.</li>
+    <li class="list-group-item">&rsaquo; Add the function <code>min</code>, which returns the smallest number. For example <code>min 1 5 3</code> is <code>1</code>.</li>
+    <li class="list-group-item">&rsaquo; Add the function <code>max</code>, which returns the biggest number. For example <code>max 1 5 3</code> is <code>5</code>.</li>
+    <li class="list-group-item">&rsaquo; Change the minus operator <code>-</code> so that when it receives one argument it negates it.</li>
+  </ul>
+</div>
+
+
+<h2>Navigation</h2>
+
+<table class="table" style='table-layout: fixed;'>
+  <tr>
+    <td class="text-left"><a href="chapter6_parsing.html"><h4>&lsaquo; Parsing</h4></a></td>
+    <td class="text-center"><a href="contents.html"><h4>&bull; Contents &bull;</h4></a></td>
+    <td class="text-right"><a href="chapter8_error_handling.html"><h4>Error Handling &rsaquo;</h4></a></td>
+  </tr>
+</table>
+
+                
+                </section>
+            
+            </div>
+
+            <div class="page-footer">
+    
+        
+            
+            <a href="./error_handeling.html" class="navigation-link next">Next</a>
+            
+        
+    
+</div>
+        </div>
+    </div>
+</div>
+
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-javascript.js"></script>
+        <script src="gitbook/jsrepl/jsrepl.js" id="jsrepl-script"></script>
+        <script src="gitbook/app.js"></script>
+        
+    </body>
+</html>
