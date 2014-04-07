@@ -1,116 +1,126 @@
 Conditionals
 ============
 
-<h2>Doing it yourself</h2> <hr/>
+Doing it yourself
+-----------------
 
-<p>We&#39;ve come quite far now. Your knowledge of C should be good enough for you to stand on your own feet a little more. If you're feeling confident, this chapter is a perfect opportunity to stretch your wings out, and attempt something on your own. It is a fairly short chapter and essentially consists of adding a couple of new builtin functions to deal with comparison and ordering.</p>
+We&#39;ve come quite far now. Your knowledge of C should be good enough for you to stand on your own feet a little more. If you're feeling confident, this chapter is a perfect opportunity to stretch your wings out, and attempt something on your own. It is a fairly short chapter and essentially consists of adding a couple of new builtin functions to deal with comparison and ordering.
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/pug.png" alt="pug"/>
-  <p><small>Pug &bull; <strong>if</strong> pug is asleep <strong>then</strong> pug is cute.</small></p>
+  <small>Pug &bull; **if** pug is asleep **then** pug is cute.</small>
 </div>
 
-<p>If you're feeling positive, go ahead and try to implement comparison and ordering into your language now. Define some new builtin functions for <em>greater than</em>, <em>less than</em>, <em>equal to</em>, and all the other comparison operators we use in C. Try to define an <code>if</code> function that tests for some condition and then either evaluate some code, or some other code, depending on the result. Once you've finished come back and compare your work to mine. Observe the differences and decide which parts you prefer.</p>
+If you're feeling positive, go ahead and try to implement comparison and ordering into your language now. Define some new builtin functions for *greater than*, *less than*, *equal to*, and all the other comparison operators we use in C. Try to define an `if` function that tests for some condition and then either evaluate some code, or some other code, depending on the result. Once you've finished come back and compare your work to mine. Observe the differences and decide which parts you prefer.
 
-<p>If you still feel uncertain don't worry. Follow along and I'll explain my approach.</p>
+If you still feel uncertain don't worry. Follow along and I'll explain my approach.
 
 
-<h2>Ordering</h2> <hr/>
+Ordering
+--------
 
-<p>For simplicity&#39;s sake I'm going to re-use our number data type to represent the result of comparisons. I'll make a rule similar to C, to say that any number that isn't <code>0</code> evaluates to true in an <code>if</code> statement, while <code>0</code> always evaluates to false.</p>
+For simplicity&#39;s sake I'm going to re-use our number data type to represent the result of comparisons. I'll make a rule similar to C, to say that any number that isn't `0` evaluates to true in an `if` statement, while `0` always evaluates to false.
 
-<p>Therefore our ordering functions are a little like a simplified version of our arithmetic functions. They'll only work on numbers, and we only want them to work on two arguments.</p>
+Therefore our ordering functions are a little like a simplified version of our arithmetic functions. They'll only work on numbers, and we only want them to work on two arguments.
 
-<p>If these error conditions are met the maths is simple, we want to return an number <code>lval</code> either <code>0</code> or <code>1</code> depending on the equality comparison between the two input <code>lval</code>. We can use C&#39;s comparison operators to do this. Like our arithmetic functions we&#39;ll make use of a single function to do all of the comparisons.</p>
+If these error conditions are met the maths is simple, we want to return an number `lval` either `0` or `1` depending on the equality comparison between the two input `lval`. We can use C&#39;s comparison operators to do this. Like our arithmetic functions we&#39;ll make use of a single function to do all of the comparisons.
 
-<p>First we check the error conditions, then we compare the numbers in each of the arguments to get some result. Finally we return this result as a number value.</p>
+First we check the error conditions, then we compare the numbers in each of the arguments to get some result. Finally we return this result as a number value.
 
-<pre><code data-language='c'>lval* builtin_ord(lenv* e, lval* a, char* op) {
+```c
+lval* builtin_ord(lenv* e, lval* a, char* op) {
   LASSERT_NUM(op, a, 2);
   LASSERT_TYPE(op, a, 0, LVAL_NUM);
   LASSERT_TYPE(op, a, 1, LVAL_NUM);
 
   int r;
-  if (strcmp(op, "&gt;")  == 0) { r = (a-&gt;cell[0]-&gt;num &gt;  a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&lt;")  == 0) { r = (a-&gt;cell[0]-&gt;num &lt;  a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&gt;=") == 0) { r = (a-&gt;cell[0]-&gt;num &gt;= a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&lt;=") == 0) { r = (a-&gt;cell[0]-&gt;num &lt;= a-&gt;cell[1]-&gt;num); }
+  if (strcmp(op, ">")  == 0) { r = (a->cell[0]->num >  a->cell[1]->num); }
+  if (strcmp(op, "<")  == 0) { r = (a->cell[0]->num <  a->cell[1]->num); }
+  if (strcmp(op, ">=") == 0) { r = (a->cell[0]->num >= a->cell[1]->num); }
+  if (strcmp(op, "<=") == 0) { r = (a->cell[0]->num <= a->cell[1]->num); }
   lval_del(a);
   return lval_num(r);
 }
 
-lval* builtin_gt(lenv* e, lval* a) { return builtin_ord(e, a, "&gt;");  }
-lval* builtin_lt(lenv* e, lval* a) { return builtin_ord(e, a, "&lt;");  }
-lval* builtin_ge(lenv* e, lval* a) { return builtin_ord(e, a, "&gt;="); }
-lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, "&lt;="); }
-</code></pre>
+lval* builtin_gt(lenv* e, lval* a) { return builtin_ord(e, a, ">");  }
+lval* builtin_lt(lenv* e, lval* a) { return builtin_ord(e, a, "<");  }
+lval* builtin_ge(lenv* e, lval* a) { return builtin_ord(e, a, ">="); }
+lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, "<="); }
+```
 
 
-<h2>Equality</h2> <hr/>
+Equality
+--------
 
-<p>Equality is going to be different to ordering because we want it to work on more than number types. It will be useful to see if an input is equal to an empty list, or to see if two functions passed in are the same. Therefore we need to define a function which can test for equality between two different types of <code>lval</code>.</p>
+Equality is going to be different to ordering because we want it to work on more than number types. It will be useful to see if an input is equal to an empty list, or to see if two functions passed in are the same. Therefore we need to define a function which can test for equality between two different types of `lval`.
 
-<p>This function essentially checks that all the fields which make up the data for a particular <code>lval</code> type are equal. If all the fields are equal, the whole thing is considered equal. Otherwise if there are any differences the whole thing is considered unequal.</p>
+This function essentially checks that all the fields which make up the data for a particular `lval` type are equal. If all the fields are equal, the whole thing is considered equal. Otherwise if there are any differences the whole thing is considered unequal.
 
-<pre><code data-language='c'>int lval_eq(lval* x, lval* y) {
+```c
+int lval_eq(lval* x, lval* y) {
 
   /* Different Types are always unequal */
-  if (x-&gt;type != y-&gt;type) { return 0; }
+  if (x->type != y->type) { return 0; }
 
   /* Compare Based upon type */
-  switch (x-&gt;type) {
+  switch (x->type) {
     /* Compare Number Value */
-    case LVAL_NUM: return (x-&gt;num == y-&gt;num);
+    case LVAL_NUM: return (x->num == y->num);
 
     /* Compare String Values */
-    case LVAL_ERR: return (strcmp(x-&gt;err, y-&gt;err) == 0);
-    case LVAL_SYM: return (strcmp(x-&gt;sym, y-&gt;sym) == 0);
+    case LVAL_ERR: return (strcmp(x->err, y->err) == 0);
+    case LVAL_SYM: return (strcmp(x->sym, y->sym) == 0);
 
     /* If Builtin compare functions, otherwise compare formals and body */
     case LVAL_FUN:
-      if (x-&gt;builtin) {
-        return x-&gt;builtin == y-&gt;builtin;
+      if (x->builtin) {
+        return x->builtin == y->builtin;
       } else {
-        return lval_eq(x-&gt;formals, y-&gt;formals) &amp;&amp; lval_eq(x-&gt;body, y-&gt;body);
+        return lval_eq(x->formals, y->formals) && lval_eq(x->body, y->body);
       }
 
     /* If list compare every individual element */
     case LVAL_QEXPR:
     case LVAL_SEXPR:
-      if (x-&gt;count != y-&gt;count) { return 0; }
-      for (int i = 0; i &lt; x-&gt;count; i++) {
+      if (x->count != y->count) { return 0; }
+      for (int i = 0; i < x->count; i++) {
         /* If any element not equal then whole list not equal */
-        if (!lval_eq(x-&gt;cell[0], y-&gt;cell[0])) { return 0; }
+        if (!lval_eq(x->cell[0], y->cell[0])) { return 0; }
       }
       /* Otherwise lists must be equal */
       return 1;
     break;
   }
   return 0;
-}</code></pre>
+}
+```
 
-<p>Using this function the new builtin function for equality comparison is very simple to add. We simply ensure two arguments are input, and that they are equal. We store the result of the comparison into a new <code>lval</code> and return it.</p>
+Using this function the new builtin function for equality comparison is very simple to add. We simply ensure two arguments are input, and that they are equal. We store the result of the comparison into a new `lval` and return it.
 
-<pre><code data-language='c'>lval* builtin_cmp(lenv* e, lval* a, char* op) {
+```c
+lval* builtin_cmp(lenv* e, lval* a, char* op) {
   LASSERT_NUM(op, a, 2);
   int r;
-  if (strcmp(op, "==") == 0) { r =  lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
-  if (strcmp(op, "!=") == 0) { r = !lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
+  if (strcmp(op, "==") == 0) { r =  lval_eq(a->cell[0], a->cell[1]); }
+  if (strcmp(op, "!=") == 0) { r = !lval_eq(a->cell[0], a->cell[1]); }
   lval_del(a);
   return lval_num(r);
 }
 
 lval* builtin_eq(lenv* e, lval* a) { return builtin_cmp(e, a, "=="); }
-lval* builtin_ne(lenv* e, lval* a) { return builtin_cmp(e, a, "!="); }</code></pre>
+lval* builtin_ne(lenv* e, lval* a) { return builtin_cmp(e, a, "!="); }
+```
 
 
-<h2>If Function</h2> <hr/>
+If Function
+-----------
 
-<p>To make our comparison operators useful well need an <code>if</code> function. This function is a little like the ternary operation in C. Upon some condition being true it evaluates to one thing, otherwise it evaluates to another.</p>
+To make our comparison operators useful well need an `if` function. This function is a little like the ternary operation in C. Upon some condition being true it evaluates to one thing, otherwise it evaluates to another.
 
-<p>We can again make use of Q-Expressions to encode a computation. First we get the user to pass in the result of a comparison, then we get the user to pass in two Q-Expressions representing the code to be evaluated upon a condition being either true or false.</p>
+We can again make use of Q-Expressions to encode a computation. First we get the user to pass in the result of a comparison, then we get the user to pass in two Q-Expressions representing the code to be evaluated upon a condition being either true or false.
 
-<pre><code data-language='c'>lval* builtin_if(lenv* e, lval* a) {
+```c
+lval* builtin_if(lenv* e, lval* a) {
   LASSERT_NUM("if", a, 3);
   LASSERT_TYPE("if", a, 0, LVAL_NUM);
   LASSERT_TYPE("if", a, 1, LVAL_QEXPR);
@@ -118,10 +128,10 @@ lval* builtin_ne(lenv* e, lval* a) { return builtin_cmp(e, a, "!="); }</code></p
 
   /* Mark Both Expressions as evaluable */
   lval* x;
-  a-&gt;cell[1]-&gt;type = LVAL_SEXPR;
-  a-&gt;cell[2]-&gt;type = LVAL_SEXPR;
+  a->cell[1]->type = LVAL_SEXPR;
+  a->cell[2]->type = LVAL_SEXPR;
 
-  if (a-&gt;cell[0]-&gt;num) {
+  if (a->cell[0]->num) {
     /* If condition is true evaluate first expression */
     x = lval_eval(e, lval_pop(a, 1));
   } else {
@@ -132,68 +142,77 @@ lval* builtin_ne(lenv* e, lval* a) { return builtin_cmp(e, a, "!="); }</code></p
   /* Delete argument list and return */
   lval_del(a);
   return x;
-}</code></pre>
+}
+```
 
-<p>All that remains is for us to register all of these new builtins and we are again ready to go!</p>
+All that remains is for us to register all of these new builtins and we are again ready to go!
 
-<pre><code data-language='c'>/* Comparison Functions */
-lenv_add_builtin(e, &quot;if&quot;,   builtin_if);
-lenv_add_builtin(e, &quot;==&quot;,   builtin_eq); lenv_add_builtin(e, &quot;!=&quot;,   builtin_ne);
-lenv_add_builtin(e, &quot;&gt;&quot;,    builtin_gt); lenv_add_builtin(e, &quot;&lt;&quot;,    builtin_lt);
-lenv_add_builtin(e, &quot;&gt;=&quot;,   builtin_ge); lenv_add_builtin(e, &quot;&lt;=&quot;,   builtin_le);
-</code></pre>
+```c
+/* Comparison Functions */
+lenv_add_builtin(e, "if",   builtin_if);
+lenv_add_builtin(e, "==",   builtin_eq); lenv_add_builtin(e, "!=",   builtin_ne);
+lenv_add_builtin(e, ">",    builtin_gt); lenv_add_builtin(e, "<",    builtin_lt);
+lenv_add_builtin(e, ">=",   builtin_ge); lenv_add_builtin(e, "<=",   builtin_le);
+```
 
-<p>Have a quick mess around to check that everything is working correctly.</p>
+Have a quick mess around to check that everything is working correctly.
 
-<pre><code data-language='lispy'>lispy&gt; &gt; 10 5
+```lispy
+lispy> > 10 5
 1
-lispy&gt; &lt;= 88 5
+lispy> <= 88 5
 0
-lispy&gt; == 5 6
+lispy> == 5 6
 0
-lispy&gt; == 5 {}
+lispy> == 5 {}
 0
-lispy&gt; == 1 1
+lispy> == 1 1
 1
-lispy&gt; != {} 56
+lispy> != {} 56
 1
-lispy&gt; == {1 2 3 {5 6}} {1   2  3   {5 6}}
+lispy> == {1 2 3 {5 6}} {1   2  3   {5 6}}
 1
-lispy&gt; def {x y} 100 200
+lispy> def {x y} 100 200
 ()
-lispy&gt; if (== x y) {+ x y} {- x y}
+lispy> if (== x y) {+ x y} {- x y}
 -100
-</code></pre>
+```
 
 
-<h2>Recursive Functions</h2> <hr/>
+Recursive Functions
+-------------------
 
-<p>By Introducing conditionals we've actually made our language a lot more powerful. This is because they effectively let us implement recursive functions.</p>
+By Introducing conditionals we've actually made our language a lot more powerful. This is because they effectively let us implement recursive functions.
 
-<p>Recursive functions are those which call themselves. We've used these already in C to perform reading in and evaluation of expressions. The reason we require conditionals for these is because they let us test for the situation where we wish to terminate the recursion.</p>
+Recursive functions are those which call themselves. We've used these already in C to perform reading in and evaluation of expressions. The reason we require conditionals for these is because they let us test for the situation where we wish to terminate the recursion.
 
-<p>For example we can use conditionals to implement a function <code>len</code> which tells us the number of items in a list. If we encounter the empty list we just return <code>0</code>. Otherwise we return the length of the <code>tail</code> of the input list, plus <code>1</code>. Think about why this works. It repeatedly uses the <code>len</code> function until it reaches the empty list. At this point it returns <code>0</code> and adds all the other partial results together.</p>
+For example we can use conditionals to implement a function `len` which tells us the number of items in a list. If we encounter the empty list we just return `0`. Otherwise we return the length of the `tail` of the input list, plus `1`. Think about why this works. It repeatedly uses the `len` function until it reaches the empty list. At this point it returns `0` and adds all the other partial results together.
 
-<pre><code data-language='lispy'>(fun {len l} {
+```lispy
+(fun {len l} {
   if (== l {})
     {0}
     {+ 1 (len (tail l))}
-})</code></pre>
+})
+```
 
-<p>There is a pleasant symmetry to this sort of recursive function. First we do something for the empty list (this is often called <em>the base case</em>). Then if we get something bigger, we take off a chunk such as the head of the list, and do something to it, before combining it with the rest of the thing to which the function has been already applied.</p>
+There is a pleasant symmetry to this sort of recursive function. First we do something for the empty list (this is often called *the base case*). Then if we get something bigger, we take off a chunk such as the head of the list, and do something to it, before combining it with the rest of the thing to which the function has been already applied.
 
-<p>Here is another function for reversing a list. Like before it checks for the empty list, but this time it returns the empty list back. This makes sense. The reverse of the empty list is just the empty list. But if it gets something bigger than the empty list, it reverses the tail, and stick this in front of the head.</p>
+Here is another function for reversing a list. Like before it checks for the empty list, but this time it returns the empty list back. This makes sense. The reverse of the empty list is just the empty list. But if it gets something bigger than the empty list, it reverses the tail, and stick this in front of the head.
 
-<pre><code data-language='lispy'>(fun {reverse l} {
+```lispy
+(fun {reverse l} {
   if (== l {})
     {{}}
     {join (reverse (tail l)) (head l)}
-})</code></pre>
+})
+```
 
-<p>We're going to use this technique to build lots functions like this, this is because it is going to be the primary way to achieve looping in our language.</p>
+We're going to use this technique to build lots functions like this, this is because it is going to be the primary way to achieve looping in our language.
 
 
-<h2>Reference</h2> <hr/>
+Reference
+---------
 
 <div class="panel-group alert alert-warning" id="accordion">
   <div class="panel panel-default">
@@ -206,14 +225,16 @@ lispy&gt; if (== x y) {+ x y} {- x y}
     </div>
     <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
-<pre><code data-language='c'>#include "mpc.h"
+
+```c
+#include "mpc.h"
 
 #ifdef _WIN32
 
 static char buffer[2048];
 
 char* readline(char* prompt) {
-  fputs("lispy&gt; ", stdout);
+  fputs("lispy> ", stdout);
   fgets(buffer, 2048, stdin);
   char* cpy = malloc(strlen(buffer)+1);
   strcpy(cpy, buffer);
@@ -225,8 +246,8 @@ void add_history(char* unused) {}
 
 #else
 
-#include &lt;editline/readline.h&gt;
-#include &lt;editline/history.h&gt;
+#include <editline/readline.h>
+#include <editline/history.h>
 
 #endif
 
@@ -264,35 +285,35 @@ struct lval {
 
 lval* lval_num(long x) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_NUM;
-  v-&gt;num = x;
+  v->type = LVAL_NUM;
+  v->num = x;
   return v;
 }
 
 lval* lval_err(char* fmt, ...) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_ERR;
+  v->type = LVAL_ERR;
   va_list va;
   va_start(va, fmt);
-  v-&gt;err = malloc(512);
-  vsnprintf(v-&gt;err, 511, fmt, va);
-  v-&gt;err = realloc(v-&gt;err, strlen(v-&gt;err)+1);
+  v->err = malloc(512);
+  vsnprintf(v->err, 511, fmt, va);
+  v->err = realloc(v->err, strlen(v->err)+1);
   va_end(va);
   return v;
 }
 
 lval* lval_sym(char* s) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SYM;
-  v-&gt;sym = malloc(strlen(s) + 1);
-  strcpy(v-&gt;sym, s);
+  v->type = LVAL_SYM;
+  v->sym = malloc(strlen(s) + 1);
+  strcpy(v->sym, s);
   return v;
 }
 
 lval* lval_builtin(lbuiltin func) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_FUN;
-  v-&gt;builtin = func;
+  v->type = LVAL_FUN;
+  v->builtin = func;
   return v;
 }
 
@@ -300,27 +321,27 @@ lenv* lenv_new(void);
 
 lval* lval_lambda(lval* formals, lval* body) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_FUN;
-  v-&gt;builtin = NULL;
-  v-&gt;env = lenv_new();
-  v-&gt;formals = formals;
-  v-&gt;body = body;
+  v->type = LVAL_FUN;
+  v->builtin = NULL;
+  v->env = lenv_new();
+  v->formals = formals;
+  v->body = body;
   return v;
 }
 
 lval* lval_sexpr(void) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
+  v->type = LVAL_SEXPR;
+  v->count = 0;
+  v->cell = NULL;
   return v;
 }
 
 lval* lval_qexpr(void) {
   lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_QEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
+  v->type = LVAL_QEXPR;
+  v->count = 0;
+  v->cell = NULL;
   return v;
 }
 
@@ -328,23 +349,23 @@ void lenv_del(lenv* e);
 
 void lval_del(lval* v) {
 
-  switch (v-&gt;type) {
+  switch (v->type) {
     case LVAL_NUM: break;
     case LVAL_FUN:
-      if (!v-&gt;builtin) {
-        lenv_del(v-&gt;env);
-        lval_del(v-&gt;formals);
-        lval_del(v-&gt;body);
+      if (!v->builtin) {
+        lenv_del(v->env);
+        lval_del(v->formals);
+        lval_del(v->body);
       }
     break;
-    case LVAL_ERR: free(v-&gt;err); break;
-    case LVAL_SYM: free(v-&gt;sym); break;
+    case LVAL_ERR: free(v->err); break;
+    case LVAL_SYM: free(v->sym); break;
     case LVAL_QEXPR:
     case LVAL_SEXPR:
-      for (int i = 0; i &lt; v-&gt;count; i++) {
-        lval_del(v-&gt;cell[i]);
+      for (int i = 0; i < v->count; i++) {
+        lval_del(v->cell[i]);
       }
-      free(v-&gt;cell);
+      free(v->cell);
     break;
   }
 
@@ -355,27 +376,27 @@ lenv* lenv_copy(lenv* e);
 
 lval* lval_copy(lval* v) {
   lval* x = malloc(sizeof(lval));
-  x-&gt;type = v-&gt;type;
-  switch (v-&gt;type) {
+  x->type = v->type;
+  switch (v->type) {
     case LVAL_FUN:
-      if (v-&gt;builtin) {
-        x-&gt;builtin = v-&gt;builtin;
+      if (v->builtin) {
+        x->builtin = v->builtin;
       } else {
-        x-&gt;builtin = NULL;
-        x-&gt;env = lenv_copy(v-&gt;env);
-        x-&gt;formals = lval_copy(v-&gt;formals);
-        x-&gt;body = lval_copy(v-&gt;body);
+        x->builtin = NULL;
+        x->env = lenv_copy(v->env);
+        x->formals = lval_copy(v->formals);
+        x->body = lval_copy(v->body);
       }
     break;
-    case LVAL_NUM: x-&gt;num = v-&gt;num; break;
-    case LVAL_ERR: x-&gt;err = malloc(strlen(v-&gt;err) + 1); strcpy(x-&gt;err, v-&gt;err); break;
-    case LVAL_SYM: x-&gt;sym = malloc(strlen(v-&gt;sym) + 1); strcpy(x-&gt;sym, v-&gt;sym); break;
+    case LVAL_NUM: x->num = v->num; break;
+    case LVAL_ERR: x->err = malloc(strlen(v->err) + 1); strcpy(x->err, v->err); break;
+    case LVAL_SYM: x->sym = malloc(strlen(v->sym) + 1); strcpy(x->sym, v->sym); break;
     case LVAL_SEXPR:
     case LVAL_QEXPR:
-      x-&gt;count = v-&gt;count;
-      x-&gt;cell = malloc(sizeof(lval*) * x-&gt;count);
-      for (int i = 0; i &lt; x-&gt;count; i++) {
-        x-&gt;cell[i] = lval_copy(v-&gt;cell[i]);
+      x->count = v->count;
+      x->cell = malloc(sizeof(lval*) * x->count);
+      for (int i = 0; i < x->count; i++) {
+        x->cell[i] = lval_copy(v->cell[i]);
       }
     break;
   }
@@ -383,26 +404,26 @@ lval* lval_copy(lval* v) {
 }
 
 lval* lval_add(lval* v, lval* x) {
-  v-&gt;count++;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
-  v-&gt;cell[v-&gt;count-1] = x;
+  v->count++;
+  v->cell = realloc(v->cell, sizeof(lval*) * v->count);
+  v->cell[v->count-1] = x;
   return v;
 }
 
 lval* lval_join(lval* x, lval* y) {
-  for (int i = 0; i &lt; y-&gt;count; i++) {
-    x = lval_add(x, y-&gt;cell[i]);
+  for (int i = 0; i < y->count; i++) {
+    x = lval_add(x, y->cell[i]);
   }
-  free(y-&gt;cell);
+  free(y->cell);
   free(y);
   return x;
 }
 
 lval* lval_pop(lval* v, int i) {
-  lval* x = v-&gt;cell[i];
-  memmove(&v-&gt;cell[i], &v-&gt;cell[i+1], sizeof(lval*) * (v-&gt;count-i-1));
-  v-&gt;count--;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
+  lval* x = v->cell[i];
+  memmove(&v->cell[i], &v->cell[i+1], sizeof(lval*) * (v->count-i-1));
+  v->count--;
+  v->cell = realloc(v->cell, sizeof(lval*) * v->count);
   return x;
 }
 
@@ -416,9 +437,9 @@ void lval_print(lval* v);
 
 void lval_print_expr(lval* v, char open, char close) {
   putchar(open);
-  for (int i = 0; i &lt; v-&gt;count; i++) {
-    lval_print(v-&gt;cell[i]);
-    if (i != (v-&gt;count-1)) {
+  for (int i = 0; i < v->count; i++) {
+    lval_print(v->cell[i]);
+    if (i != (v->count-1)) {
       putchar(' ');
     }
   }
@@ -426,17 +447,17 @@ void lval_print_expr(lval* v, char open, char close) {
 }
 
 void lval_print(lval* v) {
-  switch (v-&gt;type) {
+  switch (v->type) {
     case LVAL_FUN:
-      if (v-&gt;builtin) {
-        printf("&lt;builtin&gt;");
+      if (v->builtin) {
+        printf("<builtin>");
       } else {
-        printf("(\\ "); lval_print(v-&gt;formals); putchar(' '); lval_print(v-&gt;body); putchar(')');
+        printf("(\\ "); lval_print(v->formals); putchar(' '); lval_print(v->body); putchar(')');
       }
     break;
-    case LVAL_NUM:   printf("%li", v-&gt;num); break;
-    case LVAL_ERR:   printf("Error: %s", v-&gt;err); break;
-    case LVAL_SYM:   printf("%s", v-&gt;sym); break;
+    case LVAL_NUM:   printf("%li", v->num); break;
+    case LVAL_ERR:   printf("Error: %s", v->err); break;
+    case LVAL_SYM:   printf("%s", v->sym); break;
     case LVAL_SEXPR: lval_print_expr(v, '(', ')'); break;
     case LVAL_QEXPR: lval_print_expr(v, '{', '}'); break;
   }
@@ -447,32 +468,32 @@ void lval_println(lval* v) { lval_print(v); putchar('\n'); }
 int lval_eq(lval* x, lval* y) {
 
   /* Different Types are always unequal */
-  if (x-&gt;type != y-&gt;type) { return 0; }
+  if (x->type != y->type) { return 0; }
 
   /* Compare Based upon type */
-  switch (x-&gt;type) {
+  switch (x->type) {
     /* Compare Number Value */
-    case LVAL_NUM: return (x-&gt;num == y-&gt;num);
+    case LVAL_NUM: return (x->num == y->num);
 
     /* Compare String Values */
-    case LVAL_ERR: return (strcmp(x-&gt;err, y-&gt;err) == 0);
-    case LVAL_SYM: return (strcmp(x-&gt;sym, y-&gt;sym) == 0);
+    case LVAL_ERR: return (strcmp(x->err, y->err) == 0);
+    case LVAL_SYM: return (strcmp(x->sym, y->sym) == 0);
 
     /* If Builtin compare functions, otherwise compare formals and body */
     case LVAL_FUN:
-      if (x-&gt;builtin) {
-        return x-&gt;builtin == y-&gt;builtin;
+      if (x->builtin) {
+        return x->builtin == y->builtin;
       } else {
-        return lval_eq(x-&gt;formals, y-&gt;formals) && lval_eq(x-&gt;body, y-&gt;body);
+        return lval_eq(x->formals, y->formals) && lval_eq(x->body, y->body);
       }
 
     /* If list compare every individual element */
     case LVAL_QEXPR:
     case LVAL_SEXPR:
-      if (x-&gt;count != y-&gt;count) { return 0; }
-      for (int i = 0; i &lt; x-&gt;count; i++) {
+      if (x->count != y->count) { return 0; }
+      for (int i = 0; i < x->count; i++) {
         /* If any element not equal then whole list not equal */
-        if (!lval_eq(x-&gt;cell[0], y-&gt;cell[0])) { return 0; }
+        if (!lval_eq(x->cell[0], y->cell[0])) { return 0; }
       }
       /* Otherwise lists must be equal */
       return 1;
@@ -504,72 +525,72 @@ struct lenv {
 
 lenv* lenv_new(void) {
   lenv* e = malloc(sizeof(lenv));
-  e-&gt;par = NULL;
-  e-&gt;count = 0;
-  e-&gt;syms = NULL;
-  e-&gt;vals = NULL;
+  e->par = NULL;
+  e->count = 0;
+  e->syms = NULL;
+  e->vals = NULL;
   return e;
 }
 
 void lenv_del(lenv* e) {
-  for (int i = 0; i &lt; e-&gt;count; i++) {
-    free(e-&gt;syms[i]);
-    lval_del(e-&gt;vals[i]);
+  for (int i = 0; i < e->count; i++) {
+    free(e->syms[i]);
+    lval_del(e->vals[i]);
   }
-  free(e-&gt;syms);
-  free(e-&gt;vals);
+  free(e->syms);
+  free(e->vals);
   free(e);
 }
 
 lenv* lenv_copy(lenv* e) {
   lenv* n = malloc(sizeof(lenv));
-  n-&gt;par = e-&gt;par;
-  n-&gt;count = e-&gt;count;
-  n-&gt;syms = malloc(sizeof(char*) * n-&gt;count);
-  n-&gt;vals = malloc(sizeof(lval*) * n-&gt;count);
-  for (int i = 0; i &lt; e-&gt;count; i++) {
-    n-&gt;syms[i] = malloc(strlen(e-&gt;syms[i]) + 1);
-    strcpy(n-&gt;syms[i], e-&gt;syms[i]);
-    n-&gt;vals[i] = lval_copy(e-&gt;vals[i]);
+  n->par = e->par;
+  n->count = e->count;
+  n->syms = malloc(sizeof(char*) * n->count);
+  n->vals = malloc(sizeof(lval*) * n->count);
+  for (int i = 0; i < e->count; i++) {
+    n->syms[i] = malloc(strlen(e->syms[i]) + 1);
+    strcpy(n->syms[i], e->syms[i]);
+    n->vals[i] = lval_copy(e->vals[i]);
   }
   return n;
 }
 
 lval* lenv_get(lenv* e, lval* k) {
 
-  for (int i = 0; i &lt; e-&gt;count; i++) {
-    if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) { return lval_copy(e-&gt;vals[i]); }
+  for (int i = 0; i < e->count; i++) {
+    if (strcmp(e->syms[i], k->sym) == 0) { return lval_copy(e->vals[i]); }
   }
 
-  if (e-&gt;par) {
-    return lenv_get(e-&gt;par, k);
+  if (e->par) {
+    return lenv_get(e->par, k);
   } else {
-    return lval_err("Unbound Symbol '%s'", k-&gt;sym);
+    return lval_err("Unbound Symbol '%s'", k->sym);
   }
 }
 
 void lenv_put(lenv* e, lval* k, lval* v) {
 
-  for (int i = 0; i &lt; e-&gt;count; i++) {
-    if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) {
-      lval_del(e-&gt;vals[i]);
-      e-&gt;vals[i] = lval_copy(v);
-      e-&gt;syms[i] = realloc(e-&gt;syms[i], strlen(k-&gt;sym)+1);
-      strcpy(e-&gt;syms[i], k-&gt;sym);
+  for (int i = 0; i < e->count; i++) {
+    if (strcmp(e->syms[i], k->sym) == 0) {
+      lval_del(e->vals[i]);
+      e->vals[i] = lval_copy(v);
+      e->syms[i] = realloc(e->syms[i], strlen(k->sym)+1);
+      strcpy(e->syms[i], k->sym);
       return;
     }
   }
 
-  e-&gt;count++;
-  e-&gt;vals = realloc(e-&gt;vals, sizeof(lval*) * e-&gt;count);
-  e-&gt;syms = realloc(e-&gt;syms, sizeof(char*) * e-&gt;count);
-  e-&gt;vals[e-&gt;count-1] = lval_copy(v);
-  e-&gt;syms[e-&gt;count-1] = malloc(strlen(k-&gt;sym)+1);
-  strcpy(e-&gt;syms[e-&gt;count-1], k-&gt;sym);
+  e->count++;
+  e->vals = realloc(e->vals, sizeof(lval*) * e->count);
+  e->syms = realloc(e->syms, sizeof(char*) * e->count);
+  e->vals[e->count-1] = lval_copy(v);
+  e->syms[e->count-1] = malloc(strlen(k->sym)+1);
+  strcpy(e->syms[e->count-1], k->sym);
 }
 
 void lenv_def(lenv* e, lval* k, lval* v) {
-  while (e-&gt;par) { e = e-&gt;par; }
+  while (e->par) { e = e->par; }
   lenv_put(e, k, v);
 }
 
@@ -579,17 +600,17 @@ void lenv_def(lenv* e, lval* k, lval* v) {
   if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); lval_del(args); return err; }
 
 #define LASSERT_TYPE(func, args, index, expect) \
-  LASSERT(args, args-&gt;cell[index]-&gt;type == expect, \
+  LASSERT(args, args->cell[index]->type == expect, \
     "Function '%s' passed incorrect type for argument %i. Got %s, Expected %s.", \
-    func, index, ltype_name(args-&gt;cell[index]-&gt;type), ltype_name(expect))
+    func, index, ltype_name(args->cell[index]->type), ltype_name(expect))
 
 #define LASSERT_NUM(func, args, num) \
-  LASSERT(args, args-&gt;count == num, \
+  LASSERT(args, args->count == num, \
     "Function '%s' passed incorrect number of arguments. Got %i, Expected %i.", \
-    func, args-&gt;count, num)
+    func, args->count, num)
 
 #define LASSERT_NOT_EMPTY(func, args, index) \
-  LASSERT(args, args-&gt;cell[index]-&gt;count != 0, \
+  LASSERT(args, args->cell[index]->count != 0, \
     "Function '%s' passed {} for argument %i.", func, index);
 
 lval* lval_eval(lenv* e, lval* v);
@@ -599,10 +620,10 @@ lval* builtin_lambda(lenv* e, lval* a) {
   LASSERT_TYPE("\\", a, 0, LVAL_QEXPR);
   LASSERT_TYPE("\\", a, 1, LVAL_QEXPR);
 
-  for (int i = 0; i &lt; a-&gt;cell[0]-&gt;count; i++) {
-    LASSERT(a, (a-&gt;cell[0]-&gt;cell[i]-&gt;type == LVAL_SYM),
+  for (int i = 0; i < a->cell[0]->count; i++) {
+    LASSERT(a, (a->cell[0]->cell[i]->type == LVAL_SYM),
       "Cannot define non-symbol. Got %s, Expected %s.",
-      ltype_name(a-&gt;cell[0]-&gt;cell[i]-&gt;type), ltype_name(LVAL_SYM));
+      ltype_name(a->cell[0]->cell[i]->type), ltype_name(LVAL_SYM));
   }
 
   lval* formals = lval_pop(a, 0);
@@ -613,7 +634,7 @@ lval* builtin_lambda(lenv* e, lval* a) {
 }
 
 lval* builtin_list(lenv* e, lval* a) {
-  a-&gt;type = LVAL_QEXPR;
+  a->type = LVAL_QEXPR;
   return a;
 }
 
@@ -623,7 +644,7 @@ lval* builtin_head(lenv* e, lval* a) {
   LASSERT_NOT_EMPTY("head", a, 0);
 
   lval* v = lval_take(a, 0);
-  while (v-&gt;count &gt; 1) { lval_del(lval_pop(v, 1)); }
+  while (v->count > 1) { lval_del(lval_pop(v, 1)); }
   return v;
 }
 
@@ -642,17 +663,17 @@ lval* builtin_eval(lenv* e, lval* a) {
   LASSERT_TYPE("tail", a, 0, LVAL_QEXPR);
 
   lval* x = lval_take(a, 0);
-  x-&gt;type = LVAL_SEXPR;
+  x->type = LVAL_SEXPR;
   return lval_eval(e, x);
 }
 
 lval* builtin_join(lenv* e, lval* a) {
 
-  for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE("join", a, i, LVAL_QEXPR); }
+  for (int i = 0; i < a->count; i++) { LASSERT_TYPE("join", a, i, LVAL_QEXPR); }
 
   lval* x = lval_pop(a, 0);
 
-  while (a-&gt;count) {
+  while (a->count) {
     lval* y = lval_pop(a, 0);
     x = lval_join(x, y);
   }
@@ -663,24 +684,24 @@ lval* builtin_join(lenv* e, lval* a) {
 
 lval* builtin_op(lenv* e, lval* a, char* op) {
 
-  for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE(op, a, i, LVAL_NUM); }
+  for (int i = 0; i < a->count; i++) { LASSERT_TYPE(op, a, i, LVAL_NUM); }
 
   lval* x = lval_pop(a, 0);
 
-  if ((strcmp(op, "-") == 0) && a-&gt;count == 0) { x-&gt;num = -x-&gt;num; }
+  if ((strcmp(op, "-") == 0) && a->count == 0) { x->num = -x->num; }
 
-  while (a-&gt;count &gt; 0) {
+  while (a->count > 0) {
     lval* y = lval_pop(a, 0);
 
-    if (strcmp(op, "+") == 0) { x-&gt;num += y-&gt;num; }
-    if (strcmp(op, "-") == 0) { x-&gt;num -= y-&gt;num; }
-    if (strcmp(op, "*") == 0) { x-&gt;num *= y-&gt;num; }
+    if (strcmp(op, "+") == 0) { x->num += y->num; }
+    if (strcmp(op, "-") == 0) { x->num -= y->num; }
+    if (strcmp(op, "*") == 0) { x->num *= y->num; }
     if (strcmp(op, "/") == 0) {
-      if (y-&gt;num != 0) {
+      if (y->num != 0) {
         lval_del(x); lval_del(y); lval_del(a);
         return lval_err("Division By Zero.");
       }
-      x-&gt;num /= y-&gt;num;
+      x->num /= y->num;
     }
 
     lval_del(y);
@@ -698,20 +719,20 @@ lval* builtin_div(lenv* e, lval* a) { return builtin_op(e, a, "/"); }
 lval* builtin_var(lenv* e, lval* a, char* func) {
   LASSERT_TYPE(func, a, 0, LVAL_QEXPR);
 
-  lval* syms = a-&gt;cell[0];
-  for (int i = 0; i &lt; syms-&gt;count; i++) {
-    LASSERT(a, (syms-&gt;cell[i]-&gt;type == LVAL_SYM),
+  lval* syms = a->cell[0];
+  for (int i = 0; i < syms->count; i++) {
+    LASSERT(a, (syms->cell[i]->type == LVAL_SYM),
       "Function '%s' cannot define non-symbol. Got %s, Expected %s.",
-      func, ltype_name(syms-&gt;cell[i]-&gt;type), ltype_name(LVAL_SYM));
+      func, ltype_name(syms->cell[i]->type), ltype_name(LVAL_SYM));
   }
 
-  LASSERT(a, (syms-&gt;count == a-&gt;count-1),
+  LASSERT(a, (syms->count == a->count-1),
     "Function '%s' passed too many arguments for symbols. Got %i, Expected %i.",
-    func, syms-&gt;count, a-&gt;count-1);
+    func, syms->count, a->count-1);
 
-  for (int i = 0; i &lt; syms-&gt;count; i++) {
-    if (strcmp(func, "def") == 0) { lenv_def(e, syms-&gt;cell[i], a-&gt;cell[i+1]); }
-    if (strcmp(func, "=")   == 0) { lenv_put(e, syms-&gt;cell[i], a-&gt;cell[i+1]); }
+  for (int i = 0; i < syms->count; i++) {
+    if (strcmp(func, "def") == 0) { lenv_def(e, syms->cell[i], a->cell[i+1]); }
+    if (strcmp(func, "=")   == 0) { lenv_put(e, syms->cell[i], a->cell[i+1]); }
   }
 
   lval_del(a);
@@ -727,24 +748,24 @@ lval* builtin_ord(lenv* e, lval* a, char* op) {
   LASSERT_TYPE(op, a, 1, LVAL_NUM);
 
   int r;
-  if (strcmp(op, "&gt;")  == 0) { r = (a-&gt;cell[0]-&gt;num &gt;  a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&lt;")  == 0) { r = (a-&gt;cell[0]-&gt;num &lt;  a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&gt;=") == 0) { r = (a-&gt;cell[0]-&gt;num &gt;= a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&lt;=") == 0) { r = (a-&gt;cell[0]-&gt;num &lt;= a-&gt;cell[1]-&gt;num); }
+  if (strcmp(op, ">")  == 0) { r = (a->cell[0]->num >  a->cell[1]->num); }
+  if (strcmp(op, "<")  == 0) { r = (a->cell[0]->num <  a->cell[1]->num); }
+  if (strcmp(op, ">=") == 0) { r = (a->cell[0]->num >= a->cell[1]->num); }
+  if (strcmp(op, "<=") == 0) { r = (a->cell[0]->num <= a->cell[1]->num); }
   lval_del(a);
   return lval_num(r);
 }
 
-lval* builtin_gt(lenv* e, lval* a) { return builtin_ord(e, a, "&gt;");  }
-lval* builtin_lt(lenv* e, lval* a) { return builtin_ord(e, a, "&lt;");  }
-lval* builtin_ge(lenv* e, lval* a) { return builtin_ord(e, a, "&gt;="); }
-lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, "&lt;="); }
+lval* builtin_gt(lenv* e, lval* a) { return builtin_ord(e, a, ">");  }
+lval* builtin_lt(lenv* e, lval* a) { return builtin_ord(e, a, "<");  }
+lval* builtin_ge(lenv* e, lval* a) { return builtin_ord(e, a, ">="); }
+lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, "<="); }
 
 lval* builtin_cmp(lenv* e, lval* a, char* op) {
   LASSERT_NUM(op, a, 2);
   int r;
-  if (strcmp(op, "==") == 0) { r =  lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
-  if (strcmp(op, "!=") == 0) { r = !lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
+  if (strcmp(op, "==") == 0) { r =  lval_eq(a->cell[0], a->cell[1]); }
+  if (strcmp(op, "!=") == 0) { r = !lval_eq(a->cell[0], a->cell[1]); }
   lval_del(a);
   return lval_num(r);
 }
@@ -760,10 +781,10 @@ lval* builtin_if(lenv* e, lval* a) {
 
   /* Mark Both Expressions as evaluable */
   lval* x;
-  a-&gt;cell[1]-&gt;type = LVAL_SEXPR;
-  a-&gt;cell[2]-&gt;type = LVAL_SEXPR;
+  a->cell[1]->type = LVAL_SEXPR;
+  a->cell[2]->type = LVAL_SEXPR;
 
-  if (a-&gt;cell[0]-&gt;num) {
+  if (a->cell[0]->num) {
     /* If condition is true evaluate first expression */
     x = lval_eval(e, lval_pop(a, 1));
   } else {
@@ -800,66 +821,66 @@ void lenv_add_builtins(lenv* e) {
   /* Comparison Functions */
   lenv_add_builtin(e, "if",   builtin_if);
   lenv_add_builtin(e, "==",   builtin_eq); lenv_add_builtin(e, "!=",   builtin_ne);
-  lenv_add_builtin(e, "&gt;",    builtin_gt); lenv_add_builtin(e, "&lt;",    builtin_lt);
-  lenv_add_builtin(e, "&gt;=",   builtin_ge); lenv_add_builtin(e, "&lt;=",   builtin_le);
+  lenv_add_builtin(e, ">",    builtin_gt); lenv_add_builtin(e, "<",    builtin_lt);
+  lenv_add_builtin(e, ">=",   builtin_ge); lenv_add_builtin(e, "<=",   builtin_le);
 }
 
 /* Evaluation */
 
 lval* lval_call(lenv* e, lval* f, lval* a) {
 
-  if (f-&gt;builtin) { return f-&gt;builtin(e, a); }
+  if (f->builtin) { return f->builtin(e, a); }
 
-  int given = a-&gt;count;
-  int total = f-&gt;formals-&gt;count;
+  int given = a->count;
+  int total = f->formals->count;
 
-  while (a-&gt;count) {
+  while (a->count) {
 
-    if (f-&gt;formals-&gt;count == 0) {
+    if (f->formals->count == 0) {
       lval_del(a);
       return lval_err("Function passed too many arguments. Got %i, Expected %i.", given, total);
     }
 
-    lval* sym = lval_pop(f-&gt;formals, 0);
+    lval* sym = lval_pop(f->formals, 0);
 
-    if (strcmp(sym-&gt;sym, "&") == 0) {
+    if (strcmp(sym->sym, "&") == 0) {
 
-      if (f-&gt;formals-&gt;count != 1) {
+      if (f->formals->count != 1) {
         lval_del(a);
         return lval_err("Function format invalid. Symbol '&' not followed by single symbol.");
       }
 
-      lval* nsym = lval_pop(f-&gt;formals, 0);
-      lenv_put(f-&gt;env, nsym, builtin_list(e, a));
+      lval* nsym = lval_pop(f->formals, 0);
+      lenv_put(f->env, nsym, builtin_list(e, a));
       lval_del(sym); lval_del(nsym);
       break;
     }
 
     lval* val = lval_pop(a, 0);
-    lenv_put(f-&gt;env, sym, val);
+    lenv_put(f->env, sym, val);
     lval_del(sym); lval_del(val);
   }
 
   lval_del(a);
 
-  if (f-&gt;formals-&gt;count &gt; 0 &&
-    strcmp(f-&gt;formals-&gt;cell[0]-&gt;sym, "&") == 0) {
+  if (f->formals->count > 0 &&
+    strcmp(f->formals->cell[0]->sym, "&") == 0) {
 
-    if (f-&gt;formals-&gt;count != 2) {
+    if (f->formals->count != 2) {
       return lval_err("Function format invalid. Symbol '&' not followed by single symbol.");
     }
 
-    lval_del(lval_pop(f-&gt;formals, 0));
+    lval_del(lval_pop(f->formals, 0));
 
-    lval* sym = lval_pop(f-&gt;formals, 0);
+    lval* sym = lval_pop(f->formals, 0);
     lval* val = lval_qexpr();
-    lenv_put(f-&gt;env, sym, val);
+    lenv_put(f->env, sym, val);
     lval_del(sym); lval_del(val);
   }
 
-  if (f-&gt;formals-&gt;count == 0) {
-    f-&gt;env-&gt;par = e;
-    return builtin_eval(f-&gt;env, lval_add(lval_sexpr(), lval_copy(f-&gt;body)));
+  if (f->formals->count == 0) {
+    f->env->par = e;
+    return builtin_eval(f->env, lval_add(lval_sexpr(), lval_copy(f->body)));
   } else {
     return lval_copy(f);
   }
@@ -868,17 +889,17 @@ lval* lval_call(lenv* e, lval* f, lval* a) {
 
 lval* lval_eval_sexpr(lenv* e, lval* v) {
 
-  for (int i = 0; i &lt; v-&gt;count; i++) { v-&gt;cell[i] = lval_eval(e, v-&gt;cell[i]); }
-  for (int i = 0; i &lt; v-&gt;count; i++) { if (v-&gt;cell[i]-&gt;type == LVAL_ERR) { return lval_take(v, i); } }
+  for (int i = 0; i < v->count; i++) { v->cell[i] = lval_eval(e, v->cell[i]); }
+  for (int i = 0; i < v->count; i++) { if (v->cell[i]->type == LVAL_ERR) { return lval_take(v, i); } }
 
-  if (v-&gt;count == 0) { return v; }
-  if (v-&gt;count == 1) { return lval_eval(e, lval_take(v, 0)); }
+  if (v->count == 0) { return v; }
+  if (v->count == 1) { return lval_eval(e, lval_take(v, 0)); }
 
   lval* f = lval_pop(v, 0);
-  if (f-&gt;type != LVAL_FUN) {
+  if (f->type != LVAL_FUN) {
     lval* err = lval_err(
       "S-Expression starts with incorrect type. Got %s, Expected %s.",
-      ltype_name(f-&gt;type), ltype_name(LVAL_FUN));
+      ltype_name(f->type), ltype_name(LVAL_FUN));
     lval_del(f); lval_del(v);
     return err;
   }
@@ -889,35 +910,35 @@ lval* lval_eval_sexpr(lenv* e, lval* v) {
 }
 
 lval* lval_eval(lenv* e, lval* v) {
-  if (v-&gt;type == LVAL_SYM)   { return lenv_get(e, v); }
-  if (v-&gt;type == LVAL_SEXPR) { return lval_eval_sexpr(e, v); }
+  if (v->type == LVAL_SYM)   { return lenv_get(e, v); }
+  if (v->type == LVAL_SEXPR) { return lval_eval_sexpr(e, v); }
   return v;
 }
 
 /* Reading */
 
 lval* lval_read_num(mpc_ast_t* t) {
-  long x = strtol(t-&gt;contents, NULL, 10);
+  long x = strtol(t->contents, NULL, 10);
   return errno != ERANGE ? lval_num(x) : lval_err("Invalid Number.");
 }
 
 lval* lval_read(mpc_ast_t* t) {
 
-  if (strstr(t-&gt;tag, "number")) { return lval_read_num(t); }
-  if (strstr(t-&gt;tag, "symbol")) { return lval_sym(t-&gt;contents); }
+  if (strstr(t->tag, "number")) { return lval_read_num(t); }
+  if (strstr(t->tag, "symbol")) { return lval_sym(t->contents); }
 
   lval* x = NULL;
-  if (strcmp(t-&gt;tag, "&gt;") == 0) { x = lval_sexpr(); }
-  if (strstr(t-&gt;tag, "sexpr"))  { x = lval_sexpr(); }
-  if (strstr(t-&gt;tag, "qexpr"))  { x = lval_qexpr(); }
+  if (strcmp(t->tag, ">") == 0) { x = lval_sexpr(); }
+  if (strstr(t->tag, "sexpr"))  { x = lval_sexpr(); }
+  if (strstr(t->tag, "qexpr"))  { x = lval_qexpr(); }
 
-  for (int i = 0; i &lt; t-&gt;children_num; i++) {
-    if (strcmp(t-&gt;children[i]-&gt;contents, "(") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;contents, ")") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;contents, "}") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;contents, "{") == 0) { continue; }
-    if (strcmp(t-&gt;children[i]-&gt;tag,  "regex") == 0) { continue; }
-    x = lval_add(x, lval_read(t-&gt;children[i]));
+  for (int i = 0; i < t->children_num; i++) {
+    if (strcmp(t->children[i]->contents, "(") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, ")") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, "}") == 0) { continue; }
+    if (strcmp(t->children[i]->contents, "{") == 0) { continue; }
+    if (strcmp(t->children[i]->tag,  "regex") == 0) { continue; }
+    x = lval_add(x, lval_read(t->children[i]));
   }
 
   return x;
@@ -937,11 +958,11 @@ int main(int argc, char** argv) {
   mpca_lang(MPC_LANG_DEFAULT,
     "                                                     \
       number : /-?[0-9]+/ ;                               \
-      symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/ ;         \
-      sexpr  : '(' &lt;expr&gt;* ')' ;                          \
-      qexpr  : '{' &lt;expr&gt;* '}' ;                          \
-      expr   : &lt;number&gt; | &lt;symbol&gt; | &lt;sexpr&gt; | &lt;qexpr&gt; ;  \
-      lispy  : /^/ &lt;expr&gt;* /$/ ;                          \
+      symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=<>!&]+/ ;         \
+      sexpr  : '(' <expr>* ')' ;                          \
+      qexpr  : '{' <expr>* '}' ;                          \
+      expr   : <number> | <symbol> | <sexpr> | <qexpr> ;  \
+      lispy  : /^/ <expr>* /$/ ;                          \
     ",
     Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
@@ -953,11 +974,11 @@ int main(int argc, char** argv) {
 
   while (1) {
 
-    char* input = readline("lispy&gt; ");
+    char* input = readline("lispy> ");
     add_history(input);
 
     mpc_result_t r;
-    if (mpc_parse("&lt;stdin&gt;", input, Lispy, &r)) {
+    if (mpc_parse("<stdin>", input, Lispy, &r)) {
 
       lval* x = lval_eval(e, lval_read(r.output));
       lval_println(x);
@@ -978,21 +999,23 @@ int main(int argc, char** argv) {
   mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
   return 0;
-}</code></pre>
+}
+```
       </div>
     </div>
   </div>
 </div>
 
-<h2>Bonus Marks</h2> <hr/>
+Bonus Marks
+-----------
 
 <div class="alert alert-warning">
   <ul class="list-group">
-    <li class="list-group-item">&rsaquo; Create builtin logical operators <em>or</em> <code>||</code>, <em>and</em> <code>&&</code> and <em>not</em> <code>!</code> and add them to the language.</li>
-    <li class="list-group-item">&rsaquo; Define a recursive Lisp function that returns the <code>nth</code> item of that list.</li>
-    <li class="list-group-item">&rsaquo; Define a recursive Lisp function that returns <code>1</code> if an element is a member of a list, otherwise <code>0</code>.</li>
+    <li class="list-group-item">&rsaquo; Create builtin logical operators *or* `||`, *and* `&&` and *not* `!` and add them to the language.</li>
+    <li class="list-group-item">&rsaquo; Define a recursive Lisp function that returns the `nth` item of that list.</li>
+    <li class="list-group-item">&rsaquo; Define a recursive Lisp function that returns `1` if an element is a member of a list, otherwise `0`.</li>
     <li class="list-group-item">&rsaquo; Define a Lisp function that returns the last element of a list.</li>
-    <li class="list-group-item">&rsaquo; Define in Lisp logical operator functions such as <code>or</code>, <code>and</code> and <code>not</code>.</li>
-    <li class="list-group-item">&rsaquo; Add a specific boolean type to the language with the builtin variables <code>true</code> and <code>false</code>.</li>
+    <li class="list-group-item">&rsaquo; Define in Lisp logical operator functions such as `or`, `and` and `not`.</li>
+    <li class="list-group-item">&rsaquo; Add a specific boolean type to the language with the builtin variables `true` and `false`.</li>
   </ul>
 </div>
