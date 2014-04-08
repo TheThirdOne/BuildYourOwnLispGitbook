@@ -7,7 +7,7 @@ Doing it yourself
 We&#39;ve come quite far now. Your knowledge of C should be good enough for you to stand on your own feet a little more. If you're feeling confident, this chapter is a perfect opportunity to stretch your wings out, and attempt something on your own. It is a fairly short chapter and essentially consists of adding a couple of new builtin functions to deal with comparison and ordering.
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/pug.png" alt="pug"/>
+  <img src="img/pug.png" alt="pug"/>
   <small>Pug &bull; **if** pug is asleep **then** pug is cute.</small>
 </div>
 

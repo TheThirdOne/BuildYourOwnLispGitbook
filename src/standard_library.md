@@ -5,7 +5,7 @@ Minimalism
 ----------
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/library.png" alt="library"/>
+  <img src="img/library.png" alt="library"/>
   <small>Library &bull; Built with just leather, paper, wood, and ink.</small>
 </div>
 

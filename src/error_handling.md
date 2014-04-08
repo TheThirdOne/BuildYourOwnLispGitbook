@@ -199,7 +199,7 @@ Plumbing
 --------
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/plumbing.png" alt="plumbing"/>
+  <img src="img/plumbing.png" alt="plumbing"/>
   <small>Plumbing &bull; Harder than you think</small>
 </div>
 

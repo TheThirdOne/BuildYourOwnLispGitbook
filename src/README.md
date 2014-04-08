@@ -17,7 +17,7 @@ Who this is for
 This book is for anyone wanting to learn C, or who has once wondered how to build their own programming language. This book is not suitable as a first programming language book, but anyone with at least some minimal programming experience, in any language, should find something new and interesting inside.
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/ada.png" alt="ada"/>
+  <img src="img/ada.png" alt="ada"/>
   <small>Ada Lovelace &bull; Your typical <a href="http://areyouabrogrammer.com/">brogrammer</a>.</small>
 </div>
 
@@ -36,7 +36,7 @@ Why learn C
 C is one of the most popular and influential programming languages in the world. It is the language of choice for development on Linux, and has been used extensively in the creation of OS X and to some extent Microsoft Windows. It is used on micro-computers too. Your fridge and car probably run on it. In modern software development, the use of C may be escapable, but its legacy is not. Anyone wanting to make a career out of software development would be smart to learn C.
 
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/fridge.png" alt="fridge"/>
+  <img src="img/fridge.png" alt="fridge"/>
   <small>A fridge &bull; Your typical C user</small>
 </div>
 
@@ -66,7 +66,7 @@ Why build a Lisp
 The language we are going to be building in this book is a Lisp. This is a family of programming languages characterized by the fact that all their computation is represented by *lists*. This may sound scarier than it is. Lisps are actually very easy, distinctive, and powerful languages.
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/mike.png" alt="mike"/>
+  <img src="img/mike.png" alt="mike"/>
   <small>Mike Tyson &bull; Your typical Lisp user</small>
 </div>
 

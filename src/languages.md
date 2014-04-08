@@ -10,7 +10,7 @@ A programming language is very similar to a real language. There is a structure 
 In the 1950s the linguist *Noam Chomsky* formalised a number of [important observations](http://en.wikipedia.org/wiki/Chomsky_hierarchy) about languages. Many of these form the basis of our understanding of language today. One of these was the observation that natural languages are built up of recursive and repeated substructures.
 
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/cat.png" alt="cat"/>
+  <img src="img/cat.png" alt="cat"/>
   <small>Cat &bull; cannot speak or program</small>
 </div>
 

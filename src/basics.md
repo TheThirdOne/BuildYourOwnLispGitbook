@@ -6,7 +6,7 @@ Overview
 ---------
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/programs.png" alt="programs"/>
+  <img src="img/programs.png" alt="programs"/>
   <small>Programs &bull; Useful for the theatre.</small>
 </div>
 
@@ -114,7 +114,7 @@ Pointers
 ---------
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/pointer.png" alt="pointer"/>
+  <img src="img/pointer.png" alt="pointer"/>
   <small>Pointer &bull; A short haired one</small>
 </div>
 

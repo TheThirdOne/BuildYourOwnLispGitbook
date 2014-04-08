@@ -5,7 +5,7 @@ S-Expressions
 Lists and Lisps</h2> <hr/>
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/lisp.png" alt="lisp"/>
+  <img src="img/lisp.png" alt="lisp"/>
   <small>ALL CAPS &bull; SO RIGHT YET SO WRONG.</small>
 </div>
 
@@ -54,7 +54,7 @@ Some of you may have heard tales of these mysterious locations, such as *"the st
 <h3>The Stack</h3>
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/building.png" alt="building"/>
+  <img src="img/building.png" alt="building"/>
   <small>The Stack &bull; Like what you do with bricks.</small>
 </div>
 
@@ -66,7 +66,7 @@ I like to think of the stack as a building site. Each time we need to do somethi
 <h3>The Heap</h3>
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/storage.png" alt="storage"/>
+  <img src="img/storage.png" alt="storage"/>
   <small>The Heap &bull; U LOCK. KEEP KEY.</small>
 </div>
 

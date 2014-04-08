@@ -6,7 +6,7 @@ Libraries
 ---------
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/string.png" alt="string"/>
+  <img src="img/string.png" alt="string"/>
   <small>String &bull; How long is it.</small>
 </div>
 

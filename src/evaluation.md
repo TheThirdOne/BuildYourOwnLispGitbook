@@ -10,7 +10,7 @@ Now we can read input, and we have it structured internally, but we are still un
 This internal structure is what we saw printed out by the program in the previous chapter. It is called an *Abstract Syntax Tree*, and it represents the structure of the program based on the input entered by the user. At the leaves of this tree are numbers and operators - the actual data to be processed. At the branches are the rules used to produce this part of the tree - the information on how to traverse and evaluate it.
 
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/tree.png" alt="tree"/>
+  <img src="img/tree.png" alt="tree"/>
   <small>Abstract Christmas Tree &bull; A seasonal variation</small>
 </div>
 
@@ -62,7 +62,7 @@ Recursion
 There is a funny thing about this tree structure. It refers to itself. Each of its children are themselves trees again, and the children of those children are trees yet again. Just like our languages, and re-write rules, data in this structure contains repeated substructures, that resemble their parents.
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/recursion.png" alt="recursion"/>
+  <img src="img/recursion.png" alt="recursion"/>
   <small>Recursion &bull; Dangerous in a fire.</small>
 </div>
 

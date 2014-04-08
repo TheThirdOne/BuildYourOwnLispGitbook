@@ -6,7 +6,7 @@ Immutability
 ------------
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/turtle.png" alt="turtle"/>
+  <img src="img/turtle.png" alt="turtle"/>
   <small>Teenage Ninja Turtle &bull; Not Immutable.</small>
 </div>
 
@@ -472,7 +472,7 @@ Error Reporting
 So far our error reporting kind of sucks. We can report when an error occurs, and give a vague notion of what was the problem was, but we don't give the user much information about what exactly has gone wrong. For example if there is an unbound symbol we should be able to report exactly which symbol was unbound. This can help the user track down errors, typos, and other trivial problems.
 
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/eclipses.png" alt="eclipses"/>
+  <img src="img/eclipses.png" alt="eclipses"/>
   <small>Eclipses &bull; Like ellipsis.</small>
 </div>
 

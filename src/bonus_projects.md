@@ -27,7 +27,7 @@ This task may be interesting to anyone who has a specific idea of how they would
 
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/list.png" alt="list"/>
+  <img src="img/list.png" alt="list"/>
   <small>Important List &bull; Play! BE HAPPY and go home.</small>
 </div>
 
@@ -85,7 +85,7 @@ Garbage Collection
 Almost all other implementations of Lisps assign variables differently to ours. They do not store a copy of a value in the environment, but actually a pointer, or reference, to it directly. Because pointers are used, rather than copies, just like in C, there is much less overhead required when using large data structures.
 
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/garbage.png" alt="garbage"/>
+  <img src="img/garbage.png" alt="garbage"/>
   <small>Garbage Collection &bull; Pick up that can.</small>
 </div>
 
@@ -115,7 +115,7 @@ This could be a difficult task to get exactly right, but should be interesting t
 
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/static.png" alt="static"/>
+  <img src="img/static.png" alt="static"/>
   <small>Static Electricity &bull; A hair-raising alternative.</small>
 </div>
 

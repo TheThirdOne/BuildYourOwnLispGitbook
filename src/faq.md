@@ -2,7 +2,7 @@ Frequently Asked Questions
 ==========================
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/me.png" alt="me"/>
+  <img src="img/me.png" alt="me"/>
   <small>Me &bull; Drinking a beer.</small>
 </div>
 

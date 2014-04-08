@@ -237,7 +237,7 @@ Macros
 ------
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/strawberry.png" alt="strawberry"/>
+  <img src="img/strawberry.png" alt="strawberry"/>
   <small>Strawberry &bull; A delicious macro.</small>
 </div>
 

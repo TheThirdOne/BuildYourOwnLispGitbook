@@ -3,7 +3,7 @@ Parsing
 
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/polish_man.png" alt="polish man"/>
+  <img src="img/polish_man.png" alt="polish man"/>
   <small>A Polish Nobleman &bull; A typical Polish Notation user</small>
 </div>
 

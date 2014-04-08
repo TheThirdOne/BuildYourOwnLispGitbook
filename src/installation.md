@@ -6,7 +6,7 @@ Setup
 -----
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/cattop.png" alt="capttop"/>
+  <img src="img/cattop.png" alt="capttop"/>
   <small>Cat &bull; Install at own risk.</small>
 </div>
 
@@ -95,7 +95,7 @@ If there are some problems with your C program the compilation process may fail.
 Sometimes the error message from the compiler will make sense, but if you are having trouble understanding it try searching online for it. You should see if you can find a concise explanation of what it means, and work out how to correct it. Remember this: there are many people before you who have struggled with exactly the same problems.
 
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/smash.png" alt="smash"/>
+  <img src="img/smash.png" alt="smash"/>
   <small>Rage &bull; A poor debugging technique</small>
 </div>
 

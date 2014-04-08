@@ -9,7 +9,7 @@ Functions are the essence of all programming. Back in the early days of computer
 This dream hasn't come true yet, but it persists, no matter how flawed. Each new programming technique, or paradigm, that comes along shakes up this idea a little. They promise better re-use of code. Better abstractions, and an easier life for all.
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/bananas.png" alt="bananas"/>
+  <img src="img/bananas.png" alt="bananas"/>
   <small>Bananaphone &bull; Another naive dream.</small>
 </div>
 
@@ -22,7 +22,7 @@ One way to think about functions is as description of some computation you want 
 Another way to think about functions is as a black box that takes some input and produces some output. This idea is subtly different from the former. It is more algebraic, and doesn't talk about *computation* or *commands*. This idea is a mathematical concept, and is not tied to some particular machine, or language. In some situations this idea is exceptionally useful. It allows us to think about functions without worrying about their internals, or how they are computed exactly. We can then combine and compose them together without worry of something subtle going wrong. This is the core idea behind an abstraction, and is what allows layers of complexity to work together with each other rather than conflict. This idea's strength can also be its downfall. Because it does not mention anything about computation it does not deal with a number of real world concerns. *"How long will this function take to run?"*, *"Is this function efficient?"*, *"Will it modify the state of my program? If so how?"*.
 
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/black_box.png" alt="black_box"/>
+  <img src="img/black_box.png" alt="black_box"/>
   <small>Black Box &bull; Your typical function.</small>
 </div>
 
@@ -182,7 +182,7 @@ lval* builtin_lambda(lenv* e, lval* a) {
 
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/playgroup.png" alt="playgroup"/>
+  <img src="img/playgroup.png" alt="playgroup"/>
   <small>Playgroup &bull; Your typical parent environment.</small>
 </div>
 
@@ -518,7 +518,7 @@ fun {add-together x y} {+ x y}
 ```
 
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/curry.png" alt="curry"/>
+  <img src="img/curry.png" alt="curry"/>
   <small>Currying &bull; Not as good as it sounds.</small>
 </div>
 
