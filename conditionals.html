@@ -283,55 +283,418 @@
                 <section class="normal" id="section-gitbook_5">
                 
                     <h1 id="conditionals">Conditionals</h1>
-<p><h2>Doing it yourself</h2> <hr/></p>
+<h2 id="doing-it-yourself">Doing it yourself</h2>
 <p>We&#39;ve come quite far now. Your knowledge of C should be good enough for you to stand on your own feet a little more. If you&#39;re feeling confident, this chapter is a perfect opportunity to stretch your wings out, and attempt something on your own. It is a fairly short chapter and essentially consists of adding a couple of new builtin functions to deal with comparison and ordering.</p>
-
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/pug.png" alt="pug"/>
-  <p><small>Pug &bull; <strong>if</strong> pug is asleep <strong>then</strong> pug is cute.</small></p>
+  <small>Pug &bull; <strong>if</strong> pug is asleep <strong>then</strong> pug is cute.</small>
 </div>
 
 <p>If you&#39;re feeling positive, go ahead and try to implement comparison and ordering into your language now. Define some new builtin functions for <em>greater than</em>, <em>less than</em>, <em>equal to</em>, and all the other comparison operators we use in C. Try to define an <code>if</code> function that tests for some condition and then either evaluate some code, or some other code, depending on the result. Once you&#39;ve finished come back and compare your work to mine. Observe the differences and decide which parts you prefer.</p>
-
 <p>If you still feel uncertain don&#39;t worry. Follow along and I&#39;ll explain my approach.</p>
-
-
-<p><h2>Ordering</h2> <hr/></p>
+<h2 id="ordering">Ordering</h2>
 <p>For simplicity&#39;s sake I&#39;m going to re-use our number data type to represent the result of comparisons. I&#39;ll make a rule similar to C, to say that any number that isn&#39;t <code>0</code> evaluates to true in an <code>if</code> statement, while <code>0</code> always evaluates to false.</p>
-
 <p>Therefore our ordering functions are a little like a simplified version of our arithmetic functions. They&#39;ll only work on numbers, and we only want them to work on two arguments.</p>
-
 <p>If these error conditions are met the maths is simple, we want to return an number <code>lval</code> either <code>0</code> or <code>1</code> depending on the equality comparison between the two input <code>lval</code>. We can use C&#39;s comparison operators to do this. Like our arithmetic functions we&#39;ll make use of a single function to do all of the comparisons.</p>
-
 <p>First we check the error conditions, then we compare the numbers in each of the arguments to get some result. Finally we return this result as a number value.</p>
+<pre><code class="lang-c">lval* builtin_ord(lenv* e, lval* a, <span class="hljs-keyword">char</span>* op) {
+  LASSERT_NUM(op, a, <span class="hljs-number">2</span>);
+  LASSERT_TYPE(op, a, <span class="hljs-number">0</span>, LVAL_NUM);
+  LASSERT_TYPE(op, a, <span class="hljs-number">1</span>, LVAL_NUM);
 
-<pre><code data-language='c'>lval* builtin_ord(lenv* e, lval* a, char* op) {
-  LASSERT_NUM(op, a, 2);
-  LASSERT_TYPE(op, a, 0, LVAL_NUM);
-  LASSERT_TYPE(op, a, 1, LVAL_NUM);
-
-  int r;
-  if (strcmp(op, "&gt;")  == 0) { r = (a-&gt;cell[0]-&gt;num &gt;  a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&lt;")  == 0) { r = (a-&gt;cell[0]-&gt;num &lt;  a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&gt;=") == 0) { r = (a-&gt;cell[0]-&gt;num &gt;= a-&gt;cell[1]-&gt;num); }
-  if (strcmp(op, "&lt;=") == 0) { r = (a-&gt;cell[0]-&gt;num &lt;= a-&gt;cell[1]-&gt;num); }
+  <span class="hljs-keyword">int</span> r;
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"&gt;"</span>)  == <span class="hljs-number">0</span>) { r = (a-&gt;cell[<span class="hljs-number">0</span>]-&gt;num &gt;  a-&gt;cell[<span class="hljs-number">1</span>]-&gt;num); }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"&lt;"</span>)  == <span class="hljs-number">0</span>) { r = (a-&gt;cell[<span class="hljs-number">0</span>]-&gt;num &lt;  a-&gt;cell[<span class="hljs-number">1</span>]-&gt;num); }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"&gt;="</span>) == <span class="hljs-number">0</span>) { r = (a-&gt;cell[<span class="hljs-number">0</span>]-&gt;num &gt;= a-&gt;cell[<span class="hljs-number">1</span>]-&gt;num); }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"&lt;="</span>) == <span class="hljs-number">0</span>) { r = (a-&gt;cell[<span class="hljs-number">0</span>]-&gt;num &lt;= a-&gt;cell[<span class="hljs-number">1</span>]-&gt;num); }
   lval_del(a);
-  return lval_num(r);
+  <span class="hljs-keyword">return</span> lval_num(r);
 }
 
-lval* builtin_gt(lenv* e, lval* a) { return builtin_ord(e, a, "&gt;");  }
-lval* builtin_lt(lenv* e, lval* a) { return builtin_ord(e, a, "&lt;");  }
-lval* builtin_ge(lenv* e, lval* a) { return builtin_ord(e, a, "&gt;="); }
-lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, "&lt;="); }
+lval* builtin_gt(lenv* e, lval* a) { <span class="hljs-keyword">return</span> builtin_ord(e, a, <span class="hljs-string">"&gt;"</span>);  }
+lval* builtin_lt(lenv* e, lval* a) { <span class="hljs-keyword">return</span> builtin_ord(e, a, <span class="hljs-string">"&lt;"</span>);  }
+lval* builtin_ge(lenv* e, lval* a) { <span class="hljs-keyword">return</span> builtin_ord(e, a, <span class="hljs-string">"&gt;="</span>); }
+lval* builtin_le(lenv* e, lval* a) { <span class="hljs-keyword">return</span> builtin_ord(e, a, <span class="hljs-string">"&lt;="</span>); }
 </code></pre>
-
-
-<p><h2>Equality</h2> <hr/></p>
+<h2 id="equality">Equality</h2>
 <p>Equality is going to be different to ordering because we want it to work on more than number types. It will be useful to see if an input is equal to an empty list, or to see if two functions passed in are the same. Therefore we need to define a function which can test for equality between two different types of <code>lval</code>.</p>
-
 <p>This function essentially checks that all the fields which make up the data for a particular <code>lval</code> type are equal. If all the fields are equal, the whole thing is considered equal. Otherwise if there are any differences the whole thing is considered unequal.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">int</span> lval_eq(lval* x, lval* y) {
 
-<pre><code data-language='c'>int lval_eq(lval* x, lval* y) {
+  <span class="hljs-comment">/* Different Types are always unequal */</span>
+  <span class="hljs-keyword">if</span> (x-&gt;type != y-&gt;type) { <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; }
+
+  <span class="hljs-comment">/* Compare Based upon type */</span>
+  <span class="hljs-keyword">switch</span> (x-&gt;type) {
+    <span class="hljs-comment">/* Compare Number Value */</span>
+    <span class="hljs-keyword">case</span> LVAL_NUM: <span class="hljs-keyword">return</span> (x-&gt;num == y-&gt;num);
+
+    <span class="hljs-comment">/* Compare String Values */</span>
+    <span class="hljs-keyword">case</span> LVAL_ERR: <span class="hljs-keyword">return</span> (<span class="hljs-built_in">strcmp</span>(x-&gt;err, y-&gt;err) == <span class="hljs-number">0</span>);
+    <span class="hljs-keyword">case</span> LVAL_SYM: <span class="hljs-keyword">return</span> (<span class="hljs-built_in">strcmp</span>(x-&gt;sym, y-&gt;sym) == <span class="hljs-number">0</span>);
+
+    <span class="hljs-comment">/* If Builtin compare functions, otherwise compare formals and body */</span>
+    <span class="hljs-keyword">case</span> LVAL_FUN:
+      <span class="hljs-keyword">if</span> (x-&gt;builtin) {
+        <span class="hljs-keyword">return</span> x-&gt;builtin == y-&gt;builtin;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-keyword">return</span> lval_eq(x-&gt;formals, y-&gt;formals) &amp;&amp; lval_eq(x-&gt;body, y-&gt;body);
+      }
+
+    <span class="hljs-comment">/* If list compare every individual element */</span>
+    <span class="hljs-keyword">case</span> LVAL_QEXPR:
+    <span class="hljs-keyword">case</span> LVAL_SEXPR:
+      <span class="hljs-keyword">if</span> (x-&gt;count != y-&gt;count) { <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; }
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; x-&gt;count; i++) {
+        <span class="hljs-comment">/* If any element not equal then whole list not equal */</span>
+        <span class="hljs-keyword">if</span> (!lval_eq(x-&gt;cell[<span class="hljs-number">0</span>], y-&gt;cell[<span class="hljs-number">0</span>])) { <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>; }
+      }
+      <span class="hljs-comment">/* Otherwise lists must be equal */</span>
+      <span class="hljs-keyword">return</span> <span class="hljs-number">1</span>;
+    <span class="hljs-keyword">break</span>;
+  }
+  <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}
+</code></pre>
+<p>Using this function the new builtin function for equality comparison is very simple to add. We simply ensure two arguments are input, and that they are equal. We store the result of the comparison into a new <code>lval</code> and return it.</p>
+<pre><code class="lang-c">lval* builtin_cmp(lenv* e, lval* a, <span class="hljs-keyword">char</span>* op) {
+  LASSERT_NUM(op, a, <span class="hljs-number">2</span>);
+  <span class="hljs-keyword">int</span> r;
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"=="</span>) == <span class="hljs-number">0</span>) { r =  lval_eq(a-&gt;cell[<span class="hljs-number">0</span>], a-&gt;cell[<span class="hljs-number">1</span>]); }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"!="</span>) == <span class="hljs-number">0</span>) { r = !lval_eq(a-&gt;cell[<span class="hljs-number">0</span>], a-&gt;cell[<span class="hljs-number">1</span>]); }
+  lval_del(a);
+  <span class="hljs-keyword">return</span> lval_num(r);
+}
+
+lval* builtin_eq(lenv* e, lval* a) { <span class="hljs-keyword">return</span> builtin_cmp(e, a, <span class="hljs-string">"=="</span>); }
+lval* builtin_ne(lenv* e, lval* a) { <span class="hljs-keyword">return</span> builtin_cmp(e, a, <span class="hljs-string">"!="</span>); }
+</code></pre>
+<h2 id="if-function">If Function</h2>
+<p>To make our comparison operators useful well need an <code>if</code> function. This function is a little like the ternary operation in C. Upon some condition being true it evaluates to one thing, otherwise it evaluates to another.</p>
+<p>We can again make use of Q-Expressions to encode a computation. First we get the user to pass in the result of a comparison, then we get the user to pass in two Q-Expressions representing the code to be evaluated upon a condition being either true or false.</p>
+<pre><code class="lang-c">lval* builtin_if(lenv* e, lval* a) {
+  LASSERT_NUM(<span class="hljs-string">"if"</span>, a, <span class="hljs-number">3</span>);
+  LASSERT_TYPE(<span class="hljs-string">"if"</span>, a, <span class="hljs-number">0</span>, LVAL_NUM);
+  LASSERT_TYPE(<span class="hljs-string">"if"</span>, a, <span class="hljs-number">1</span>, LVAL_QEXPR);
+  LASSERT_TYPE(<span class="hljs-string">"if"</span>, a, <span class="hljs-number">2</span>, LVAL_QEXPR);
+
+  <span class="hljs-comment">/* Mark Both Expressions as evaluable */</span>
+  lval* x;
+  a-&gt;cell[<span class="hljs-number">1</span>]-&gt;type = LVAL_SEXPR;
+  a-&gt;cell[<span class="hljs-number">2</span>]-&gt;type = LVAL_SEXPR;
+
+  <span class="hljs-keyword">if</span> (a-&gt;cell[<span class="hljs-number">0</span>]-&gt;num) {
+    <span class="hljs-comment">/* If condition is true evaluate first expression */</span>
+    x = lval_eval(e, lval_pop(a, <span class="hljs-number">1</span>));
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-comment">/* Otherwise evaluate second expression */</span>
+    x = lval_eval(e, lval_pop(a, <span class="hljs-number">2</span>));
+  }
+
+  <span class="hljs-comment">/* Delete argument list and return */</span>
+  lval_del(a);
+  <span class="hljs-keyword">return</span> x;
+}
+</code></pre>
+<p>All that remains is for us to register all of these new builtins and we are again ready to go!</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Comparison Functions */</span>
+lenv_add_builtin(e, <span class="hljs-string">"if"</span>,   builtin_if);
+lenv_add_builtin(e, <span class="hljs-string">"=="</span>,   builtin_eq); lenv_add_builtin(e, <span class="hljs-string">"!="</span>,   builtin_ne);
+lenv_add_builtin(e, <span class="hljs-string">"&gt;"</span>,    builtin_gt); lenv_add_builtin(e, <span class="hljs-string">"&lt;"</span>,    builtin_lt);
+lenv_add_builtin(e, <span class="hljs-string">"&gt;="</span>,   builtin_ge); lenv_add_builtin(e, <span class="hljs-string">"&lt;="</span>,   builtin_le);
+</code></pre>
+<p>Have a quick mess around to check that everything is working correctly.</p>
+<pre><code class="lang-lispy">lispy&gt; &gt; <span class="hljs-number">10</span> <span class="hljs-number">5</span>
+<span class="hljs-number">1</span>
+lispy&gt; &lt;= <span class="hljs-number">88</span> <span class="hljs-number">5</span>
+<span class="hljs-number">0</span>
+lispy&gt; == <span class="hljs-number">5</span> <span class="hljs-number">6</span>
+<span class="hljs-number">0</span>
+lispy&gt; == <span class="hljs-number">5</span> <span class="hljs-cell">{}</span>
+<span class="hljs-number">0</span>
+lispy&gt; == <span class="hljs-number">1</span> <span class="hljs-number">1</span>
+<span class="hljs-number">1</span>
+lispy&gt; != <span class="hljs-cell">{}</span> <span class="hljs-number">56</span>
+<span class="hljs-number">1</span>
+lispy&gt; == <span class="hljs-cell">{<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> {<span class="hljs-number">5</span> <span class="hljs-number">6</span>}</span>} <span class="hljs-cell">{<span class="hljs-number">1</span>   <span class="hljs-number">2</span>  <span class="hljs-number">3</span>   {<span class="hljs-number">5</span> <span class="hljs-number">6</span>}</span>}
+<span class="hljs-number">1</span>
+lispy&gt; def <span class="hljs-cell">{x y}</span> <span class="hljs-number">100</span> <span class="hljs-number">200</span>
+()
+lispy&gt; <span class="hljs-keyword">if</span> (== x y) <span class="hljs-cell">{+ x y}</span> <span class="hljs-cell">{- x y}</span>
+-<span class="hljs-number">100</span>
+</code></pre>
+<h2 id="recursive-functions">Recursive Functions</h2>
+<p>By Introducing conditionals we&#39;ve actually made our language a lot more powerful. This is because they effectively let us implement recursive functions.</p>
+<p>Recursive functions are those which call themselves. We&#39;ve used these already in C to perform reading in and evaluation of expressions. The reason we require conditionals for these is because they let us test for the situation where we wish to terminate the recursion.</p>
+<p>For example we can use conditionals to implement a function <code>len</code> which tells us the number of items in a list. If we encounter the empty list we just return <code>0</code>. Otherwise we return the length of the <code>tail</code> of the input list, plus <code>1</code>. Think about why this works. It repeatedly uses the <code>len</code> function until it reaches the empty list. At this point it returns <code>0</code> and adds all the other partial results together.</p>
+<pre><code class="lang-lispy"><span class="hljs-list">(<span class="hljs-title">fun</span> <span class="hljs-collection">{len l}</span> <span class="hljs-collection">{
+  if <span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">==</span></span> l <span class="hljs-collection">{}</span>)</span><span class="hljs-number">
+    {0</span>}</span>
+    <span class="hljs-collection">{+<span class="hljs-number"> 1</span> <span class="hljs-list">(<span class="hljs-title">len</span> <span class="hljs-list">(<span class="hljs-title">tail</span> l)</span>)</span>}</span>
+})</span>
+</code></pre>
+<p>There is a pleasant symmetry to this sort of recursive function. First we do something for the empty list (this is often called <em>the base case</em>). Then if we get something bigger, we take off a chunk such as the head of the list, and do something to it, before combining it with the rest of the thing to which the function has been already applied.</p>
+<p>Here is another function for reversing a list. Like before it checks for the empty list, but this time it returns the empty list back. This makes sense. The reverse of the empty list is just the empty list. But if it gets something bigger than the empty list, it reverses the tail, and stick this in front of the head.</p>
+<pre><code class="lang-lispy"><span class="hljs-list">(<span class="hljs-title">fun</span> <span class="hljs-collection">{reverse l}</span> <span class="hljs-collection">{
+  if <span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">==</span></span> l <span class="hljs-collection">{}</span>)</span>
+    <span class="hljs-collection">{<span class="hljs-collection">{}</span>}</span>
+    <span class="hljs-collection">{join <span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">reverse</span></span> <span class="hljs-list">(<span class="hljs-title">tail</span> l)</span>)</span> <span class="hljs-list">(<span class="hljs-title">head</span> l)</span>}</span>
+}</span>)</span>
+</code></pre>
+<p>We&#39;re going to use this technique to build lots functions like this, this is because it is going to be the primary way to achieve looping in our language.</p>
+<h2 id="reference">Reference</h2>
+<div class="panel-group alert alert-warning" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          conditionals.c
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+
+<code>c
+#include &quot;mpc.h&quot;
+
+#ifdef _WIN32
+
+static char buffer[2048];
+
+char* readline(char* prompt) {
+  fputs(&quot;lispy&gt; &quot;, stdout);
+  fgets(buffer, 2048, stdin);
+  char* cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = &#39;\0&#39;;
+  return cpy;
+}
+
+void add_history(char* unused) {}
+
+#else
+
+#include &lt;editline/readline.h&gt;
+#include &lt;editline/history.h&gt;
+
+#endif
+
+/* Forward Declarations */
+
+struct lval;
+struct lenv;
+typedef struct lval lval;
+typedef struct lenv lenv;
+
+/* Lisp Value */
+
+enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
+
+typedef lval*(*lbuiltin)(lenv*, lval*);
+
+struct lval {
+  int type;
+
+  /* Basic */
+  long num;
+  char* err;
+  char* sym;
+
+  /* Function */
+  lbuiltin builtin;
+  lenv* env;
+  lval* formals;
+  lval* body;
+
+  /* Expression */
+  int count;
+  lval** cell;
+};
+
+lval* lval_num(long x) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_NUM;
+  v-&gt;num = x;
+  return v;
+}
+
+lval* lval_err(char* fmt, ...) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_ERR;
+  va_list va;
+  va_start(va, fmt);
+  v-&gt;err = malloc(512);
+  vsnprintf(v-&gt;err, 511, fmt, va);
+  v-&gt;err = realloc(v-&gt;err, strlen(v-&gt;err)+1);
+  va_end(va);
+  return v;
+}
+
+lval* lval_sym(char* s) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_SYM;
+  v-&gt;sym = malloc(strlen(s) + 1);
+  strcpy(v-&gt;sym, s);
+  return v;
+}
+
+lval* lval_builtin(lbuiltin func) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_FUN;
+  v-&gt;builtin = func;
+  return v;
+}
+
+lenv* lenv_new(void);
+
+lval* lval_lambda(lval* formals, lval* body) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_FUN;
+  v-&gt;builtin = NULL;
+  v-&gt;env = lenv_new();
+  v-&gt;formals = formals;
+  v-&gt;body = body;
+  return v;
+}
+
+lval* lval_sexpr(void) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_SEXPR;
+  v-&gt;count = 0;
+  v-&gt;cell = NULL;
+  return v;
+}
+
+lval* lval_qexpr(void) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_QEXPR;
+  v-&gt;count = 0;
+  v-&gt;cell = NULL;
+  return v;
+}
+
+void lenv_del(lenv* e);
+
+void lval_del(lval* v) {
+
+  switch (v-&gt;type) {
+    case LVAL_NUM: break;
+    case LVAL_FUN:
+      if (!v-&gt;builtin) {
+        lenv_del(v-&gt;env);
+        lval_del(v-&gt;formals);
+        lval_del(v-&gt;body);
+      }
+    break;
+    case LVAL_ERR: free(v-&gt;err); break;
+    case LVAL_SYM: free(v-&gt;sym); break;
+    case LVAL_QEXPR:
+    case LVAL_SEXPR:
+      for (int i = 0; i &lt; v-&gt;count; i++) {
+        lval_del(v-&gt;cell[i]);
+      }
+      free(v-&gt;cell);
+    break;
+  }
+
+  free(v);
+}
+
+lenv* lenv_copy(lenv* e);
+
+lval* lval_copy(lval* v) {
+  lval* x = malloc(sizeof(lval));
+  x-&gt;type = v-&gt;type;
+  switch (v-&gt;type) {
+    case LVAL_FUN:
+      if (v-&gt;builtin) {
+        x-&gt;builtin = v-&gt;builtin;
+      } else {
+        x-&gt;builtin = NULL;
+        x-&gt;env = lenv_copy(v-&gt;env);
+        x-&gt;formals = lval_copy(v-&gt;formals);
+        x-&gt;body = lval_copy(v-&gt;body);
+      }
+    break;
+    case LVAL_NUM: x-&gt;num = v-&gt;num; break;
+    case LVAL_ERR: x-&gt;err = malloc(strlen(v-&gt;err) + 1); strcpy(x-&gt;err, v-&gt;err); break;
+    case LVAL_SYM: x-&gt;sym = malloc(strlen(v-&gt;sym) + 1); strcpy(x-&gt;sym, v-&gt;sym); break;
+    case LVAL_SEXPR:
+    case LVAL_QEXPR:
+      x-&gt;count = v-&gt;count;
+      x-&gt;cell = malloc(sizeof(lval*) * x-&gt;count);
+      for (int i = 0; i &lt; x-&gt;count; i++) {
+        x-&gt;cell[i] = lval_copy(v-&gt;cell[i]);
+      }
+    break;
+  }
+  return x;
+}
+
+lval* lval_add(lval* v, lval* x) {
+  v-&gt;count++;
+  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
+  v-&gt;cell[v-&gt;count-1] = x;
+  return v;
+}
+
+lval* lval_join(lval* x, lval* y) {
+  for (int i = 0; i &lt; y-&gt;count; i++) {
+    x = lval_add(x, y-&gt;cell[i]);
+  }
+  free(y-&gt;cell);
+  free(y);
+  return x;
+}
+
+lval* lval_pop(lval* v, int i) {
+  lval* x = v-&gt;cell[i];
+  memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval*) * (v-&gt;count-i-1));
+  v-&gt;count--;
+  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
+  return x;
+}
+
+lval* lval_take(lval* v, int i) {
+  lval* x = lval_pop(v, i);
+  lval_del(v);
+  return x;
+}
+
+void lval_print(lval* v);
+
+void lval_print_expr(lval* v, char open, char close) {
+  putchar(open);
+  for (int i = 0; i &lt; v-&gt;count; i++) {
+    lval_print(v-&gt;cell[i]);
+    if (i != (v-&gt;count-1)) {
+      putchar(&#39; &#39;);
+    }
+  }
+  putchar(close);
+}
+
+void lval_print(lval* v) {
+  switch (v-&gt;type) {
+    case LVAL_FUN:
+      if (v-&gt;builtin) {
+        printf(&quot;&lt;builtin&gt;&quot;);
+      } else {
+        printf(&quot;(\\ &quot;); lval_print(v-&gt;formals); putchar(&#39; &#39;); lval_print(v-&gt;body); putchar(&#39;)&#39;);
+      }
+    break;
+    case LVAL_NUM:   printf(&quot;%li&quot;, v-&gt;num); break;
+    case LVAL_ERR:   printf(&quot;Error: %s&quot;, v-&gt;err); break;
+    case LVAL_SYM:   printf(&quot;%s&quot;, v-&gt;sym); break;
+    case LVAL_SEXPR: lval_print_expr(v, &#39;(&#39;, &#39;)&#39;); break;
+    case LVAL_QEXPR: lval_print_expr(v, &#39;{&#39;, &#39;}&#39;); break;
+  }
+}
+
+void lval_println(lval* v) { lval_print(v); putchar(&#39;\n&#39;); }
+
+int lval_eq(lval* x, lval* y) {
 
   /* Different Types are always unequal */
   if (x-&gt;type != y-&gt;type) { return 0; }
@@ -366,398 +729,9 @@ lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, "&lt;="); }
     break;
   }
   return 0;
-}</code></pre>
-
-<p>Using this function the new builtin function for equality comparison is very simple to add. We simply ensure two arguments are input, and that they are equal. We store the result of the comparison into a new <code>lval</code> and return it.</p>
-
-<pre><code data-language='c'>lval* builtin_cmp(lenv* e, lval* a, char* op) {
-  LASSERT_NUM(op, a, 2);
-  int r;
-  if (strcmp(op, "==") == 0) { r =  lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
-  if (strcmp(op, "!=") == 0) { r = !lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
-  lval_del(a);
-  return lval_num(r);
 }
 
-lval* builtin_eq(lenv* e, lval* a) { return builtin_cmp(e, a, "=="); }
-lval* builtin_ne(lenv* e, lval* a) { return builtin_cmp(e, a, "!="); }</code></pre>
-
-
-<p><h2>If Function</h2> <hr/></p>
-<p>To make our comparison operators useful well need an <code>if</code> function. This function is a little like the ternary operation in C. Upon some condition being true it evaluates to one thing, otherwise it evaluates to another.</p>
-
-<p>We can again make use of Q-Expressions to encode a computation. First we get the user to pass in the result of a comparison, then we get the user to pass in two Q-Expressions representing the code to be evaluated upon a condition being either true or false.</p>
-
-<pre><code data-language='c'>lval* builtin_if(lenv* e, lval* a) {
-  LASSERT_NUM("if", a, 3);
-  LASSERT_TYPE("if", a, 0, LVAL_NUM);
-  LASSERT_TYPE("if", a, 1, LVAL_QEXPR);
-  LASSERT_TYPE("if", a, 2, LVAL_QEXPR);
-
-  /* Mark Both Expressions as evaluable */
-  lval* x;
-  a-&gt;cell[1]-&gt;type = LVAL_SEXPR;
-  a-&gt;cell[2]-&gt;type = LVAL_SEXPR;
-
-  if (a-&gt;cell[0]-&gt;num) {
-    /* If condition is true evaluate first expression */
-    x = lval_eval(e, lval_pop(a, 1));
-  } else {
-    /* Otherwise evaluate second expression */
-    x = lval_eval(e, lval_pop(a, 2));
-  }
-
-  /* Delete argument list and return */
-  lval_del(a);
-  return x;
-}</code></pre>
-
-<p>All that remains is for us to register all of these new builtins and we are again ready to go!</p>
-
-<pre><code data-language='c'>/* Comparison Functions */
-lenv_add_builtin(e, &quot;if&quot;,   builtin_if);
-lenv_add_builtin(e, &quot;==&quot;,   builtin_eq); lenv_add_builtin(e, &quot;!=&quot;,   builtin_ne);
-lenv_add_builtin(e, &quot;&gt;&quot;,    builtin_gt); lenv_add_builtin(e, &quot;&lt;&quot;,    builtin_lt);
-lenv_add_builtin(e, &quot;&gt;=&quot;,   builtin_ge); lenv_add_builtin(e, &quot;&lt;=&quot;,   builtin_le);
-</code></pre>
-
-<p>Have a quick mess around to check that everything is working correctly.</p>
-
-<pre><code data-language='lispy'>lispy&gt; &gt; 10 5
-1
-lispy&gt; &lt;= 88 5
-0
-lispy&gt; == 5 6
-0
-lispy&gt; == 5 {}
-0
-lispy&gt; == 1 1
-1
-lispy&gt; != {} 56
-1
-lispy&gt; == {1 2 3 {5 6}} {1   2  3   {5 6}}
-1
-lispy&gt; def {x y} 100 200
-()
-lispy&gt; if (== x y) {+ x y} {- x y}
--100
-</code></pre>
-
-
-<p><h2>Recursive Functions</h2> <hr/></p>
-<p>By Introducing conditionals we&#39;ve actually made our language a lot more powerful. This is because they effectively let us implement recursive functions.</p>
-
-<p>Recursive functions are those which call themselves. We&#39;ve used these already in C to perform reading in and evaluation of expressions. The reason we require conditionals for these is because they let us test for the situation where we wish to terminate the recursion.</p>
-
-<p>For example we can use conditionals to implement a function <code>len</code> which tells us the number of items in a list. If we encounter the empty list we just return <code>0</code>. Otherwise we return the length of the <code>tail</code> of the input list, plus <code>1</code>. Think about why this works. It repeatedly uses the <code>len</code> function until it reaches the empty list. At this point it returns <code>0</code> and adds all the other partial results together.</p>
-
-<pre><code data-language='lispy'>(fun {len l} {
-  if (== l {})
-    {0}
-    {+ 1 (len (tail l))}
-})</code></pre>
-
-<p>There is a pleasant symmetry to this sort of recursive function. First we do something for the empty list (this is often called <em>the base case</em>). Then if we get something bigger, we take off a chunk such as the head of the list, and do something to it, before combining it with the rest of the thing to which the function has been already applied.</p>
-
-<p>Here is another function for reversing a list. Like before it checks for the empty list, but this time it returns the empty list back. This makes sense. The reverse of the empty list is just the empty list. But if it gets something bigger than the empty list, it reverses the tail, and stick this in front of the head.</p>
-
-<pre><code data-language='lispy'>(fun {reverse l} {
-  if (== l {})
-    {{}}
-    {join (reverse (tail l)) (head l)}
-})</code></pre>
-
-<p>We&#39;re going to use this technique to build lots functions like this, this is because it is going to be the primary way to achieve looping in our language.</p>
-
-
-<p><h2>Reference</h2> <hr/></p>
-<div class="panel-group alert alert-warning" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-          conditionals.c
-        </a>
-      </h4>
-    </div>
-    <div id="collapseOne" class="panel-collapse collapse">
-      <div class="panel-body">
-<pre><code data-language='c'>#include &quot;mpc.h&quot;
-
-#ifdef <em>WIN32
-
-static char buffer[2048];
-
-char<em> readline(char</em> prompt) {
-  fputs(&quot;lispy&gt; &quot;, stdout);
-  fgets(buffer, 2048, stdin);
-  char<em> cpy = malloc(strlen(buffer)+1);
-  strcpy(cpy, buffer);
-  cpy[strlen(cpy)-1] = &#39;\0&#39;;
-  return cpy;
-}
-
-void add_history(char</em> unused) {}
-
-#else
-
-#include &lt;editline/readline.h&gt;
-#include &lt;editline/history.h&gt;
-
-#endif
-
-/<em> Forward Declarations </em>/
-
-struct lval;
-struct lenv;
-typedef struct lval lval;
-typedef struct lenv lenv;
-
-/<em> Lisp Value </em>/
-
-enum { LVAL<em>ERR, LVAL<em>NUM, LVAL_SYM, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
-
-typedef lval<em>(</em>lbuiltin)(lenv<em>, lval</em>);
-
-struct lval {
-  int type;
-
-  /<em> Basic </em>/
-  long num;
-  char<em> err;
-  char</em> sym;
-
-  /<em> Function </em>/
-  lbuiltin builtin;
-  lenv<em> env;
-  lval</em> formals;
-  lval<em> body;
-
-  /</em> Expression <em>/
-  int count;
-  lval** cell;
-};
-
-lval</em> lval_num(long x) {
-  lval<em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_NUM;
-  v-&gt;num = x;
-  return v;
-}
-
-lval</em> lval_err(char<em> fmt, ...) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_ERR;
-  va_list va;
-  va_start(va, fmt);
-  v-&gt;err = malloc(512);
-  vsnprintf(v-&gt;err, 511, fmt, va);
-  v-&gt;err = realloc(v-&gt;err, strlen(v-&gt;err)+1);
-  va_end(va);
-  return v;
-}
-
-lval<em> lval_sym(char</em> s) {
-  lval<em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SYM;
-  v-&gt;sym = malloc(strlen(s) + 1);
-  strcpy(v-&gt;sym, s);
-  return v;
-}
-
-lval</em> lval_builtin(lbuiltin func) {
-  lval<em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_FUN;
-  v-&gt;builtin = func;
-  return v;
-}
-
-lenv</em> lenv_new(void);
-
-lval<em> lval_lambda(lval</em> formals, lval<em> body) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_FUN;
-  v-&gt;builtin = NULL;
-  v-&gt;env = lenv_new();
-  v-&gt;formals = formals;
-  v-&gt;body = body;
-  return v;
-}
-
-lval<em> lval_sexpr(void) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
-  return v;
-}
-
-lval<em> lval_qexpr(void) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_QEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
-  return v;
-}
-
-void lenv_del(lenv<em> e);
-
-void lval_del(lval</em> v) {
-
-  switch (v-&gt;type) {
-    case LVAL_NUM: break;
-    case LVAL_FUN:
-      if (!v-&gt;builtin) {
-        lenv_del(v-&gt;env);
-        lval_del(v-&gt;formals);
-        lval_del(v-&gt;body);
-      }
-    break;
-    case LVAL_ERR: free(v-&gt;err); break;
-    case LVAL_SYM: free(v-&gt;sym); break;
-    case LVAL_QEXPR:
-    case LVAL_SEXPR:
-      for (int i = 0; i &lt; v-&gt;count; i++) {
-        lval_del(v-&gt;cell[i]);
-      }
-      free(v-&gt;cell);
-    break;
-  }
-
-  free(v);
-}
-
-lenv<em> lenv_copy(lenv</em> e);
-
-lval<em> lval_copy(lval</em> v) {
-  lval<em> x = malloc(sizeof(lval));
-  x-&gt;type = v-&gt;type;
-  switch (v-&gt;type) {
-    case LVAL_FUN:
-      if (v-&gt;builtin) {
-        x-&gt;builtin = v-&gt;builtin;
-      } else {
-        x-&gt;builtin = NULL;
-        x-&gt;env = lenv_copy(v-&gt;env);
-        x-&gt;formals = lval_copy(v-&gt;formals);
-        x-&gt;body = lval_copy(v-&gt;body);
-      }
-    break;
-    case LVAL_NUM: x-&gt;num = v-&gt;num; break;
-    case LVAL_ERR: x-&gt;err = malloc(strlen(v-&gt;err) + 1); strcpy(x-&gt;err, v-&gt;err); break;
-    case LVAL_SYM: x-&gt;sym = malloc(strlen(v-&gt;sym) + 1); strcpy(x-&gt;sym, v-&gt;sym); break;
-    case LVAL_SEXPR:
-    case LVAL_QEXPR:
-      x-&gt;count = v-&gt;count;
-      x-&gt;cell = malloc(sizeof(lval</em>) <em> x-&gt;count);
-      for (int i = 0; i &lt; x-&gt;count; i++) {
-        x-&gt;cell[i] = lval_copy(v-&gt;cell[i]);
-      }
-    break;
-  }
-  return x;
-}
-
-lval</em> lval_add(lval<em> v, lval</em> x) {
-  v-&gt;count++;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval<em>) </em> v-&gt;count);
-  v-&gt;cell[v-&gt;count-1] = x;
-  return v;
-}
-
-lval<em> lval_join(lval</em> x, lval<em> y) {
-  for (int i = 0; i &lt; y-&gt;count; i++) {
-    x = lval_add(x, y-&gt;cell[i]);
-  }
-  free(y-&gt;cell);
-  free(y);
-  return x;
-}
-
-lval</em> lval_pop(lval<em> v, int i) {
-  lval</em> x = v-&gt;cell[i];
-  memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval<em>) </em> (v-&gt;count-i-1));
-  v-&gt;count--;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval<em>) </em> v-&gt;count);
-  return x;
-}
-
-lval<em> lval_take(lval</em> v, int i) {
-  lval<em> x = lval_pop(v, i);
-  lval_del(v);
-  return x;
-}
-
-void lval_print(lval</em> v);
-
-void lval_print_expr(lval<em> v, char open, char close) {
-  putchar(open);
-  for (int i = 0; i &lt; v-&gt;count; i++) {
-    lval_print(v-&gt;cell[i]);
-    if (i != (v-&gt;count-1)) {
-      putchar(&#39; &#39;);
-    }
-  }
-  putchar(close);
-}
-
-void lval_print(lval</em> v) {
-  switch (v-&gt;type) {
-    case LVAL_FUN:
-      if (v-&gt;builtin) {
-        printf(&quot;&lt;builtin&gt;&quot;);
-      } else {
-        printf(&quot;(\ &quot;); lval_print(v-&gt;formals); putchar(&#39; &#39;); lval_print(v-&gt;body); putchar(&#39;)&#39;);
-      }
-    break;
-    case LVAL_NUM:   printf(&quot;%li&quot;, v-&gt;num); break;
-    case LVAL_ERR:   printf(&quot;Error: %s&quot;, v-&gt;err); break;
-    case LVAL_SYM:   printf(&quot;%s&quot;, v-&gt;sym); break;
-    case LVAL_SEXPR: lval_print_expr(v, &#39;(&#39;, &#39;)&#39;); break;
-    case LVAL_QEXPR: lval_print_expr(v, &#39;{&#39;, &#39;}&#39;); break;
-  }
-}
-
-void lval_println(lval<em> v) { lval_print(v); putchar(&#39;\n&#39;); }
-
-int lval_eq(lval</em> x, lval<em> y) {
-
-  /</em> Different Types are always unequal <em>/
-  if (x-&gt;type != y-&gt;type) { return 0; }
-
-  /</em> Compare Based upon type <em>/
-  switch (x-&gt;type) {
-    /</em> Compare Number Value <em>/
-    case LVAL_NUM: return (x-&gt;num == y-&gt;num);
-
-    /</em> Compare String Values <em>/
-    case LVAL_ERR: return (strcmp(x-&gt;err, y-&gt;err) == 0);
-    case LVAL_SYM: return (strcmp(x-&gt;sym, y-&gt;sym) == 0);
-
-    /</em> If Builtin compare functions, otherwise compare formals and body <em>/
-    case LVAL_FUN:
-      if (x-&gt;builtin) {
-        return x-&gt;builtin == y-&gt;builtin;
-      } else {
-        return lval_eq(x-&gt;formals, y-&gt;formals) &amp;&amp; lval_eq(x-&gt;body, y-&gt;body);
-      }
-
-    /</em> If list compare every individual element <em>/
-    case LVAL_QEXPR:
-    case LVAL_SEXPR:
-      if (x-&gt;count != y-&gt;count) { return 0; }
-      for (int i = 0; i &lt; x-&gt;count; i++) {
-        /</em> If any element not equal then whole list not equal <em>/
-        if (!lval_eq(x-&gt;cell[0], y-&gt;cell[0])) { return 0; }
-      }
-      /</em> Otherwise lists must be equal <em>/
-      return 1;
-    break;
-  }
-  return 0;
-}
-
-char</em> ltype_name(int t) {
+char* ltype_name(int t) {
   switch(t) {
     case LVAL_FUN: return &quot;Function&quot;;
     case LVAL_NUM: return &quot;Number&quot;;
@@ -769,17 +743,17 @@ char</em> ltype_name(int t) {
   }
 }
 
-/<em> Lisp Environment </em>/
+/* Lisp Environment */
 
 struct lenv {
-  lenv<em> par;
+  lenv* par;
   int count;
-  char<strong> syms;
-  lval</strong> vals;
+  char** syms;
+  lval** vals;
 };
 
-lenv</em> lenv_new(void) {
-  lenv<em> e = malloc(sizeof(lenv));
+lenv* lenv_new(void) {
+  lenv* e = malloc(sizeof(lenv));
   e-&gt;par = NULL;
   e-&gt;count = 0;
   e-&gt;syms = NULL;
@@ -787,7 +761,7 @@ lenv</em> lenv_new(void) {
   return e;
 }
 
-void lenv_del(lenv</em> e) {
+void lenv_del(lenv* e) {
   for (int i = 0; i &lt; e-&gt;count; i++) {
     free(e-&gt;syms[i]);
     lval_del(e-&gt;vals[i]);
@@ -797,12 +771,12 @@ void lenv_del(lenv</em> e) {
   free(e);
 }
 
-lenv<em> lenv_copy(lenv</em> e) {
-  lenv<em> n = malloc(sizeof(lenv));
+lenv* lenv_copy(lenv* e) {
+  lenv* n = malloc(sizeof(lenv));
   n-&gt;par = e-&gt;par;
   n-&gt;count = e-&gt;count;
-  n-&gt;syms = malloc(sizeof(char</em>) <em> n-&gt;count);
-  n-&gt;vals = malloc(sizeof(lval</em>) <em> n-&gt;count);
+  n-&gt;syms = malloc(sizeof(char*) * n-&gt;count);
+  n-&gt;vals = malloc(sizeof(lval*) * n-&gt;count);
   for (int i = 0; i &lt; e-&gt;count; i++) {
     n-&gt;syms[i] = malloc(strlen(e-&gt;syms[i]) + 1);
     strcpy(n-&gt;syms[i], e-&gt;syms[i]);
@@ -811,7 +785,7 @@ lenv<em> lenv_copy(lenv</em> e) {
   return n;
 }
 
-lval</em> lenv_get(lenv<em> e, lval</em> k) {
+lval* lenv_get(lenv* e, lval* k) {
 
   for (int i = 0; i &lt; e-&gt;count; i++) {
     if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) { return lval_copy(e-&gt;vals[i]); }
@@ -824,7 +798,7 @@ lval</em> lenv_get(lenv<em> e, lval</em> k) {
   }
 }
 
-void lenv_put(lenv<em> e, lval</em> k, lval<em> v) {
+void lenv_put(lenv* e, lval* k, lval* v) {
 
   for (int i = 0; i &lt; e-&gt;count; i++) {
     if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) {
@@ -837,22 +811,22 @@ void lenv_put(lenv<em> e, lval</em> k, lval<em> v) {
   }
 
   e-&gt;count++;
-  e-&gt;vals = realloc(e-&gt;vals, sizeof(lval</em>) <em> e-&gt;count);
-  e-&gt;syms = realloc(e-&gt;syms, sizeof(char</em>) <em> e-&gt;count);
+  e-&gt;vals = realloc(e-&gt;vals, sizeof(lval*) * e-&gt;count);
+  e-&gt;syms = realloc(e-&gt;syms, sizeof(char*) * e-&gt;count);
   e-&gt;vals[e-&gt;count-1] = lval_copy(v);
   e-&gt;syms[e-&gt;count-1] = malloc(strlen(k-&gt;sym)+1);
   strcpy(e-&gt;syms[e-&gt;count-1], k-&gt;sym);
 }
 
-void lenv_def(lenv</em> e, lval<em> k, lval</em> v) {
+void lenv_def(lenv* e, lval* k, lval* v) {
   while (e-&gt;par) { e = e-&gt;par; }
   lenv_put(e, k, v);
 }
 
-/<em> Builtins </em>/
+/* Builtins */
 
 #define LASSERT(args, cond, fmt, ...) \
-  if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS</em></em>); lval_del(args); return err; }
+  if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); lval_del(args); return err; }
 
 #define LASSERT_TYPE(func, args, index, expect) \
   LASSERT(args, args-&gt;cell[index]-&gt;type == expect, \
@@ -868,12 +842,12 @@ void lenv_def(lenv</em> e, lval<em> k, lval</em> v) {
   LASSERT(args, args-&gt;cell[index]-&gt;count != 0, \
     &quot;Function &#39;%s&#39; passed {} for argument %i.&quot;, func, index);
 
-lval<em> lval_eval(lenv</em> e, lval<em> v);
+lval* lval_eval(lenv* e, lval* v);
 
-lval</em> builtin_lambda(lenv<em> e, lval</em> a) {
-  LASSERT_NUM(&quot;\&quot;, a, 2);
-  LASSERT_TYPE(&quot;\&quot;, a, 0, LVAL_QEXPR);
-  LASSERT_TYPE(&quot;\&quot;, a, 1, LVAL_QEXPR);
+lval* builtin_lambda(lenv* e, lval* a) {
+  LASSERT_NUM(&quot;\\&quot;, a, 2);
+  LASSERT_TYPE(&quot;\\&quot;, a, 0, LVAL_QEXPR);
+  LASSERT_TYPE(&quot;\\&quot;, a, 1, LVAL_QEXPR);
 
   for (int i = 0; i &lt; a-&gt;cell[0]-&gt;count; i++) {
     LASSERT(a, (a-&gt;cell[0]-&gt;cell[i]-&gt;type == LVAL_SYM),
@@ -881,55 +855,55 @@ lval</em> builtin_lambda(lenv<em> e, lval</em> a) {
       ltype_name(a-&gt;cell[0]-&gt;cell[i]-&gt;type), ltype_name(LVAL_SYM));
   }
 
-  lval<em> formals = lval_pop(a, 0);
-  lval</em> body = lval_pop(a, 0);
+  lval* formals = lval_pop(a, 0);
+  lval* body = lval_pop(a, 0);
   lval_del(a);
 
   return lval_lambda(formals, body);
 }
 
-lval<em> builtin_list(lenv</em> e, lval<em> a) {
+lval* builtin_list(lenv* e, lval* a) {
   a-&gt;type = LVAL_QEXPR;
   return a;
 }
 
-lval</em> builtin_head(lenv<em> e, lval</em> a) {
+lval* builtin_head(lenv* e, lval* a) {
   LASSERT_NUM(&quot;head&quot;, a, 1);
   LASSERT_TYPE(&quot;head&quot;, a, 0, LVAL_QEXPR);
   LASSERT_NOT_EMPTY(&quot;head&quot;, a, 0);
 
-  lval<em> v = lval_take(a, 0);
+  lval* v = lval_take(a, 0);
   while (v-&gt;count &gt; 1) { lval_del(lval_pop(v, 1)); }
   return v;
 }
 
-lval</em> builtin_tail(lenv<em> e, lval</em> a) {
+lval* builtin_tail(lenv* e, lval* a) {
   LASSERT_NUM(&quot;tail&quot;, a, 1);
   LASSERT_TYPE(&quot;tail&quot;, a, 0, LVAL_QEXPR);
   LASSERT_NOT_EMPTY(&quot;tail&quot;, a, 0);
 
-  lval<em> v = lval_take(a, 0);
+  lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, 0));
   return v;
 }
 
-lval</em> builtin_eval(lenv<em> e, lval</em> a) {
+lval* builtin_eval(lenv* e, lval* a) {
   LASSERT_NUM(&quot;eval&quot;, a, 1);
   LASSERT_TYPE(&quot;tail&quot;, a, 0, LVAL_QEXPR);
 
-  lval<em> x = lval_take(a, 0);
+  lval* x = lval_take(a, 0);
   x-&gt;type = LVAL_SEXPR;
   return lval_eval(e, x);
 }
 
-lval</em> builtin_join(lenv<em> e, lval</em> a) {
+lval* builtin_join(lenv* e, lval* a) {
 
   for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE(&quot;join&quot;, a, i, LVAL_QEXPR); }
 
-  lval<em> x = lval_pop(a, 0);
+  lval* x = lval_pop(a, 0);
 
   while (a-&gt;count) {
-    lval</em> y = lval_pop(a, 0);
+    lval* y = lval_pop(a, 0);
     x = lval_join(x, y);
   }
 
@@ -937,20 +911,20 @@ lval</em> builtin_join(lenv<em> e, lval</em> a) {
   return x;
 }
 
-lval<em> builtin_op(lenv</em> e, lval<em> a, char</em> op) {
+lval* builtin_op(lenv* e, lval* a, char* op) {
 
   for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE(op, a, i, LVAL_NUM); }
 
-  lval<em> x = lval_pop(a, 0);
+  lval* x = lval_pop(a, 0);
 
   if ((strcmp(op, &quot;-&quot;) == 0) &amp;&amp; a-&gt;count == 0) { x-&gt;num = -x-&gt;num; }
 
   while (a-&gt;count &gt; 0) {
-    lval</em> y = lval_pop(a, 0);
+    lval* y = lval_pop(a, 0);
 
     if (strcmp(op, &quot;+&quot;) == 0) { x-&gt;num += y-&gt;num; }
     if (strcmp(op, &quot;-&quot;) == 0) { x-&gt;num -= y-&gt;num; }
-    if (strcmp(op, &quot;<em>&quot;) == 0) { x-&gt;num </em>= y-&gt;num; }
+    if (strcmp(op, &quot;*&quot;) == 0) { x-&gt;num *= y-&gt;num; }
     if (strcmp(op, &quot;/&quot;) == 0) {
       if (y-&gt;num != 0) {
         lval_del(x); lval_del(y); lval_del(a);
@@ -966,15 +940,15 @@ lval<em> builtin_op(lenv</em> e, lval<em> a, char</em> op) {
   return x;
 }
 
-lval<em> builtin_add(lenv</em> e, lval<em> a) { return builtin_op(e, a, &quot;+&quot;); }
-lval</em> builtin_sub(lenv<em> e, lval</em> a) { return builtin_op(e, a, &quot;-&quot;); }
-lval<em> builtin_mul(lenv</em> e, lval<em> a) { return builtin_op(e, a, &quot;</em>&quot;); }
-lval<em> builtin_div(lenv</em> e, lval<em> a) { return builtin_op(e, a, &quot;/&quot;); }
+lval* builtin_add(lenv* e, lval* a) { return builtin_op(e, a, &quot;+&quot;); }
+lval* builtin_sub(lenv* e, lval* a) { return builtin_op(e, a, &quot;-&quot;); }
+lval* builtin_mul(lenv* e, lval* a) { return builtin_op(e, a, &quot;*&quot;); }
+lval* builtin_div(lenv* e, lval* a) { return builtin_op(e, a, &quot;/&quot;); }
 
-lval</em> builtin_var(lenv<em> e, lval</em> a, char<em> func) {
+lval* builtin_var(lenv* e, lval* a, char* func) {
   LASSERT_TYPE(func, a, 0, LVAL_QEXPR);
 
-  lval</em> syms = a-&gt;cell[0];
+  lval* syms = a-&gt;cell[0];
   for (int i = 0; i &lt; syms-&gt;count; i++) {
     LASSERT(a, (syms-&gt;cell[i]-&gt;type == LVAL_SYM),
       &quot;Function &#39;%s&#39; cannot define non-symbol. Got %s, Expected %s.&quot;,
@@ -994,10 +968,10 @@ lval</em> builtin_var(lenv<em> e, lval</em> a, char<em> func) {
   return lval_sexpr();
 }
 
-lval<em> builtin_def(lenv</em> e, lval<em> a) { return builtin_var(e, a, &quot;def&quot;); }
-lval</em> builtin_put(lenv<em> e, lval</em> a) { return builtin_var(e, a, &quot;=&quot;); }
+lval* builtin_def(lenv* e, lval* a) { return builtin_var(e, a, &quot;def&quot;); }
+lval* builtin_put(lenv* e, lval* a) { return builtin_var(e, a, &quot;=&quot;); }
 
-lval<em> builtin_ord(lenv</em> e, lval<em> a, char</em> op) {
+lval* builtin_ord(lenv* e, lval* a, char* op) {
   LASSERT_NUM(op, a, 2);
   LASSERT_TYPE(op, a, 0, LVAL_NUM);
   LASSERT_TYPE(op, a, 1, LVAL_NUM);
@@ -1011,12 +985,12 @@ lval<em> builtin_ord(lenv</em> e, lval<em> a, char</em> op) {
   return lval_num(r);
 }
 
-lval<em> builtin_gt(lenv</em> e, lval<em> a) { return builtin_ord(e, a, &quot;&gt;&quot;);  }
-lval</em> builtin_lt(lenv<em> e, lval</em> a) { return builtin_ord(e, a, &quot;&lt;&quot;);  }
-lval<em> builtin_ge(lenv</em> e, lval<em> a) { return builtin_ord(e, a, &quot;&gt;=&quot;); }
-lval</em> builtin_le(lenv<em> e, lval</em> a) { return builtin_ord(e, a, &quot;&lt;=&quot;); }
+lval* builtin_gt(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&gt;&quot;);  }
+lval* builtin_lt(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&lt;&quot;);  }
+lval* builtin_ge(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&gt;=&quot;); }
+lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&lt;=&quot;); }
 
-lval<em> builtin_cmp(lenv</em> e, lval<em> a, char</em> op) {
+lval* builtin_cmp(lenv* e, lval* a, char* op) {
   LASSERT_NUM(op, a, 2);
   int r;
   if (strcmp(op, &quot;==&quot;) == 0) { r =  lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
@@ -1025,64 +999,64 @@ lval<em> builtin_cmp(lenv</em> e, lval<em> a, char</em> op) {
   return lval_num(r);
 }
 
-lval<em> builtin_eq(lenv</em> e, lval<em> a) { return builtin_cmp(e, a, &quot;==&quot;); }
-lval</em> builtin_ne(lenv<em> e, lval</em> a) { return builtin_cmp(e, a, &quot;!=&quot;); }
+lval* builtin_eq(lenv* e, lval* a) { return builtin_cmp(e, a, &quot;==&quot;); }
+lval* builtin_ne(lenv* e, lval* a) { return builtin_cmp(e, a, &quot;!=&quot;); }
 
-lval<em> builtin_if(lenv</em> e, lval<em> a) {
+lval* builtin_if(lenv* e, lval* a) {
   LASSERT_NUM(&quot;if&quot;, a, 3);
   LASSERT_TYPE(&quot;if&quot;, a, 0, LVAL_NUM);
   LASSERT_TYPE(&quot;if&quot;, a, 1, LVAL_QEXPR);
   LASSERT_TYPE(&quot;if&quot;, a, 2, LVAL_QEXPR);
 
-  /</em> Mark Both Expressions as evaluable <em>/
-  lval</em> x;
+  /* Mark Both Expressions as evaluable */
+  lval* x;
   a-&gt;cell[1]-&gt;type = LVAL_SEXPR;
   a-&gt;cell[2]-&gt;type = LVAL_SEXPR;
 
   if (a-&gt;cell[0]-&gt;num) {
-    /<em> If condition is true evaluate first expression </em>/
+    /* If condition is true evaluate first expression */
     x = lval_eval(e, lval_pop(a, 1));
   } else {
-    /<em> Otherwise evaluate second expression </em>/
+    /* Otherwise evaluate second expression */
     x = lval_eval(e, lval_pop(a, 2));
   }
 
-  /<em> Delete argument list and return </em>/
+  /* Delete argument list and return */
   lval_del(a);
   return x;
 }
 
-void lenv_add_builtin(lenv<em> e, char</em> name, lbuiltin func) {
-  lval<em> k = lval_sym(name);
-  lval</em> v = lval_builtin(func);
+void lenv_add_builtin(lenv* e, char* name, lbuiltin func) {
+  lval* k = lval_sym(name);
+  lval* v = lval_builtin(func);
   lenv_put(e, k, v);
   lval_del(k); lval_del(v);
 }
 
-void lenv_add_builtins(lenv<em> e) {
-  /</em> Variable Functions <em>/
-  lenv_add_builtin(e, &quot;\&quot;,  builtin_lambda);
+void lenv_add_builtins(lenv* e) {
+  /* Variable Functions */
+  lenv_add_builtin(e, &quot;\\&quot;,  builtin_lambda);
   lenv_add_builtin(e, &quot;def&quot;, builtin_def); lenv_add_builtin(e, &quot;=&quot;, builtin_put);
 
-  /</em> List Functions <em>/
+  /* List Functions */
   lenv_add_builtin(e, &quot;list&quot;, builtin_list);
   lenv_add_builtin(e, &quot;head&quot;, builtin_head); lenv_add_builtin(e, &quot;tail&quot;,  builtin_tail);
   lenv_add_builtin(e, &quot;eval&quot;, builtin_eval); lenv_add_builtin(e, &quot;join&quot;,  builtin_join);
 
-  /</em> Mathematical Functions <em>/
+  /* Mathematical Functions */
   lenv_add_builtin(e, &quot;+&quot;,    builtin_add); lenv_add_builtin(e, &quot;-&quot;,     builtin_sub);
-  lenv_add_builtin(e, &quot;</em>&quot;,    builtin_mul); lenv_add_builtin(e, &quot;/&quot;,     builtin_div);
+  lenv_add_builtin(e, &quot;*&quot;,    builtin_mul); lenv_add_builtin(e, &quot;/&quot;,     builtin_div);
 
-  /<em> Comparison Functions </em>/
+  /* Comparison Functions */
   lenv_add_builtin(e, &quot;if&quot;,   builtin_if);
   lenv_add_builtin(e, &quot;==&quot;,   builtin_eq); lenv_add_builtin(e, &quot;!=&quot;,   builtin_ne);
   lenv_add_builtin(e, &quot;&gt;&quot;,    builtin_gt); lenv_add_builtin(e, &quot;&lt;&quot;,    builtin_lt);
   lenv_add_builtin(e, &quot;&gt;=&quot;,   builtin_ge); lenv_add_builtin(e, &quot;&lt;=&quot;,   builtin_le);
 }
 
-/<em> Evaluation </em>/
+/* Evaluation */
 
-lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
+lval* lval_call(lenv* e, lval* f, lval* a) {
 
   if (f-&gt;builtin) { return f-&gt;builtin(e, a); }
 
@@ -1096,7 +1070,7 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
       return lval_err(&quot;Function passed too many arguments. Got %i, Expected %i.&quot;, given, total);
     }
 
-    lval<em> sym = lval_pop(f-&gt;formals, 0);
+    lval* sym = lval_pop(f-&gt;formals, 0);
 
     if (strcmp(sym-&gt;sym, &quot;&amp;&quot;) == 0) {
 
@@ -1105,13 +1079,13 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
         return lval_err(&quot;Function format invalid. Symbol &#39;&amp;&#39; not followed by single symbol.&quot;);
       }
 
-      lval</em> nsym = lval_pop(f-&gt;formals, 0);
+      lval* nsym = lval_pop(f-&gt;formals, 0);
       lenv_put(f-&gt;env, nsym, builtin_list(e, a));
       lval_del(sym); lval_del(nsym);
       break;
     }
 
-    lval<em> val = lval_pop(a, 0);
+    lval* val = lval_pop(a, 0);
     lenv_put(f-&gt;env, sym, val);
     lval_del(sym); lval_del(val);
   }
@@ -1127,8 +1101,8 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
 
     lval_del(lval_pop(f-&gt;formals, 0));
 
-    lval</em> sym = lval_pop(f-&gt;formals, 0);
-    lval<em> val = lval_qexpr();
+    lval* sym = lval_pop(f-&gt;formals, 0);
+    lval* val = lval_qexpr();
     lenv_put(f-&gt;env, sym, val);
     lval_del(sym); lval_del(val);
   }
@@ -1142,7 +1116,7 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
 
 }
 
-lval</em> lval_eval_sexpr(lenv<em> e, lval</em> v) {
+lval* lval_eval_sexpr(lenv* e, lval* v) {
 
   for (int i = 0; i &lt; v-&gt;count; i++) { v-&gt;cell[i] = lval_eval(e, v-&gt;cell[i]); }
   for (int i = 0; i &lt; v-&gt;count; i++) { if (v-&gt;cell[i]-&gt;type == LVAL_ERR) { return lval_take(v, i); } }
@@ -1150,39 +1124,39 @@ lval</em> lval_eval_sexpr(lenv<em> e, lval</em> v) {
   if (v-&gt;count == 0) { return v; }
   if (v-&gt;count == 1) { return lval_eval(e, lval_take(v, 0)); }
 
-  lval<em> f = lval_pop(v, 0);
+  lval* f = lval_pop(v, 0);
   if (f-&gt;type != LVAL_FUN) {
-    lval</em> err = lval_err(
+    lval* err = lval_err(
       &quot;S-Expression starts with incorrect type. Got %s, Expected %s.&quot;,
       ltype_name(f-&gt;type), ltype_name(LVAL_FUN));
     lval_del(f); lval_del(v);
     return err;
   }
 
-  lval<em> result = lval_call(e, f, v);
+  lval* result = lval_call(e, f, v);
   lval_del(f);
   return result;
 }
 
-lval</em> lval_eval(lenv<em> e, lval</em> v) {
+lval* lval_eval(lenv* e, lval* v) {
   if (v-&gt;type == LVAL_SYM)   { return lenv_get(e, v); }
   if (v-&gt;type == LVAL_SEXPR) { return lval_eval_sexpr(e, v); }
   return v;
 }
 
-/<em> Reading </em>/
+/* Reading */
 
-lval<em> lval_read_num(mpc_ast_t</em> t) {
+lval* lval_read_num(mpc_ast_t* t) {
   long x = strtol(t-&gt;contents, NULL, 10);
   return errno != ERANGE ? lval_num(x) : lval_err(&quot;Invalid Number.&quot;);
 }
 
-lval<em> lval_read(mpc_ast_t</em> t) {
+lval* lval_read(mpc_ast_t* t) {
 
   if (strstr(t-&gt;tag, &quot;number&quot;)) { return lval_read_num(t); }
   if (strstr(t-&gt;tag, &quot;symbol&quot;)) { return lval_sym(t-&gt;contents); }
 
-  lval<em> x = NULL;
+  lval* x = NULL;
   if (strcmp(t-&gt;tag, &quot;&gt;&quot;) == 0) { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, &quot;sexpr&quot;))  { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, &quot;qexpr&quot;))  { x = lval_qexpr(); }
@@ -1199,37 +1173,37 @@ lval<em> lval_read(mpc_ast_t</em> t) {
   return x;
 }
 
-/</em> Main <em>/
+/* Main */
 
 int main(int argc, char** argv) {
 
-  mpc_parser_t</em> Number = mpc_new(&quot;number&quot;);
-  mpc_parser_t<em> Symbol = mpc_new(&quot;symbol&quot;);
-  mpc_parser_t</em> Sexpr  = mpc_new(&quot;sexpr&quot;);
-  mpc_parser_t<em> Qexpr  = mpc_new(&quot;qexpr&quot;);
-  mpc_parser_t</em> Expr   = mpc_new(&quot;expr&quot;);
+  mpc_parser_t* Number = mpc_new(&quot;number&quot;);
+  mpc_parser_t* Symbol = mpc_new(&quot;symbol&quot;);
+  mpc_parser_t* Sexpr  = mpc_new(&quot;sexpr&quot;);
+  mpc_parser_t* Qexpr  = mpc_new(&quot;qexpr&quot;);
+  mpc_parser_t* Expr   = mpc_new(&quot;expr&quot;);
   mpc_parser_t* Lispy  = mpc_new(&quot;lispy&quot;);
 
   mpca_lang(MPC_LANG_DEFAULT,
     &quot;                                                     \
       number : /-?[0-9]+/ ;                               \
-      symbol : /[a-zA-Z0-9</em>+\-<em>\/\\=&lt;&gt;!&amp;]+/ ;         \
-      sexpr  : &#39;(&#39; &lt;expr&gt;</em> &#39;)&#39; ;                          \
-      qexpr  : &#39;{&#39; &lt;expr&gt;<em> &#39;}&#39; ;                          \
+      symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/ ;         \
+      sexpr  : &#39;(&#39; &lt;expr&gt;* &#39;)&#39; ;                          \
+      qexpr  : &#39;{&#39; &lt;expr&gt;* &#39;}&#39; ;                          \
       expr   : &lt;number&gt; | &lt;symbol&gt; | &lt;sexpr&gt; | &lt;qexpr&gt; ;  \
-      lispy  : /^/ &lt;expr&gt;</em> /$/ ;                          \
+      lispy  : /^/ &lt;expr&gt;* /$/ ;                          \
     &quot;,
     Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
   puts(&quot;Lispy Version 0.0.0.0.9&quot;);
   puts(&quot;Press Ctrl+c to Exit\n&quot;);
 
-  lenv<em> e = lenv_new();
+  lenv* e = lenv_new();
   lenv_add_builtins(e);
 
   while (1) {
 
-    char</em> input = readline(&quot;lispy&gt; &quot;);
+    char* input = readline(&quot;lispy&gt; &quot;);
     add_history(input);
 
     mpc_result_t r;
@@ -1254,13 +1228,13 @@ int main(int argc, char** argv) {
   mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
   return 0;
-}</code></pre>
+}</code>
       </div>
     </div>
   </div>
 </div>
 
-<p><h2>Bonus Marks</h2> <hr/></p>
+<h2 id="bonus-marks">Bonus Marks</h2>
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; Create builtin logical operators <em>or</em> <code>||</code>, <em>and</em> <code>&amp;&amp;</code> and <em>not</em> <code>!</code> and add them to the language.</li>

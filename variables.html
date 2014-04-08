@@ -283,88 +283,474 @@
                 <section class="normal" id="section-gitbook_18">
                 
                     <h1 id="variables">Variables</h1>
-<p><h2>Immutability</h2> <hr/></p>
+<h2 id="immutability">Immutability</h2>
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/turtle.png" alt="turtle"/>
-  <p><small>Teenage Ninja Turtle &bull; Not Immutable.</small></p>
+  <small>Teenage Ninja Turtle &bull; Not Immutable.</small>
 </div>
 
 <p>In the previous chapters we&#39;ve learnt a lot, and made great progress on the infrastructure of our language.</p>
-
 <p>Already we can do a number of cool things that other languages can&#39;t, such as putting code inside of lists. Now is the time to start adding in the <em>features</em> which will make our language practical. The first one of these is going to be <em>variables</em>.</p>
-
 <p>They&#39;re called variables, but it&#39;s a misleading name, because our variables won&#39;t vary. Our variables are <em>immutable</em> meaning they cannot change. Everything in our language so far has acted like it is <em>immutable</em>. When we evaluate an expression we have imagined that the old thing has been deleted and a new thing returned. In implementation often it is easier for us to reuse the data from the old thing to build the new thing, but conceptually it is a good way to think about how our language works.</p>
-
 <p>So actually our variables are simply a way of <em>naming values</em>. They let us assign a <em>name</em> to a <em>value</em>, and then let us get a copy of that <em>value</em> later on when we need it.</p>
-
 <p>To allow for <em>naming values</em> we need to create a structure which stores the name and value of everything named in our program. We call this the <em>environment</em>. When we start a new interactive prompt we want to create a new environment to go along with it, in which each new bit of input is evaluated. Then we can store and recall variables as we program.</p>
-
 <div class="alert alert-warning">
-  <p><strong>What happens when we re-assign a name to something new? Isn&#39;t this like mutability?</strong></p>
+  <strong>What happens when we re-assign a name to something new? Isn&#39;t this like mutability?</strong>
 
-  <p>In our Lisp, when we re-assign a name we&#39;re going to delete the old association and create a new one. This gives the illusion that the thing assigned to that name has changed, and is mutable, but in fact we have deleted the old thing and assigned it a new thing. This is different to C where we really can change the data pointed to by a pointer, or stored in a struct, without deleting it and creating a new one.</p>
+  In our Lisp, when we re-assign a name we&#39;re going to delete the old association and create a new one. This gives the illusion that the thing assigned to that name has changed, and is mutable, but in fact we have deleted the old thing and assigned it a new thing. This is different to C where we really can change the data pointed to by a pointer, or stored in a struct, without deleting it and creating a new one.
 </div>
 
 
-<p><h2>Symbol Syntax</h2> <hr/></p>
+<h2 id="symbol-syntax">Symbol Syntax</h2>
 <p>Now that we&#39;re going to allow for user defined variables we need to update the grammar for symbols to be more flexible. Rather than just our builtin functions it should match any possible valid symbol. Unlike in C, where the name a variable can be given is fairly restrictive, we&#39;re going to allow for all sorts of characters in the name of a variable.</p>
-
 <p>We can create a regular expression that expresses the range of characters available as follows.</p>
-
-<pre><code>/[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/</code></pre>
-
-<p>On first glace this looks like we&#39;ve just bashed our hands in the keyboard. Actually it is a regular expression using a big range specifier <code>[]</code>. Inside range specifiers special characters lose their meaning, but some of these characters still need to be escaped with backslashes. Because this is part of a C string we need to put two back slashes to represent a single backslash character in the input.</p>
-
-<p>This rule lets symbols be any of, the standard C identifier characters <code>a-zA-Z0-9_</code>, the arithmetic operator characters <code>+\-*\/</code>, the backslash character <code>\\</code>, the comparison operator characters <code>=&lt;&gt;!</code>, or an ampersands <code>&amp;</code>. This will give us all the flexibility we need for defining new and existing symbols.</p>
-
-<pre><code data-language='C'>mpca_lang(MPC_LANG_DEFAULT,
-  "                                                     \
+<pre><code>/<span class="hljs-special">[</span>a-zA-Z0-9_+<span class="hljs-command">\\</span>-*<span class="hljs-command">\\</span>/<span class="hljs-command">\\</span><span class="hljs-command">\\</span>=&lt;&gt;!<span class="hljs-special">&amp;</span><span class="hljs-special">]</span>+/
+</code></pre><p>On first glace this looks like we&#39;ve just bashed our hands in the keyboard. Actually it is a regular expression using a big range specifier <code>[]</code>. Inside range specifiers special characters lose their meaning, but some of these characters still need to be escaped with backslashes. Because this is part of a C string we need to put two back slashes to represent a single backslash character in the input.</p>
+<p>This rule lets symbols be any of, the standard C identifier characters <code>a-zA-Z0-9_</code>, the arithmetic operator characters <code>+\\-*\\/</code>, the backslash character <code>\\\\</code>, the comparison operator characters <code>=&lt;&gt;!</code>, or an ampersands <code>&amp;</code>. This will give us all the flexibility we need for defining new and existing symbols.</p>
+<pre><code class="lang-c">mpca_lang(MPC_LANG_DEFAULT,
+  <span class="hljs-string">"                                                     \
     number : /-?[0-9]+/ ;                               \
     symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/ ;         \
     sexpr  : '(' &lt;expr&gt;* ')' ;                          \
     qexpr  : '{' &lt;expr&gt;* '}' ;                          \
     expr   : &lt;number&gt; | &lt;symbol&gt; | &lt;sexpr&gt; | &lt;qexpr&gt; ;  \
     lispy  : /^/ &lt;expr&gt;* /$/ ;                          \
-  ",
+  "</span>,
   Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 </code></pre>
-
-
-<p><h2>Function Pointers</h2> <hr/></p>
+<h2 id="function-pointers">Function Pointers</h2>
 <p>Once we introduce variables, symbols will no longer represent functions in our language, but rather they will represent a name for us to lookup into our environment and get some new value back from.</p>
-
 <p>Therefore we need a new value to represent functions in our language, which we can return once one of the builtin symbols is encountered. To create this new type of <code>lval</code> we are going to use something called a <em>function pointer</em>.</p>
-
 <p>Function pointers are a great feature of C that lets you store and pass around pointers to functions. It doesn&#39;t make sense to edit the data pointed to by these pointers. Instead we use them to call the function they point to, as if it were a normal function.</p>
-
 <p>Like normal pointers, function pointers have some type associated with them. This type specifies the type of the function pointed to, not the type of the data pointed to. This lets the compiler work out if it has been called correctly.</p>
-
-<p>In the previous chapter our builtin functions took a <code>lval<em></code> as input and returned a <code>lval</em></code> as output. In this chapter our builtin functions will take an extra pointer to the environment <code>lenv*</code> as input. We can declare a new function pointer type called <code>lbuiltin</code>, for this type of function, like this.</p>
-
-<pre><code data-language='c'>typedef lval*(*lbuiltin)(lenv*, lval*);</code></pre>
-
+<p>In the previous chapter our builtin functions took a <code>lval*</code> as input and returned a <code>lval*</code> as output. In this chapter our builtin functions will take an extra pointer to the environment <code>lenv*</code> as input. We can declare a new function pointer type called <code>lbuiltin</code>, for this type of function, like this.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">typedef</span> lval*(*lbuiltin)(lenv*, lval*);
+</code></pre>
 <div class="alert alert-warning">
-  <p><strong>Why is that syntax so odd?</strong></p>
+  <strong>Why is that syntax so odd?</strong>
 
-  <p>In some places the syntax of C can look particularly weird. It can help if we understand exactly why the syntax is like this. Let us de-construct the above syntax part by part.</p>
+  In some places the syntax of C can look particularly weird. It can help if we understand exactly why the syntax is like this. Let us de-construct the above syntax part by part.
 
-  <p>First the <code>typedef</code>. This can be put before any standard variable declaration. It results in the name of the variable, being declared a new type, matching what would be the inferred type of that variable. This is why in the above declaration what looks like the function name becomes the new type name.</p>
+  First the <code>typedef</code>. This can be put before any standard variable declaration. It results in the name of the variable, being declared a new type, matching what would be the inferred type of that variable. This is why in the above declaration what looks like the function name becomes the new type name.
 
-  <p>Next all those <code><em></code>. Pointer types in C are actually meant to be written with the star <code></em></code> on the left hand side of the variable name, not the right hand side of the type <code>int <em>x;</code>. This is because C type syntax works by a kind of weird inference. Instead of reading <em>&quot;Create a new <code>int</code> pointer <code>x</code>&quot;</em>. It is meant to read <em>&quot;Create a new variable <code>x</code> where to dereference <code>x</code> results in an <code>int</code>.&quot;</em> Therefore <code>x</code> is inferred to be a pointer to an <code>int</code>.</p>
+  Next all those <code>*</code>. Pointer types in C are actually meant to be written with the star <code>*</code> on the left hand side of the variable name, not the right hand side of the type <code>int *x;</code>. This is because C type syntax works by a kind of weird inference. Instead of reading <em>&quot;Create a new <code>int</code> pointer <code>x</code>&quot;</em>. It is meant to read <em>&quot;Create a new variable <code>x</code> where to dereference <code>x</code> results in an <code>int</code>.&quot;</em> Therefore <code>x</code> is inferred to be a pointer to an <code>int</code>.
 
-  <p>This idea is extended to function pointers. We can read the above declaration as follows. <em>&quot;To get an <code>lval</em></code> we dereference <code>lbuiltin</code> and call it with a <code>lenv<em></code> and a <code>lval</em></code>.&quot;</em> Therefore <code>lbuiltin</code> must be a function pointer that takes an <code>lenv<em></code> and a <code>lval</em></code> and returns a <code>lval*</code>.</p>
+  This idea is extended to function pointers. We can read the above declaration as follows. &quot;To get an <code>lval*</code> we dereference <code>lbuiltin</code> and call it with a <code>lenv*</code> and a <code>lval*</code>.&quot; Therefore <code>lbuiltin</code> must be a function pointer that takes an <code>lenv*</code> and a <code>lval*</code> and returns a <code>lval*</code>.
 </div>
 
-<p><h2>Cyclic Types</h2> <hr/></p>
+<h2 id="cyclic-types">Cyclic Types</h2>
 <p>The <code>lbuiltin</code> type references the <code>lval</code> type and the <code>lenv</code> type. This means that they should be declared first in the source file.</p>
-
 <p>But we want to make a <code>lbuiltin</code> field in our <code>lval</code> struct so we can create function values. So therefore our <code>lbuiltin</code> declaration must go before our <code>lval</code> declaration. This leads to what is called a cyclic type dependency, where two types depend on each other.</p>
-
 <p>We&#39;ve come across this problem before with functions which depend on each other. The solution was to create a <em>forward declaration</em> which declared a function but left the body of it empty.</p>
-
 <p>In C we can do exactly the same with types. First we declare two <code>struct</code> types without a body. Secondly we typedef these to the names <code>lval</code> and <code>lenv</code>. Then we can define our <code>lbuiltin</code> function pointer type. And finally we can define the body of our <code>lval</code> struct. Now all our type issues are resolved and the compiler won&#39;t complain any more.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Forward Declarations */</span>
 
-<pre><code data-language='c'>/* Forward Declarations */
+<span class="hljs-keyword">struct</span> lval;
+<span class="hljs-keyword">struct</span> lenv;
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> lval lval;
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> lenv lenv;
+
+<span class="hljs-comment">/* Lisp Value */</span>
+
+<span class="hljs-keyword">enum</span> { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
+
+<span class="hljs-keyword">typedef</span> lval*(*lbuiltin)(lenv*, lval*);
+
+<span class="hljs-keyword">struct</span> lval {
+  <span class="hljs-keyword">int</span> type;
+
+  <span class="hljs-keyword">long</span> num;
+  <span class="hljs-keyword">char</span>* err;
+  <span class="hljs-keyword">char</span>* sym;
+  lbuiltin fun;
+
+  <span class="hljs-keyword">int</span> count;
+  lval** cell;
+};
+</code></pre>
+<h2 id="function-type">Function Type</h2>
+<p>As we&#39;ve added a new possible <code>lval</code> type with the enumeration <code>LVAL_FUN</code>. We should update all our relevant functions that work on <code>lvals</code> to deal correctly with this update. In most cases this just means inserting new cases into switch statements.</p>
+<p>We can start by making a new constructor function for this type.</p>
+<pre><code class="lang-c">lval* lval_fun(lbuiltin func) {
+  lval* v = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(lval));
+  v-&gt;type = LVAL_FUN;
+  v-&gt;fun = func;
+  <span class="hljs-keyword">return</span> v;
+}
+</code></pre>
+<p>On <strong>deletion</strong> we don&#39;t need to do anything special for function pointers.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> LVAL_FUN: <span class="hljs-keyword">break</span>;
+</code></pre>
+<p>On <strong>printing</strong> we can just print out some nominal string.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> LVAL_FUN:   <span class="hljs-built_in">printf</span>(<span class="hljs-string">"&lt;function&gt;"</span>); <span class="hljs-keyword">break</span>;
+</code></pre>
+<p>We&#39;re also going to add a new function for <strong>copying</strong> an <code>lval</code>. This is going to come in useful when we put things into, and take things out of, the environment. For numbers and functions we can just copy the relevant fields directly. For strings we need to copy using <code>malloc</code> and <code>strcpy</code>. To copy lists we need to allocate the correct amount of space and then copy each element individually.</p>
+<pre><code class="lang-c">lval* lval_copy(lval* v) {
+
+  lval* x = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(lval));
+  x-&gt;type = v-&gt;type;
+
+  <span class="hljs-keyword">switch</span> (v-&gt;type) {
+
+    <span class="hljs-comment">/* Copy Functions and Numbers Directly */</span>
+    <span class="hljs-keyword">case</span> LVAL_FUN: x-&gt;fun = v-&gt;fun; <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> LVAL_NUM: x-&gt;num = v-&gt;num; <span class="hljs-keyword">break</span>;
+
+    <span class="hljs-comment">/* Copy Strings using malloc and strcpy */</span>
+    <span class="hljs-keyword">case</span> LVAL_ERR: x-&gt;err = <span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">strlen</span>(v-&gt;err) + <span class="hljs-number">1</span>); <span class="hljs-built_in">strcpy</span>(x-&gt;err, v-&gt;err); <span class="hljs-keyword">break</span>;
+    <span class="hljs-keyword">case</span> LVAL_SYM: x-&gt;sym = <span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">strlen</span>(v-&gt;sym) + <span class="hljs-number">1</span>); <span class="hljs-built_in">strcpy</span>(x-&gt;sym, v-&gt;sym); <span class="hljs-keyword">break</span>;
+
+    <span class="hljs-comment">/* Copy Lists by copying each sub-expression */</span>
+    <span class="hljs-keyword">case</span> LVAL_SEXPR:
+    <span class="hljs-keyword">case</span> LVAL_QEXPR:
+      x-&gt;count = v-&gt;count;
+      x-&gt;cell = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(lval*) * x-&gt;count);
+      <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; x-&gt;count; i++) {
+        x-&gt;cell[i] = lval_copy(v-&gt;cell[i]);
+      }
+    <span class="hljs-keyword">break</span>;
+  }
+
+  <span class="hljs-keyword">return</span> x;
+}
+</code></pre>
+<h2 id="environment">Environment</h2>
+<p>Our environment structure must encode a list of relationships between <em>names</em> and <em>values</em>. There are many ways to build a structure that can do this sort of thing. We are going to go for the simplest possible method that works well. This is to use two lists of equal length. One is a list of <code>lval*</code>, and the other is a list of <code>char*</code>. Each entry in one list has a corresponding entry in the other list at the same position.</p>
+<p>We&#39;ve already forward declared our <code>lenv</code> struct, so we can define it as follows.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">struct</span> lenv {
+  <span class="hljs-keyword">int</span> count;
+  <span class="hljs-keyword">char</span>** syms;
+  lval** vals;
+};
+</code></pre>
+<p>We need some functions to create and delete this structure. These are pretty simple. Creation initialises the struct fields, while deletion iterates over the items in both lists and deletes or frees them.</p>
+<pre><code class="lang-c">lenv* lenv_new(<span class="hljs-keyword">void</span>) {
+  lenv* e = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(lenv));
+  e-&gt;count = <span class="hljs-number">0</span>;
+  e-&gt;syms = NULL;
+  e-&gt;vals = NULL;
+  <span class="hljs-keyword">return</span> e;
+}
+
+<span class="hljs-keyword">void</span> lenv_del(lenv* e) {
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; e-&gt;count; i++) {
+    <span class="hljs-built_in">free</span>(e-&gt;syms[i]);
+    lval_del(e-&gt;vals[i]);
+  }
+  <span class="hljs-built_in">free</span>(e-&gt;syms);
+  <span class="hljs-built_in">free</span>(e-&gt;vals);
+  <span class="hljs-built_in">free</span>(e);
+}
+</code></pre>
+<p>Next we can create two functions that either get values from the environment or put values into it.</p>
+<p>To get a value from the environment we loop over all the items in the environment and check if the given symbol matches any of the stored strings. If we find a match we can return a copy of the stored value. If no match is found we should return an error.</p>
+<p>The function for putting new variables into the environment is a little bit more complex. First we want to check if a variable with the same name already exists. If this is the case we should replace its value with the new one. To do this we loop over all the existing variables in the environment and check their name. If a match is found we delete the value stored at that location, and store there a copy of the input value.</p>
+<p>If no existing value is found with that name, we need to allocate some more space to put it in. For this we can use <code>realloc</code>, and store a copy of the <code>lval</code> and its name at the newly allocated locations.</p>
+<pre><code class="lang-c">lval* lenv_get(lenv* e, lval* k) {
+
+  <span class="hljs-comment">/* Iterate over all items in environment */</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; e-&gt;count; i++) {
+    <span class="hljs-comment">/* Check if the stored string matches the symbol string */</span>
+    <span class="hljs-comment">/* If it does, return a copy of the value */</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(e-&gt;syms[i], k-&gt;sym) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> lval_copy(e-&gt;vals[i]); }
+  }
+  <span class="hljs-comment">/* If no symbol found return error */</span>
+  <span class="hljs-keyword">return</span> lval_err(<span class="hljs-string">"unbound symbol!"</span>,);
+}
+
+<span class="hljs-keyword">void</span> lenv_put(lenv* e, lval* k, lval* v) {
+
+  <span class="hljs-comment">/* Iterate over all items in environment */</span>
+  <span class="hljs-comment">/* This is to see if variable already exists */</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; e-&gt;count; i++) {
+
+    <span class="hljs-comment">/* If variable is found delete item at that position */</span>
+    <span class="hljs-comment">/* And replace with variable supplied by user */</span>
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(e-&gt;syms[i], k-&gt;sym) == <span class="hljs-number">0</span>) {
+      lval_del(e-&gt;vals[i]);
+      e-&gt;vals[i] = lval_copy(v);
+      e-&gt;syms[i] = realloc(e-&gt;syms[i], <span class="hljs-built_in">strlen</span>(k-&gt;sym)+<span class="hljs-number">1</span>);
+      <span class="hljs-built_in">strcpy</span>(e-&gt;syms[i], k-&gt;sym);
+      <span class="hljs-keyword">return</span>;
+    }
+  }
+
+  <span class="hljs-comment">/* If no existing entry found then allocate space for new entry */</span>
+  e-&gt;count++;
+  e-&gt;vals = realloc(e-&gt;vals, <span class="hljs-keyword">sizeof</span>(lval*) * e-&gt;count);
+  e-&gt;syms = realloc(e-&gt;syms, <span class="hljs-keyword">sizeof</span>(<span class="hljs-keyword">char</span>*) * e-&gt;count);
+
+  <span class="hljs-comment">/* Copy contents of lval and symbol string into new location */</span>
+  e-&gt;vals[e-&gt;count-<span class="hljs-number">1</span>] = lval_copy(v);
+  e-&gt;syms[e-&gt;count-<span class="hljs-number">1</span>] = <span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">strlen</span>(k-&gt;sym)+<span class="hljs-number">1</span>);
+  <span class="hljs-built_in">strcpy</span>(e-&gt;syms[e-&gt;count-<span class="hljs-number">1</span>], k-&gt;sym);
+}
+</code></pre>
+<h2 id="variable-evaluation">Variable Evaluation</h2>
+<p>Our evaluation function now depends on the some environment. We should pass this in as an argument and use it to extract get a value if we encounter a symbol type.</p>
+<pre><code class="lang-c">lval* lval_eval(lenv* e, lval* v) {
+  <span class="hljs-keyword">if</span> (v-&gt;type == LVAL_SYM)   { <span class="hljs-keyword">return</span> lenv_get(e, v); }
+  <span class="hljs-keyword">if</span> (v-&gt;type == LVAL_SEXPR) { <span class="hljs-keyword">return</span> lval_eval_sexpr(e, v); }
+  <span class="hljs-keyword">return</span> v;
+}
+</code></pre>
+<p>Because we&#39;ve added a function type, our evaluation of S-Expressions also needs to change. Instead of checking for a symbol type we want to ensure it is a function type. If this condition holds we can call the <code>fun</code> field of the <code>lval</code> using the same notation as standard function calls.</p>
+<pre><code class="lang-c">lval* lval_eval_sexpr(lenv* e, lval* v) {
+
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; v-&gt;count; i++) { v-&gt;cell[i] = lval_eval(e, v-&gt;cell[i]); }
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; v-&gt;count; i++) { <span class="hljs-keyword">if</span> (v-&gt;cell[i]-&gt;type == LVAL_ERR) { <span class="hljs-keyword">return</span> lval_take(v, i); } }
+
+  <span class="hljs-keyword">if</span> (v-&gt;count == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> v; }
+  <span class="hljs-keyword">if</span> (v-&gt;count == <span class="hljs-number">1</span>) { <span class="hljs-keyword">return</span> lval_take(v, <span class="hljs-number">0</span>); }
+
+  <span class="hljs-comment">/* Ensure first element is a function after evaluation */</span>
+  lval* f = lval_pop(v, <span class="hljs-number">0</span>);
+  <span class="hljs-keyword">if</span> (f-&gt;type != LVAL_FUN) {
+    lval_del(v); lval_del(f);
+    <span class="hljs-keyword">return</span> lval_err(<span class="hljs-string">"first element is not a function"</span>);
+  }
+
+  <span class="hljs-comment">/* If so call function to get result */</span>
+  lval* result = f-&gt;fun(e, v);
+  lval_del(f);
+  <span class="hljs-keyword">return</span> result;
+}
+</code></pre>
+<h2 id="builtins">Builtins</h2>
+<p>Now that our evaluation relies on the new function type we need to make sure we can register all of our builtin functions with the environment before we start the interactive prompt. At the moment our builtin functions might not be the correct type. We need to change their type signature such that they take in some environment, and where appropriate change them to pass this environment into other calls that require it.</p>
+<p>Once we&#39;ve changed them to the correct type we can create a function that registers all of our builtins into an environment.</p>
+<p>For each builtin we want to create a function <code>lval</code> and symbol <code>lval</code> with the given name. We then register these with the environment using <code>lenv_put</code>. The environment always takes or returns copies of a values, so we need to remember to delete these two <code>lval</code> after registration as we won&#39;t need them anymore.</p>
+<p>If we split this task into two functions we can neatly register all of our builtins with some environment.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">void</span> lenv_add_builtin(lenv* e, <span class="hljs-keyword">char</span>* name, lbuiltin func) {
+  lval* k = lval_sym(name);
+  lval* v = lval_fun(func);
+  lenv_put(e, k, v);
+  lval_del(k); lval_del(v);
+}
+
+<span class="hljs-keyword">void</span> lenv_add_builtins(lenv* e) {
+  <span class="hljs-comment">/* List Functions */</span>
+  lenv_add_builtin(e, <span class="hljs-string">"list"</span>, builtin_list);
+  lenv_add_builtin(e, <span class="hljs-string">"head"</span>, builtin_head); lenv_add_builtin(e, <span class="hljs-string">"tail"</span>,  builtin_tail);
+  lenv_add_builtin(e, <span class="hljs-string">"eval"</span>, builtin_eval); lenv_add_builtin(e, <span class="hljs-string">"join"</span>,  builtin_join);
+
+  <span class="hljs-comment">/* Mathematical Functions */</span>
+  lenv_add_builtin(e, <span class="hljs-string">"+"</span>,    builtin_add); lenv_add_builtin(e, <span class="hljs-string">"-"</span>,     builtin_sub);
+  lenv_add_builtin(e, <span class="hljs-string">"*"</span>,    builtin_mul); lenv_add_builtin(e, <span class="hljs-string">"/"</span>,     builtin_div);
+}
+</code></pre>
+<p>The final step is to call this function before we create the interactive prompt. We also need to remember to delete the environment once we are finished.</p>
+<pre><code class="lang-c">lenv* e = lenv_new();
+lenv_add_builtins(e);
+
+<span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) {
+
+  <span class="hljs-keyword">char</span>* input = readline(<span class="hljs-string">"lispy&gt; "</span>);
+  add_history(input);
+
+  mpc_result_t r;
+  <span class="hljs-keyword">if</span> (mpc_parse(<span class="hljs-string">"&lt;stdin&gt;"</span>, input, Lispy, &amp;r)) {
+
+    lval* x = lval_eval(e, lval_read(r.output));
+    lval_println(x);
+    lval_del(x);
+
+    mpc_ast_delete(r.output);
+  } <span class="hljs-keyword">else</span> {
+    mpc_err_print(r.error);
+    mpc_err_delete(r.error);
+  }
+
+  <span class="hljs-built_in">free</span>(input);
+
+}
+
+lenv_del(e);
+</code></pre>
+<p>If everything is working correctly we should have a play around in the prompt and verify that functions are actually a new type of value now, not symbols.</p>
+<pre><code class="lang-lispy">lispy&gt; +
+&lt;<span class="hljs-function"><span class="hljs-keyword">function</span>&gt;</span>
+lispy&gt; eval (head <span class="hljs-cell">{<span class="hljs-number">5</span> <span class="hljs-number">10</span> <span class="hljs-number">11</span> <span class="hljs-number">15</span>}</span>)
+<span class="hljs-number">5</span>
+lispy&gt; eval (head <span class="hljs-cell">{+ - + - * /}</span>)
+&lt;<span class="hljs-function"><span class="hljs-keyword">function</span>&gt;</span>
+lispy&gt; (eval (head <span class="hljs-cell">{+ - + - * /}</span>)) <span class="hljs-number">10</span> <span class="hljs-number">20</span>
+<span class="hljs-number">30</span>
+lispy&gt; hello
+Error: unbound symbol!
+lispy&gt;
+</code></pre>
+<h2 id="define-function">Define Function</h2>
+<p>We&#39;ve managed to register our builtins as variables but we still don&#39;t have a way for users to define their own variables.</p>
+<p>This is actually a bit awkward. We need to get the user to pass in a symbol to name, as well as the value to assign to it. But symbols can&#39;t appear on their own. Otherwise the evaluation function will attempt to retrieve a value for them from the environment.</p>
+<p>The only way we can pass around symbols without them being evaluated is to put them between <code>{}</code> in a quoted expression. So we&#39;re going to use this technique for our define function. It will take as input a list of symbols, and a number of other values. It will then assign each of the values to each of the symbols.</p>
+<p>This function should act like any other builtin. It first checks for error conditions and then performs some command and return a value. In this case it first checks that the input arguments are the correct types. It then iterates over each symbol and value and puts them into the environment. If these is an error we can return this, but on success we will return the empty expression <code>()</code>.</p>
+<pre><code class="lang-c">lval* builtin_def(lenv* e, lval* a) {
+  LASSERT(a, (a-&gt;cell[<span class="hljs-number">0</span>]-&gt;type == LVAL_QEXPR), <span class="hljs-string">"Function 'def' passed incorrect type!"</span>);
+
+  <span class="hljs-comment">/* First argument is symbol list */</span>
+  lval* syms = a-&gt;cell[<span class="hljs-number">0</span>];
+
+  <span class="hljs-comment">/* Ensure all elements of first list are symbols */</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; syms-&gt;count; i++) {
+    LASSERT(a, (syms-&gt;cell[i]-&gt;type == LVAL_SYM), <span class="hljs-string">"Function 'def' cannot define non-symbol"</span>);
+  }
+
+  <span class="hljs-comment">/* Check correct number of symbols and values */</span>
+  LASSERT(a, (syms-&gt;count == a-&gt;count-<span class="hljs-number">1</span>), <span class="hljs-string">"Function 'def' cannot define incorrect number of values to symbols"</span>);
+
+  <span class="hljs-comment">/* Assign copies of values to symbols */</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; syms-&gt;count; i++) {
+    lenv_put(e, syms-&gt;cell[i], a-&gt;cell[i+<span class="hljs-number">1</span>]);
+  }
+
+  lval_del(a);
+  <span class="hljs-keyword">return</span> lval_sexpr();
+}
+</code></pre>
+<p>We need to register this new builtin using our builtin function <code>lenv_add_builtins</code>.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Variable Functions */</span>
+lenv_add_builtin(e, <span class="hljs-string">"def"</span>,  builtin_def);
+</code></pre>
+<p>Now we should be able to support user defined variables! Because our <code>def</code> function takes in a list of symbols we can do some cool things storing and manipulating symbols in lists before passing them to be defined. Have a play around in the prompt and ensure everything is working correctly. You should get behaviour as follows. See what other complex methods are possible for the definition and evaluation of variables. Once we get to defining functions we&#39;ll really see some of the neat things that can be done with this approach.</p>
+<pre><code class="lang-lispy">lispy&gt; def <span class="hljs-list">{x}</span> <span class="hljs-number">100</span>
+()
+lispy&gt; def <span class="hljs-list">{y}</span> <span class="hljs-number">200</span>
+()
+lispy&gt; x
+<span class="hljs-number">100</span>
+lispy&gt; y
+<span class="hljs-number">200</span>
+lispy&gt; + x y
+<span class="hljs-number">300</span>
+lispy&gt; def <span class="hljs-list">{a b}</span> <span class="hljs-number">5</span> <span class="hljs-number">6</span>
+()
+lispy&gt; + a b
+<span class="hljs-number">11</span>
+lispy&gt; def <span class="hljs-list">{arglist}</span> <span class="hljs-list">{a b x y}</span>
+()
+lispy&gt; arglist
+<span class="hljs-list">{a b x y}</span>
+lispy&gt; def arglist <span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span>
+()
+lispy&gt; list a b x y
+<span class="hljs-list">{1 2 3 4}</span>
+lispy&gt;
+</code></pre>
+<h2 id="error-reporting">Error Reporting</h2>
+<p>So far our error reporting kind of sucks. We can report when an error occurs, and give a vague notion of what was the problem was, but we don&#39;t give the user much information about what exactly has gone wrong. For example if there is an unbound symbol we should be able to report exactly which symbol was unbound. This can help the user track down errors, typos, and other trivial problems.</p>
+<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
+  <img src="static/img/eclipses.png" alt="eclipses"/>
+  <small>Eclipses &bull; Like ellipsis.</small>
+</div>
+
+<p>Wouldn&#39;t it be great if we could write a function that can report errors in a similar way to how <code>printf</code> works. It would be ideal if we could pass in strings, integers, and other data to make our error messages richer.</p>
+<p>The <code>printf</code> function is a special function in C because it takes a variable number of arguments. We can create our own <em>variable argument</em> functions, which is what we&#39;re going to do to make our error reporting better.</p>
+<p>We&#39;ll modify <code>lval_err</code> to act in the same way as <code>printf</code>, taking in a format string, and after that a variable number of arguments to match into this string.</p>
+<p>To declare that a function takes variables arguments in the type signature you use the special syntax of ellipsis <code>...</code>, which represent the rest of the arguments.</p>
+<p><code data-language='c'>lval<em> lval_err(char</em> fmt, ...);`</p>
+<p>Then, inside the function there are some standard library functions we can use to examine what the caller has passed in.</p>
+<p>The first step is to create a <code>va_list</code> struct and initialise it with <code>va_start</code>, passing in the last named argument. For other purposes it is possible to examine each argument passed in using <code>va_arg</code>, but we are going to pass our whole variable argument list directly to the <code>vsnprintf</code> function. This function acts like <code>printf</code> but instead writes to a string and takes in a <code>va_list</code>. Once we are done with our variable arguments, we shoulder call <code>va_end</code> to cleanup any resources used.</p>
+<p>The <code>vsnprintf</code> function outputs to a string, which we need to allocate some first. Because we don&#39;t know the size of this string until we&#39;ve run the function we first allocate a buffer <code>512</code> characters big and then reallocate to a smaller buffer once we&#39;ve output to it. If an error message is going to be longer than 512 character it will just get cut off, but hopefully this won&#39;t happen.</p>
+<p>Putting it all together our new error function looks like this.</p>
+<pre><code class="lang-c">lval* lval_err(<span class="hljs-keyword">char</span>* fmt, ...) {
+  lval* v = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(lval));
+  v-&gt;type = LVAL_ERR;
+
+  <span class="hljs-comment">/* Create a va list and initialize it */</span>
+  va_list va;
+  va_start(va, fmt);
+
+  <span class="hljs-comment">/* Allocate 512 bytes of space */</span>
+  v-&gt;err = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">512</span>);
+
+  <span class="hljs-comment">/* printf into the error string with a maximum of 511 characters */</span>
+  vsnprintf(v-&gt;err, <span class="hljs-number">511</span>, fmt, va);
+
+  <span class="hljs-comment">/* Reallocate to number of bytes actually used */</span>
+  v-&gt;err = realloc(v-&gt;err, <span class="hljs-built_in">strlen</span>(v-&gt;err)+<span class="hljs-number">1</span>);
+
+  <span class="hljs-comment">/* Cleanup our va list */</span>
+  va_end(va);
+
+  <span class="hljs-keyword">return</span> v;
+}
+</code></pre>
+<p>Using this we can then start adding in some better error messages to our functions. As an example we can look at <code>lenv_get</code>. When a symbol can&#39;t be found, rather than reporting a generic error, we can actually report the name that was not found.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">return</span> lval_err(<span class="hljs-string">"Unbound Symbol '%s'"</span>, k-&gt;sym);
+</code></pre>
+<p>We can also adapt our <code>LASSERT</code> macro such that it can take variable arguments too. Because this is a macro and not a standard function the syntax is slightly different. On the left hand side of the definition we use the ellipses notation again, but on the right hand side we use a special variable <code>__VA_ARGS__</code> to paste in the contents of all the other arguments.</p>
+<p>We need to prefix this special variable with two hash signs <code>##</code>. This ensure that it is pasted correctly when the macro is passed no extra arguments. In essence what this does is make sure to remove the leading comma <code>,</code> to appear as if no extra arguments were passed in.</p>
+<p>Because we might use <code>args</code> in the construction of the error message we need to make sure we don&#39;t delete it until we&#39;ve created the error value.</p>
+<pre><code class="lang-c"><span class="hljs-preprocessor">#define LASSERT(args, cond, fmt, ...) \</span>
+  <span class="hljs-keyword">if</span> (!(cond)) { lval* err = lval_err(fmt, <span class="hljs-preprocessor">##__VA_ARGS__); lval_del(args); return err; }</span>
+</code></pre>
+<p>Now we can update some of our error messages to make them more informative. For example if the incorrect number of arguments were passed we can specify how many were required and how many were given.</p>
+<pre><code class="lang-c">LASSERT(a, (a-&gt;count == <span class="hljs-number">1</span>), <span class="hljs-string">"Function 'head' passed too many arguments. Got %i, Expected %i."</span>, a-&gt;count, <span class="hljs-number">1</span>);
+</code></pre>
+<p>We can also improve our error reporting for type errors. We should attempt to report what type was expected by a function and what type it actually got. Before we can do this it would be useful to have a function that took as input some type enumeration and returned a string representation of that type.</p>
+<pre><code class="lang-c"><span class="hljs-keyword">char</span>* ltype_name(<span class="hljs-keyword">int</span> t) {
+  <span class="hljs-keyword">switch</span>(t) {
+    <span class="hljs-keyword">case</span> LVAL_FUN: <span class="hljs-keyword">return</span> <span class="hljs-string">"Function"</span>;
+    <span class="hljs-keyword">case</span> LVAL_NUM: <span class="hljs-keyword">return</span> <span class="hljs-string">"Number"</span>;
+    <span class="hljs-keyword">case</span> LVAL_ERR: <span class="hljs-keyword">return</span> <span class="hljs-string">"Error"</span>;
+    <span class="hljs-keyword">case</span> LVAL_SYM: <span class="hljs-keyword">return</span> <span class="hljs-string">"Symbol"</span>;
+    <span class="hljs-keyword">case</span> LVAL_SEXPR: <span class="hljs-keyword">return</span> <span class="hljs-string">"S-Expression"</span>;
+    <span class="hljs-keyword">case</span> LVAL_QEXPR: <span class="hljs-keyword">return</span> <span class="hljs-string">"Q-Expression"</span>;
+    <span class="hljs-keyword">default</span>: <span class="hljs-keyword">return</span> <span class="hljs-string">"Unknown"</span>;
+  }
+}
+</code></pre>
+<p>Then we can use this function in our <code>LASSERT</code> functions to report what was retrieved and what was expected in a useful way.</p>
+<pre><code class="lang-c">LASSERT(a, (a-&gt;cell[<span class="hljs-number">0</span>]-&gt;type == LVAL_QEXPR),
+  <span class="hljs-string">"Function 'head' passed incorrect type for argument 0. Got %s, Expected %s."</span>,
+  ltype_name(a-&gt;cell[<span class="hljs-number">0</span>]-&gt;type), type_name(LVAL_QEXPR));
+</code></pre>
+<p>Go ahead and improve the error reporting in all situations where we return an error in the code. This should make debugging many of the next stages much easier as we begin to write real, and complicated code using our new language! See if you can use macros to save on typing and automatically generate code for common methods of error reporting.</p>
+<pre><code class="lang-lispy">lispy&gt; + <span class="hljs-number">1</span> {<span class="hljs-number">5</span> <span class="hljs-number">6</span> <span class="hljs-number">7</span>}
+<span class="hljs-built_in">Error</span>: <span class="hljs-built_in">Function</span> <span class="hljs-string">'+'</span> passed incorrect type <span class="hljs-keyword">for</span> argument <span class="hljs-number">1.</span> Got Q-Expression, Expected <span class="hljs-built_in">Number</span>.
+lispy&gt; head {<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>} {<span class="hljs-number">4</span> <span class="hljs-number">5</span> <span class="hljs-number">6</span>}
+<span class="hljs-built_in">Error</span>: <span class="hljs-built_in">Function</span> <span class="hljs-string">'head'</span> passed incorrect number of <span class="hljs-built_in">arguments</span>. Got <span class="hljs-number">2</span>, Expected <span class="hljs-number">1.</span>
+lispy&gt;
+</code></pre>
+<h2 id="reference">Reference</h2>
+<div class="panel-group alert alert-warning" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          variables.c
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+<code>c
+#include &quot;mpc.h&quot;
+
+#ifdef _WIN32
+
+static char buffer[2048];
+
+char* readline(char* prompt) {
+  fputs(&quot;lispy&gt; &quot;, stdout);
+  fgets(buffer, 2048, stdin);
+  char* cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = &#39;\0&#39;;
+  return cpy;
+}
+
+void add_history(char* unused) {}
+
+#else
+
+#include &lt;editline/readline.h&gt;
+#include &lt;editline/history.h&gt;
+
+#endif
+
+/* Forward Declarations */
 
 struct lval;
 struct lenv;
@@ -387,35 +773,92 @@ struct lval {
 
   int count;
   lval** cell;
-};</code></pre>
+};
 
+lval* lval_num(long x) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_NUM;
+  v-&gt;num = x;
+  return v;
+}
 
-<p><h2>Function Type</h2> <hr/></p>
-<p>As we&#39;ve added a new possible <code>lval</code> type with the enumeration <code>LVAL_FUN</code>. We should update all our relevant functions that work on <code>lvals</code> to deal correctly with this update. In most cases this just means inserting new cases into switch statements.</p>
+lval* lval_err(char* fmt, ...) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_ERR;
 
-<p>We can start by making a new constructor function for this type.</p>
+  /* Create a va list and initialize it */
+  va_list va;
+  va_start(va, fmt);
 
-<pre><code data-language='c'>lval* lval_fun(lbuiltin func) {
+  /* Allocate 512 bytes of space */
+  v-&gt;err = malloc(512);
+
+  /* printf into the error string with a maximum of 511 characters */
+  vsnprintf(v-&gt;err, 511, fmt, va);
+
+  /* Reallocate to number of bytes actually used */
+  v-&gt;err = realloc(v-&gt;err, strlen(v-&gt;err)+1);
+
+  /* Cleanup our va list */
+  va_end(va);
+
+  return v;
+}
+
+lval* lval_sym(char* s) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_SYM;
+  v-&gt;sym = malloc(strlen(s) + 1);
+  strcpy(v-&gt;sym, s);
+  return v;
+}
+
+lval* lval_fun(lbuiltin func) {
   lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_FUN;
   v-&gt;fun = func;
   return v;
-}</code></pre>
+}
 
-<p>On <strong>deletion</strong> we don&#39;t need to do anything special for function pointers.</p>
+lval* lval_sexpr(void) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_SEXPR;
+  v-&gt;count = 0;
+  v-&gt;cell = NULL;
+  return v;
+}
 
-<pre><code data-language='c'>case LVAL_FUN: break;</code></pre>
+lval* lval_qexpr(void) {
+  lval* v = malloc(sizeof(lval));
+  v-&gt;type = LVAL_QEXPR;
+  v-&gt;count = 0;
+  v-&gt;cell = NULL;
+  return v;
+}
 
-<p>On <strong>printing</strong> we can just print out some nominal string.</p>
+void lval_del(lval* v) {
 
-<pre><code data-language='c'>case LVAL_FUN:   printf("&lt;function&gt;"); break;</code></pre>
+  switch (v-&gt;type) {
+    case LVAL_NUM: break;
+    case LVAL_FUN: break;
+    case LVAL_ERR: free(v-&gt;err); break;
+    case LVAL_SYM: free(v-&gt;sym); break;
+    case LVAL_QEXPR:
+    case LVAL_SEXPR:
+      for (int i = 0; i &lt; v-&gt;count; i++) {
+        lval_del(v-&gt;cell[i]);
+      }
+      free(v-&gt;cell);
+    break;
+  }
 
-<p>We&#39;re also going to add a new function for <strong>copying</strong> an <code>lval</code>. This is going to come in useful when we put things into, and take things out of, the environment. For numbers and functions we can just copy the relevant fields directly. For strings we need to copy using <code>malloc</code> and <code>strcpy</code>. To copy lists we need to allocate the correct amount of space and then copy each element individually.</p>
+  free(v);
+}
 
-<pre><code data-language='c'>lval* lval_copy(lval* v) {
+lval* lval_copy(lval* v) {
 
   lval* x = malloc(sizeof(lval));
-  x->type = v-&gt;type;
+  x-&gt;type = v-&gt;type;
 
   switch (v-&gt;type) {
 
@@ -439,49 +882,110 @@ struct lval {
   }
 
   return x;
-}</code></pre>
+}
 
+lval* lval_add(lval* v, lval* x) {
+  v-&gt;count++;
+  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
+  v-&gt;cell[v-&gt;count-1] = x;
+  return v;
+}
 
-<p><h2>Environment</h2> <hr/></p>
-<p>Our environment structure must encode a list of relationships between <em>names</em> and <em>values</em>. There are many ways to build a structure that can do this sort of thing. We are going to go for the simplest possible method that works well. This is to use two lists of equal length. One is a list of <code>lval<em></code>, and the other is a list of <code>char</em></code>. Each entry in one list has a corresponding entry in the other list at the same position.</p>
+lval* lval_join(lval* x, lval* y) {
+  for (int i = 0; i &lt; y-&gt;count; i++) {
+    x = lval_add(x, y-&gt;cell[i]);
+  }
+  free(y-&gt;cell);
+  free(y);
+  return x;
+}
 
-<p>We&#39;ve already forward declared our <code>lenv</code> struct, so we can define it as follows.</p>
+lval* lval_pop(lval* v, int i) {
+  lval* x = v-&gt;cell[i];
+  memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval*) * (v-&gt;count-i-1));
+  v-&gt;count--;
+  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
+  return x;
+}
 
-<pre><code data-language='c'>struct lenv {
+lval* lval_take(lval* v, int i) {
+  lval* x = lval_pop(v, i);
+  lval_del(v);
+  return x;
+}
+
+void lval_print(lval* v);
+
+void lval_print_expr(lval* v, char open, char close) {
+  putchar(open);
+  for (int i = 0; i &lt; v-&gt;count; i++) {
+    lval_print(v-&gt;cell[i]);
+    if (i != (v-&gt;count-1)) {
+      putchar(&#39; &#39;);
+    }
+  }
+  putchar(close);
+}
+
+void lval_print(lval* v) {
+  switch (v-&gt;type) {
+    case LVAL_FUN:   printf(&quot;&lt;function&gt;&quot;); break;
+    case LVAL_NUM:   printf(&quot;%li&quot;, v-&gt;num); break;
+    case LVAL_ERR:   printf(&quot;Error: %s&quot;, v-&gt;err); break;
+    case LVAL_SYM:   printf(&quot;%s&quot;, v-&gt;sym); break;
+    case LVAL_SEXPR: lval_print_expr(v, &#39;(&#39;, &#39;)&#39;); break;
+    case LVAL_QEXPR: lval_print_expr(v, &#39;{&#39;, &#39;}&#39;); break;
+  }
+}
+
+void lval_println(lval* v) { lval_print(v); putchar(&#39;\n&#39;); }
+
+char* ltype_name(int t) {
+  switch(t) {
+    case LVAL_FUN: return &quot;Function&quot;;
+    case LVAL_NUM: return &quot;Number&quot;;
+    case LVAL_ERR: return &quot;Error&quot;;
+    case LVAL_SYM: return &quot;Symbol&quot;;
+    case LVAL_SEXPR: return &quot;S-Expression&quot;;
+    case LVAL_QEXPR: return &quot;Q-Expression&quot;;
+    default: return &quot;Unknown&quot;;
+  }
+}
+
+/* Lisp Environment */
+
+struct lenv {
   int count;
   char** syms;
   lval** vals;
-};</code></pre>
+};
 
-<p>We need some functions to create and delete this structure. These are pretty simple. Creation initialises the struct fields, while deletion iterates over the items in both lists and deletes or frees them.</p>
+lenv* lenv_new(void) {
 
-<pre><code data-language='c'>lenv* lenv_new(void) {
+  /* Initialize struct */
   lenv* e = malloc(sizeof(lenv));
   e-&gt;count = 0;
   e-&gt;syms = NULL;
   e-&gt;vals = NULL;
   return e;
+
 }
 
 void lenv_del(lenv* e) {
+
+  /* Iterate over all items in environment deleting them */
   for (int i = 0; i &lt; e-&gt;count; i++) {
     free(e-&gt;syms[i]);
     lval_del(e-&gt;vals[i]);
   }
+
+  /* Free allocated memory for lists */
   free(e-&gt;syms);
   free(e-&gt;vals);
   free(e);
-}</code></pre>
+}
 
-<p>Next we can create two functions that either get values from the environment or put values into it.</p>
-
-<p>To get a value from the environment we loop over all the items in the environment and check if the given symbol matches any of the stored strings. If we find a match we can return a copy of the stored value. If no match is found we should return an error.</p>
-
-<p>The function for putting new variables into the environment is a little bit more complex. First we want to check if a variable with the same name already exists. If this is the case we should replace its value with the new one. To do this we loop over all the existing variables in the environment and check their name. If a match is found we delete the value stored at that location, and store there a copy of the input value.</p>
-
-<p>If no existing value is found with that name, we need to allocate some more space to put it in. For this we can use <code>realloc</code>, and store a copy of the <code>lval</code> and its name at the newly allocated locations.</p>
-
-<pre><code data-language='c'>lval* lenv_get(lenv* e, lval* k) {
+lval* lenv_get(lenv* e, lval* k) {
 
   /* Iterate over all items in environment */
   for (int i = 0; i &lt; e-&gt;count; i++) {
@@ -490,7 +994,7 @@ void lenv_del(lenv* e) {
     if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) { return lval_copy(e-&gt;vals[i]); }
   }
   /* If no symbol found return error */
-  return lval_err(&quot;unbound symbol!&quot;,);
+  return lval_err(&quot;Unbound Symbol &#39;%s&#39;&quot;, k-&gt;sym);
 }
 
 void lenv_put(lenv* e, lval* k, lval* v) {
@@ -519,589 +1023,12 @@ void lenv_put(lenv* e, lval* k, lval* v) {
   e-&gt;vals[e-&gt;count-1] = lval_copy(v);
   e-&gt;syms[e-&gt;count-1] = malloc(strlen(k-&gt;sym)+1);
   strcpy(e-&gt;syms[e-&gt;count-1], k-&gt;sym);
-}</code></pre>
-
-
-<p><h2>Variable Evaluation</h2> <hr/></p>
-<p>Our evaluation function now depends on the some environment. We should pass this in as an argument and use it to extract get a value if we encounter a symbol type.</p>
-
-<pre><code data-language='c'>lval* lval_eval(lenv* e, lval* v) {
-  if (v-&gt;type == LVAL_SYM)   { return lenv_get(e, v); }
-  if (v-&gt;type == LVAL_SEXPR) { return lval_eval_sexpr(e, v); }
-  return v;
-}</code></pre>
-
-<p>Because we&#39;ve added a function type, our evaluation of S-Expressions also needs to change. Instead of checking for a symbol type we want to ensure it is a function type. If this condition holds we can call the <code>fun</code> field of the <code>lval</code> using the same notation as standard function calls.</p>
-
-<pre><code data-language='c'>lval* lval_eval_sexpr(lenv* e, lval* v) {
-
-  for (int i = 0; i &lt; v-&gt;count; i++) { v-&gt;cell[i] = lval_eval(e, v-&gt;cell[i]); }
-  for (int i = 0; i &lt; v-&gt;count; i++) { if (v-&gt;cell[i]-&gt;type == LVAL_ERR) { return lval_take(v, i); } }
-
-  if (v-&gt;count == 0) { return v; }
-  if (v-&gt;count == 1) { return lval_take(v, 0); }
-
-  /* Ensure first element is a function after evaluation */
-  lval* f = lval_pop(v, 0);
-  if (f-&gt;type != LVAL_FUN) {
-    lval_del(v); lval_del(f);
-    return lval_err(&quot;first element is not a function&quot;);
-  }
-
-  /* If so call function to get result */
-  lval* result = f-&gt;fun(e, v);
-  lval_del(f);
-  return result;
-}</code></pre>
-
-
-<p><h2>Builtins</h2> <hr/></p>
-<p>Now that our evaluation relies on the new function type we need to make sure we can register all of our builtin functions with the environment before we start the interactive prompt. At the moment our builtin functions might not be the correct type. We need to change their type signature such that they take in some environment, and where appropriate change them to pass this environment into other calls that require it.</p>
-
-<p>Once we&#39;ve changed them to the correct type we can create a function that registers all of our builtins into an environment.</p>
-
-<p>For each builtin we want to create a function <code>lval</code> and symbol <code>lval</code> with the given name. We then register these with the environment using <code>lenv_put</code>. The environment always takes or returns copies of a values, so we need to remember to delete these two <code>lval</code> after registration as we won&#39;t need them anymore.</p>
-
-<p>If we split this task into two functions we can neatly register all of our builtins with some environment.</p>
-
-<pre><code data-language='c'>void lenv_add_builtin(lenv* e, char* name, lbuiltin func) {
-  lval* k = lval_sym(name);
-  lval* v = lval_fun(func);
-  lenv_put(e, k, v);
-  lval_del(k); lval_del(v);
 }
 
-void lenv_add_builtins(lenv* e) {
-  /* List Functions */
-  lenv_add_builtin(e, &quot;list&quot;, builtin_list);
-  lenv_add_builtin(e, &quot;head&quot;, builtin_head); lenv_add_builtin(e, &quot;tail&quot;,  builtin_tail);
-  lenv_add_builtin(e, &quot;eval&quot;, builtin_eval); lenv_add_builtin(e, &quot;join&quot;,  builtin_join);
-
-  /* Mathematical Functions */
-  lenv_add_builtin(e, &quot;+&quot;,    builtin_add); lenv_add_builtin(e, &quot;-&quot;,     builtin_sub);
-  lenv_add_builtin(e, &quot;*&quot;,    builtin_mul); lenv_add_builtin(e, &quot;/&quot;,     builtin_div);
-}</code></pre>
-
-<p>The final step is to call this function before we create the interactive prompt. We also need to remember to delete the environment once we are finished.</p>
-
-<pre><code data-language='c'>lenv* e = lenv_new();
-lenv_add_builtins(e);
-
-while (1) {
-
-  char* input = readline("lispy&gt; ");
-  add_history(input);
-
-  mpc_result_t r;
-  if (mpc_parse("&lt;stdin&gt;", input, Lispy, &r)) {
-
-    lval* x = lval_eval(e, lval_read(r.output));
-    lval_println(x);
-    lval_del(x);
-
-    mpc_ast_delete(r.output);
-  } else {
-    mpc_err_print(r.error);
-    mpc_err_delete(r.error);
-  }
-
-  free(input);
-
-}
-
-lenv_del(e);
-</code></pre>
-
-<p>If everything is working correctly we should have a play around in the prompt and verify that functions are actually a new type of value now, not symbols.</p>
-
-<pre><code data-language='lispy'>lispy&gt; +
-&lt;function&gt;
-lispy&gt; eval (head {5 10 11 15})
-5
-lispy&gt; eval (head {+ - + - * /})
-&lt;function&gt;
-lispy&gt; (eval (head {+ - + - * /})) 10 20
-30
-lispy&gt; hello
-Error: unbound symbol!
-lispy&gt;</code></pre>
-
-
-<p><h2>Define Function</h2> <hr/></p>
-<p>We&#39;ve managed to register our builtins as variables but we still don&#39;t have a way for users to define their own variables.</p>
-
-<p>This is actually a bit awkward. We need to get the user to pass in a symbol to name, as well as the value to assign to it. But symbols can&#39;t appear on their own. Otherwise the evaluation function will attempt to retrieve a value for them from the environment.</p>
-
-<p>The only way we can pass around symbols without them being evaluated is to put them between <code>{}</code> in a quoted expression. So we&#39;re going to use this technique for our define function. It will take as input a list of symbols, and a number of other values. It will then assign each of the values to each of the symbols.</p>
-
-<p>This function should act like any other builtin. It first checks for error conditions and then performs some command and return a value. In this case it first checks that the input arguments are the correct types. It then iterates over each symbol and value and puts them into the environment. If these is an error we can return this, but on success we will return the empty expression <code>()</code>.</p>
-
-<pre><code data-language='c'>lval* builtin_def(lenv* e, lval* a) {
-  LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR), &quot;Function &#39;def&#39; passed incorrect type!&quot;);
-
-  /* First argument is symbol list */
-  lval* syms = a-&gt;cell[0];
-
-  /* Ensure all elements of first list are symbols */
-  for (int i = 0; i &lt; syms-&gt;count; i++) {
-    LASSERT(a, (syms-&gt;cell[i]-&gt;type == LVAL_SYM), &quot;Function &#39;def&#39; cannot define non-symbol&quot;);
-  }
-
-  /* Check correct number of symbols and values */
-  LASSERT(a, (syms-&gt;count == a-&gt;count-1), &quot;Function &#39;def&#39; cannot define incorrect number of values to symbols&quot;);
-
-  /* Assign copies of values to symbols */
-  for (int i = 0; i &lt; syms-&gt;count; i++) {
-    lenv_put(e, syms-&gt;cell[i], a-&gt;cell[i+1]);
-  }
-
-  lval_del(a);
-  return lval_sexpr();
-}</code></pre>
-
-<p>We need to register this new builtin using our builtin function <code>lenv_add_builtins</code>.</p>
-
-<pre><code data-language='c'>/* Variable Functions */
-lenv_add_builtin(e, &quot;def&quot;,  builtin_def);</code></pre>
-
-<p>Now we should be able to support user defined variables! Because our <code>def</code> function takes in a list of symbols we can do some cool things storing and manipulating symbols in lists before passing them to be defined. Have a play around in the prompt and ensure everything is working correctly. You should get behaviour as follows. See what other complex methods are possible for the definition and evaluation of variables. Once we get to defining functions we&#39;ll really see some of the neat things that can be done with this approach.</p>
-
-<pre><code data-language='lispy'>lispy&gt; def {x} 100
-()
-lispy&gt; def {y} 200
-()
-lispy&gt; x
-100
-lispy&gt; y
-200
-lispy&gt; + x y
-300
-lispy&gt; def {a b} 5 6
-()
-lispy&gt; + a b
-11
-lispy&gt; def {arglist} {a b x y}
-()
-lispy&gt; arglist
-{a b x y}
-lispy&gt; def arglist 1 2 3 4
-()
-lispy&gt; list a b x y
-{1 2 3 4}
-lispy&gt;</code></pre>
-
-
-<p><h2>Error Reporting</h2> <hr/></p>
-<p>So far our error reporting kind of sucks. We can report when an error occurs, and give a vague notion of what was the problem was, but we don&#39;t give the user much information about what exactly has gone wrong. For example if there is an unbound symbol we should be able to report exactly which symbol was unbound. This can help the user track down errors, typos, and other trivial problems.</p>
-
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/eclipses.png" alt="eclipses"/>
-  <p><small>Eclipses &bull; Like ellipsis.</small></p>
-</div>
-
-<p>Wouldn&#39;t it be great if we could write a function that can report errors in a similar way to how <code>printf</code> works. It would be ideal if we could pass in strings, integers, and other data to make our error messages richer.</p>
-
-<p>The <code>printf</code> function is a special function in C because it takes a variable number of arguments. We can create our own <em>variable argument</em> functions, which is what we&#39;re going to do to make our error reporting better.</p>
-
-<p>We&#39;ll modify <code>lval_err</code> to act in the same way as <code>printf</code>, taking in a format string, and after that a variable number of arguments to match into this string.</p>
-
-<p>To declare that a function takes variables arguments in the type signature you use the special syntax of ellipsis <code>...</code>, which represent the rest of the arguments.</p>
-
-<p><code data-language='c'>lval<em> lval_err(char</em> fmt, ...);</code></p>
-
-<p>Then, inside the function there are some standard library functions we can use to examine what the caller has passed in.</p>
-
-<p>The first step is to create a <code>va_list</code> struct and initialise it with <code>va_start</code>, passing in the last named argument. For other purposes it is possible to examine each argument passed in using <code>va_arg</code>, but we are going to pass our whole variable argument list directly to the <code>vsnprintf</code> function. This function acts like <code>printf</code> but instead writes to a string and takes in a <code>va_list</code>. Once we are done with our variable arguments, we shoulder call <code>va_end</code> to cleanup any resources used.</p>
-
-<p>The <code>vsnprintf</code> function outputs to a string, which we need to allocate some first. Because we don&#39;t know the size of this string until we&#39;ve run the function we first allocate a buffer <code>512</code> characters big and then reallocate to a smaller buffer once we&#39;ve output to it. If an error message is going to be longer than 512 character it will just get cut off, but hopefully this won&#39;t happen.</p>
-
-<p>Putting it all together our new error function looks like this.</p>
-
-<pre><code data-language='c'>lval* lval_err(char* fmt, ...) {
-  lval* v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_ERR;
-
-  /* Create a va list and initialize it */
-  va_list va;
-  va_start(va, fmt);
-
-  /* Allocate 512 bytes of space */
-  v-&gt;err = malloc(512);
-
-  /* printf into the error string with a maximum of 511 characters */
-  vsnprintf(v-&gt;err, 511, fmt, va);
-
-  /* Reallocate to number of bytes actually used */
-  v-&gt;err = realloc(v-&gt;err, strlen(v-&gt;err)+1);
-
-  /* Cleanup our va list */
-  va_end(va);
-
-  return v;
-}</code></pre>
-
-<p>Using this we can then start adding in some better error messages to our functions. As an example we can look at <code>lenv_get</code>. When a symbol can&#39;t be found, rather than reporting a generic error, we can actually report the name that was not found.</p>
-
-<pre><code data-language='c'>return lval_err(&quot;Unbound Symbol &#39;%s&#39;&quot;, k-&gt;sym);</code></pre>
-
-<p>We can also adapt our <code>LASSERT</code> macro such that it can take variable arguments too. Because this is a macro and not a standard function the syntax is slightly different. On the left hand side of the definition we use the ellipses notation again, but on the right hand side we use a special variable <code><strong>VA_ARGS</strong></code> to paste in the contents of all the other arguments.</p>
-
-<p>We need to prefix this special variable with two hash signs <code>##</code>. This ensure that it is pasted correctly when the macro is passed no extra arguments. In essence what this does is make sure to remove the leading comma <code>,</code> to appear as if no extra arguments were passed in.</p>
-
-<p>Because we might use <code>args</code> in the construction of the error message we need to make sure we don&#39;t delete it until we&#39;ve created the error value.</p>
-
-<pre><code data-language='c'>#define LASSERT(args, cond, fmt, ...) \
-  if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); lval_del(args); return err; }</code></pre>
-
-<p>Now we can update some of our error messages to make them more informative. For example if the incorrect number of arguments were passed we can specify how many were required and how many were given.</p>
-
-<pre><code data-language='c'>LASSERT(a, (a-&gt;count == 1), &quot;Function &#39;head&#39; passed too many arguments. Got %i, Expected %i.&quot;, a-&gt;count, 1);</code></pre>
-
-<p>We can also improve our error reporting for type errors. We should attempt to report what type was expected by a function and what type it actually got. Before we can do this it would be useful to have a function that took as input some type enumeration and returned a string representation of that type.</p>
-
-<pre><code data-language='c'>char* ltype_name(int t) {
-  switch(t) {
-    case LVAL_FUN: return &quot;Function&quot;;
-    case LVAL_NUM: return &quot;Number&quot;;
-    case LVAL_ERR: return &quot;Error&quot;;
-    case LVAL_SYM: return &quot;Symbol&quot;;
-    case LVAL_SEXPR: return &quot;S-Expression&quot;;
-    case LVAL_QEXPR: return &quot;Q-Expression&quot;;
-    default: return &quot;Unknown&quot;;
-  }
-}</code></pre>
-
-<p>Then we can use this function in our <code>LASSERT</code> functions to report what was retrieved and what was expected in a useful way.</p>
-
-<pre><code data-language='c'>LASSERT(a, (a-&gt;cell[0]-&gt;type == LVAL_QEXPR),
-  &quot;Function &#39;head&#39; passed incorrect type for argument 0. Got %s, Expected %s.&quot;,
-  ltype_name(a-&gt;cell[0]-&gt;type), type_name(LVAL_QEXPR));
-</code></pre>
-
-<p>Go ahead and improve the error reporting in all situations where we return an error in the code. This should make debugging many of the next stages much easier as we begin to write real, and complicated code using our new language! See if you can use macros to save on typing and automatically generate code for common methods of error reporting.</p>
-
-<pre><code data-language='lispy'>lispy&gt; + 1 {5 6 7}
-Error: Function '+' passed incorrect type for argument 1. Got Q-Expression, Expected Number.
-lispy&gt; head {1 2 3} {4 5 6}
-Error: Function 'head' passed incorrect number of arguments. Got 2, Expected 1.
-lispy&gt;</code></pre>
-
-
-<p><h2>Reference</h2> <hr/></p>
-<div class="panel-group alert alert-warning" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-          variables.c
-        </a>
-      </h4>
-    </div>
-    <div id="collapseOne" class="panel-collapse collapse">
-      <div class="panel-body">
-<pre><code data-language='c'>#include &quot;mpc.h&quot;
-
-#ifdef <em>WIN32
-
-static char buffer[2048];
-
-char<em> readline(char</em> prompt) {
-  fputs(&quot;lispy&gt; &quot;, stdout);
-  fgets(buffer, 2048, stdin);
-  char<em> cpy = malloc(strlen(buffer)+1);
-  strcpy(cpy, buffer);
-  cpy[strlen(cpy)-1] = &#39;\0&#39;;
-  return cpy;
-}
-
-void add_history(char</em> unused) {}
-
-#else
-
-#include &lt;editline/readline.h&gt;
-#include &lt;editline/history.h&gt;
-
-#endif
-
-/<em> Forward Declarations </em>/
-
-struct lval;
-struct lenv;
-typedef struct lval lval;
-typedef struct lenv lenv;
-
-/<em> Lisp Value </em>/
-
-enum { LVAL<em>ERR, LVAL<em>NUM, LVAL_SYM, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
-
-typedef lval<em>(</em>lbuiltin)(lenv<em>, lval</em>);
-
-struct lval {
-  int type;
-
-  long num;
-  char<em> err;
-  char</em> sym;
-  lbuiltin fun;
-
-  int count;
-  lval<strong> cell;
-};
-
-lval<em> lval_num(long x) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_NUM;
-  v-&gt;num = x;
-  return v;
-}
-
-lval<em> lval_err(char</em> fmt, ...) {
-  lval<em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_ERR;
-
-  /</em> Create a va list and initialize it <em>/
-  va_list va;
-  va_start(va, fmt);
-
-  /</em> Allocate 512 bytes of space <em>/
-  v-&gt;err = malloc(512);
-
-  /</em> printf into the error string with a maximum of 511 characters <em>/
-  vsnprintf(v-&gt;err, 511, fmt, va);
-
-  /</em> Reallocate to number of bytes actually used <em>/
-  v-&gt;err = realloc(v-&gt;err, strlen(v-&gt;err)+1);
-
-  /</em> Cleanup our va list <em>/
-  va_end(va);
-
-  return v;
-}
-
-lval</em> lval_sym(char<em> s) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SYM;
-  v-&gt;sym = malloc(strlen(s) + 1);
-  strcpy(v-&gt;sym, s);
-  return v;
-}
-
-lval<em> lval_fun(lbuiltin func) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_FUN;
-  v-&gt;fun = func;
-  return v;
-}
-
-lval<em> lval_sexpr(void) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_SEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
-  return v;
-}
-
-lval<em> lval_qexpr(void) {
-  lval</em> v = malloc(sizeof(lval));
-  v-&gt;type = LVAL_QEXPR;
-  v-&gt;count = 0;
-  v-&gt;cell = NULL;
-  return v;
-}
-
-void lval_del(lval<em> v) {
-
-  switch (v-&gt;type) {
-    case LVAL_NUM: break;
-    case LVAL_FUN: break;
-    case LVAL_ERR: free(v-&gt;err); break;
-    case LVAL_SYM: free(v-&gt;sym); break;
-    case LVAL_QEXPR:
-    case LVAL_SEXPR:
-      for (int i = 0; i &lt; v-&gt;count; i++) {
-        lval_del(v-&gt;cell[i]);
-      }
-      free(v-&gt;cell);
-    break;
-  }
-
-  free(v);
-}
-
-lval</em> lval_copy(lval<em> v) {
-
-  lval</em> x = malloc(sizeof(lval));
-  x-&gt;type = v-&gt;type;
-
-  switch (v-&gt;type) {
-
-    /<em> Copy Functions and Numbers Directly </em>/
-    case LVAL_FUN: x-&gt;fun = v-&gt;fun; break;
-    case LVAL_NUM: x-&gt;num = v-&gt;num; break;
-
-    /<em> Copy Strings using malloc and strcpy </em>/
-    case LVAL_ERR: x-&gt;err = malloc(strlen(v-&gt;err) + 1); strcpy(x-&gt;err, v-&gt;err); break;
-    case LVAL_SYM: x-&gt;sym = malloc(strlen(v-&gt;sym) + 1); strcpy(x-&gt;sym, v-&gt;sym); break;
-
-    /<em> Copy Lists by copying each sub-expression </em>/
-    case LVAL_SEXPR:
-    case LVAL_QEXPR:
-      x-&gt;count = v-&gt;count;
-      x-&gt;cell = malloc(sizeof(lval<em>) </em> x-&gt;count);
-      for (int i = 0; i &lt; x-&gt;count; i++) {
-        x-&gt;cell[i] = lval_copy(v-&gt;cell[i]);
-      }
-    break;
-  }
-
-  return x;
-}
-
-lval<em> lval_add(lval</em> v, lval<em> x) {
-  v-&gt;count++;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval</em>) <em> v-&gt;count);
-  v-&gt;cell[v-&gt;count-1] = x;
-  return v;
-}
-
-lval</em> lval_join(lval<em> x, lval</em> y) {
-  for (int i = 0; i &lt; y-&gt;count; i++) {
-    x = lval_add(x, y-&gt;cell[i]);
-  }
-  free(y-&gt;cell);
-  free(y);
-  return x;
-}
-
-lval<em> lval_pop(lval</em> v, int i) {
-  lval<em> x = v-&gt;cell[i];
-  memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval</em>) <em> (v-&gt;count-i-1));
-  v-&gt;count--;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval</em>) <em> v-&gt;count);
-  return x;
-}
-
-lval</em> lval_take(lval<em> v, int i) {
-  lval</em> x = lval_pop(v, i);
-  lval_del(v);
-  return x;
-}
-
-void lval_print(lval<em> v);
-
-void lval_print_expr(lval</em> v, char open, char close) {
-  putchar(open);
-  for (int i = 0; i &lt; v-&gt;count; i++) {
-    lval_print(v-&gt;cell[i]);
-    if (i != (v-&gt;count-1)) {
-      putchar(&#39; &#39;);
-    }
-  }
-  putchar(close);
-}
-
-void lval_print(lval<em> v) {
-  switch (v-&gt;type) {
-    case LVAL_FUN:   printf(&quot;&lt;function&gt;&quot;); break;
-    case LVAL_NUM:   printf(&quot;%li&quot;, v-&gt;num); break;
-    case LVAL_ERR:   printf(&quot;Error: %s&quot;, v-&gt;err); break;
-    case LVAL_SYM:   printf(&quot;%s&quot;, v-&gt;sym); break;
-    case LVAL_SEXPR: lval_print_expr(v, &#39;(&#39;, &#39;)&#39;); break;
-    case LVAL_QEXPR: lval_print_expr(v, &#39;{&#39;, &#39;}&#39;); break;
-  }
-}
-
-void lval_println(lval</em> v) { lval_print(v); putchar(&#39;\n&#39;); }
-
-char<em> ltype_name(int t) {
-  switch(t) {
-    case LVAL_FUN: return &quot;Function&quot;;
-    case LVAL_NUM: return &quot;Number&quot;;
-    case LVAL_ERR: return &quot;Error&quot;;
-    case LVAL_SYM: return &quot;Symbol&quot;;
-    case LVAL_SEXPR: return &quot;S-Expression&quot;;
-    case LVAL_QEXPR: return &quot;Q-Expression&quot;;
-    default: return &quot;Unknown&quot;;
-  }
-}
-
-/</em> Lisp Environment */
-
-struct lenv {
-  int count;
-  char</strong> syms;
-  lval<em>* vals;
-};
-
-lenv</em> lenv_new(void) {
-
-  /<em> Initialize struct </em>/
-  lenv<em> e = malloc(sizeof(lenv));
-  e-&gt;count = 0;
-  e-&gt;syms = NULL;
-  e-&gt;vals = NULL;
-  return e;
-
-}
-
-void lenv_del(lenv</em> e) {
-
-  /<em> Iterate over all items in environment deleting them </em>/
-  for (int i = 0; i &lt; e-&gt;count; i++) {
-    free(e-&gt;syms[i]);
-    lval_del(e-&gt;vals[i]);
-  }
-
-  /<em> Free allocated memory for lists </em>/
-  free(e-&gt;syms);
-  free(e-&gt;vals);
-  free(e);
-}
-
-lval<em> lenv_get(lenv</em> e, lval<em> k) {
-
-  /</em> Iterate over all items in environment <em>/
-  for (int i = 0; i &lt; e-&gt;count; i++) {
-    /</em> Check if the stored string matches the symbol string <em>/
-    /</em> If it does, return a copy of the value <em>/
-    if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) { return lval_copy(e-&gt;vals[i]); }
-  }
-  /</em> If no symbol found return error <em>/
-  return lval_err(&quot;Unbound Symbol &#39;%s&#39;&quot;, k-&gt;sym);
-}
-
-void lenv_put(lenv</em> e, lval<em> k, lval</em> v) {
-
-  /<em> Iterate over all items in environment </em>/
-  /<em> This is to see if variable already exists </em>/
-  for (int i = 0; i &lt; e-&gt;count; i++) {
-
-    /<em> If variable is found delete item at that position </em>/
-    /<em> And replace with variable supplied by user </em>/
-    if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) {
-      lval_del(e-&gt;vals[i]);
-      e-&gt;vals[i] = lval_copy(v);
-      e-&gt;syms[i] = realloc(e-&gt;syms[i], strlen(k-&gt;sym)+1);
-      strcpy(e-&gt;syms[i], k-&gt;sym);
-      return;
-    }
-  }
-
-  /<em> If no existing entry found then allocate space for new entry </em>/
-  e-&gt;count++;
-  e-&gt;vals = realloc(e-&gt;vals, sizeof(lval<em>) </em> e-&gt;count);
-  e-&gt;syms = realloc(e-&gt;syms, sizeof(char<em>) </em> e-&gt;count);
-
-  /<em> Copy contents of lval and symbol string into new location </em>/
-  e-&gt;vals[e-&gt;count-1] = lval_copy(v);
-  e-&gt;syms[e-&gt;count-1] = malloc(strlen(k-&gt;sym)+1);
-  strcpy(e-&gt;syms[e-&gt;count-1], k-&gt;sym);
-}
-
-/<em> Builtins </em>/
+/* Builtins */
 
 #define LASSERT(args, cond, fmt, ...) \
-  if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS</em></em>); lval_del(args); return err; }
+  if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); lval_del(args); return err; }
 
 #define LASSERT_TYPE(func, args, index, expect) \
   LASSERT(args, args-&gt;cell[index]-&gt;type == expect, \
@@ -1118,50 +1045,50 @@ void lenv_put(lenv</em> e, lval<em> k, lval</em> v) {
     &quot;Function &#39;%s&#39; passed {} for argument %i.&quot;, func, index);
 
 
-lval<em> lval_eval(lenv</em> e, lval<em> v);
+lval* lval_eval(lenv* e, lval* v);
 
-lval</em> builtin_list(lenv<em> e, lval</em> a) {
+lval* builtin_list(lenv* e, lval* a) {
   a-&gt;type = LVAL_QEXPR;
   return a;
 }
 
-lval<em> builtin_head(lenv</em> e, lval<em> a) {
+lval* builtin_head(lenv* e, lval* a) {
   LASSERT_NUM(&quot;head&quot;, a, 1);
   LASSERT_TYPE(&quot;head&quot;, a, 0, LVAL_QEXPR);
   LASSERT_NOT_EMPTY(&quot;head&quot;, a, 0);
 
-  lval</em> v = lval_take(a, 0);
+  lval* v = lval_take(a, 0);
   while (v-&gt;count &gt; 1) { lval_del(lval_pop(v, 1)); }
   return v;
 }
 
-lval<em> builtin_tail(lenv</em> e, lval<em> a) {
+lval* builtin_tail(lenv* e, lval* a) {
   LASSERT_NUM(&quot;tail&quot;, a, 1);
   LASSERT_TYPE(&quot;tail&quot;, a, 0, LVAL_QEXPR);
   LASSERT_NOT_EMPTY(&quot;tail&quot;, a, 0);
 
-  lval</em> v = lval_take(a, 0);
+  lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, 0));
   return v;
 }
 
-lval<em> builtin_eval(lenv</em> e, lval<em> a) {
+lval* builtin_eval(lenv* e, lval* a) {
   LASSERT_NUM(&quot;eval&quot;, a, 1);
   LASSERT_TYPE(&quot;tail&quot;, a, 0, LVAL_QEXPR);
 
-  lval</em> x = lval_take(a, 0);
+  lval* x = lval_take(a, 0);
   x-&gt;type = LVAL_SEXPR;
   return lval_eval(e, x);
 }
 
-lval<em> builtin_join(lenv</em> e, lval<em> a) {
+lval* builtin_join(lenv* e, lval* a) {
 
   for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE(&quot;join&quot;, a, i, LVAL_QEXPR); }
 
-  lval</em> x = lval_pop(a, 0);
+  lval* x = lval_pop(a, 0);
 
   while (a-&gt;count) {
-    lval<em> y = lval_pop(a, 0);
+    lval* y = lval_pop(a, 0);
     x = lval_join(x, y);
   }
 
@@ -1169,20 +1096,20 @@ lval<em> builtin_join(lenv</em> e, lval<em> a) {
   return x;
 }
 
-lval</em> builtin_op(lenv<em> e, lval</em> a, char<em> op) {
+lval* builtin_op(lenv* e, lval* a, char* op) {
 
   for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE(op, a, i, LVAL_NUM); }
 
-  lval</em> x = lval_pop(a, 0);
+  lval* x = lval_pop(a, 0);
 
   if ((strcmp(op, &quot;-&quot;) == 0) &amp;&amp; a-&gt;count == 0) { x-&gt;num = -x-&gt;num; }
 
   while (a-&gt;count &gt; 0) {
-    lval<em> y = lval_pop(a, 0);
+    lval* y = lval_pop(a, 0);
 
     if (strcmp(op, &quot;+&quot;) == 0) { x-&gt;num += y-&gt;num; }
     if (strcmp(op, &quot;-&quot;) == 0) { x-&gt;num -= y-&gt;num; }
-    if (strcmp(op, &quot;</em>&quot;) == 0) { x-&gt;num <em>= y-&gt;num; }
+    if (strcmp(op, &quot;*&quot;) == 0) { x-&gt;num *= y-&gt;num; }
     if (strcmp(op, &quot;/&quot;) == 0) {
       if (y-&gt;num != 0) {
         lval_del(x); lval_del(y); lval_del(a);
@@ -1198,31 +1125,31 @@ lval</em> builtin_op(lenv<em> e, lval</em> a, char<em> op) {
   return x;
 }
 
-lval</em> builtin_add(lenv<em> e, lval</em> a) { return builtin_op(e, a, &quot;+&quot;); }
-lval<em> builtin_sub(lenv</em> e, lval<em> a) { return builtin_op(e, a, &quot;-&quot;); }
-lval</em> builtin_mul(lenv<em> e, lval</em> a) { return builtin_op(e, a, &quot;<em>&quot;); }
-lval</em> builtin_div(lenv<em> e, lval</em> a) { return builtin_op(e, a, &quot;/&quot;); }
+lval* builtin_add(lenv* e, lval* a) { return builtin_op(e, a, &quot;+&quot;); }
+lval* builtin_sub(lenv* e, lval* a) { return builtin_op(e, a, &quot;-&quot;); }
+lval* builtin_mul(lenv* e, lval* a) { return builtin_op(e, a, &quot;*&quot;); }
+lval* builtin_div(lenv* e, lval* a) { return builtin_op(e, a, &quot;/&quot;); }
 
-lval<em> builtin_def(lenv</em> e, lval<em> a) {
+lval* builtin_def(lenv* e, lval* a) {
 
   LASSERT_TYPE(&quot;def&quot;, a, 0, LVAL_QEXPR);
 
-  /</em> First argument is symbol list <em>/
-  lval</em> syms = a-&gt;cell[0];
+  /* First argument is symbol list */
+  lval* syms = a-&gt;cell[0];
 
-  /<em> Ensure all elements of first list are symbols </em>/
+  /* Ensure all elements of first list are symbols */
   for (int i = 0; i &lt; syms-&gt;count; i++) {
     LASSERT(a, (syms-&gt;cell[i]-&gt;type == LVAL_SYM),
       &quot;Function &#39;def&#39; cannot define non-symbol. Got %s, Expected %s.&quot;,
       ltype_name(syms-&gt;cell[i]-&gt;type), ltype_name(LVAL_SYM));
   }
 
-  /<em> Check correct number of symbols and values </em>/
+  /* Check correct number of symbols and values */
   LASSERT(a, (syms-&gt;count == a-&gt;count-1),
     &quot;Function &#39;def&#39; passed too many arguments for symbols. Got %i, Expected %i.&quot;,
     syms-&gt;count, a-&gt;count-1);
 
-  /<em> Assign copies of values to symbols </em>/
+  /* Assign copies of values to symbols */
   for (int i = 0; i &lt; syms-&gt;count; i++) {
     lenv_put(e, syms-&gt;cell[i], a-&gt;cell[i+1]);
   }
@@ -1231,30 +1158,30 @@ lval<em> builtin_def(lenv</em> e, lval<em> a) {
   return lval_sexpr();
 }
 
-void lenv_add_builtin(lenv<em> e, char</em> name, lbuiltin func) {
-  lval<em> k = lval_sym(name);
-  lval</em> v = lval_fun(func);
+void lenv_add_builtin(lenv* e, char* name, lbuiltin func) {
+  lval* k = lval_sym(name);
+  lval* v = lval_fun(func);
   lenv_put(e, k, v);
   lval_del(k); lval_del(v);
 }
 
-void lenv_add_builtins(lenv<em> e) {
-  /</em> Variable Functions <em>/
+void lenv_add_builtins(lenv* e) {
+  /* Variable Functions */
   lenv_add_builtin(e, &quot;def&quot;,  builtin_def);
 
-  /</em> List Functions <em>/
+  /* List Functions */
   lenv_add_builtin(e, &quot;list&quot;, builtin_list);
   lenv_add_builtin(e, &quot;head&quot;, builtin_head); lenv_add_builtin(e, &quot;tail&quot;,  builtin_tail);
   lenv_add_builtin(e, &quot;eval&quot;, builtin_eval); lenv_add_builtin(e, &quot;join&quot;,  builtin_join);
 
-  /</em> Mathematical Functions <em>/
+  /* Mathematical Functions */
   lenv_add_builtin(e, &quot;+&quot;,    builtin_add); lenv_add_builtin(e, &quot;-&quot;,     builtin_sub);
-  lenv_add_builtin(e, &quot;</em>&quot;,    builtin_mul); lenv_add_builtin(e, &quot;/&quot;,     builtin_div);
+  lenv_add_builtin(e, &quot;*&quot;,    builtin_mul); lenv_add_builtin(e, &quot;/&quot;,     builtin_div);
 }
 
-/<em> Evaluation </em>/
+/* Evaluation */
 
-lval<em> lval_eval_sexpr(lenv</em> e, lval<em> v) {
+lval* lval_eval_sexpr(lenv* e, lval* v) {
 
   for (int i = 0; i &lt; v-&gt;count; i++) { v-&gt;cell[i] = lval_eval(e, v-&gt;cell[i]); }
   for (int i = 0; i &lt; v-&gt;count; i++) { if (v-&gt;cell[i]-&gt;type == LVAL_ERR) { return lval_take(v, i); } }
@@ -1262,41 +1189,41 @@ lval<em> lval_eval_sexpr(lenv</em> e, lval<em> v) {
   if (v-&gt;count == 0) { return v; }
   if (v-&gt;count == 1) { return lval_take(v, 0); }
 
-  /</em> Ensure first element is a function after evaluation <em>/
-  lval</em> f = lval_pop(v, 0);
+  /* Ensure first element is a function after evaluation */
+  lval* f = lval_pop(v, 0);
   if (f-&gt;type != LVAL_FUN) {
-    lval<em> err = lval_err(
+    lval* err = lval_err(
       &quot;S-Expression starts with incorrect type. Got %s, Expected %s.&quot;,
       ltype_name(f-&gt;type), ltype_name(LVAL_FUN));
     lval_del(f); lval_del(v);
     return err;
   }
 
-  /</em> If so call function to get result <em>/
-  lval</em> result = f-&gt;fun(e, v);
+  /* If so call function to get result */
+  lval* result = f-&gt;fun(e, v);
   lval_del(f);
   return result;
 }
 
-lval<em> lval_eval(lenv</em> e, lval<em> v) {
+lval* lval_eval(lenv* e, lval* v) {
   if (v-&gt;type == LVAL_SYM)   { return lenv_get(e, v); }
   if (v-&gt;type == LVAL_SEXPR) { return lval_eval_sexpr(e, v); }
   return v;
 }
 
-/</em> Reading <em>/
+/* Reading */
 
-lval</em> lval_read_num(mpc_ast_t<em> t) {
+lval* lval_read_num(mpc_ast_t* t) {
   long x = strtol(t-&gt;contents, NULL, 10);
   return errno != ERANGE ? lval_num(x) : lval_err(&quot;Invalid Number.&quot;);
 }
 
-lval</em> lval_read(mpc_ast_t<em> t) {
+lval* lval_read(mpc_ast_t* t) {
 
   if (strstr(t-&gt;tag, &quot;number&quot;)) { return lval_read_num(t); }
   if (strstr(t-&gt;tag, &quot;symbol&quot;)) { return lval_sym(t-&gt;contents); }
 
-  lval</em> x = NULL;
+  lval* x = NULL;
   if (strcmp(t-&gt;tag, &quot;&gt;&quot;) == 0) { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, &quot;sexpr&quot;))  { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, &quot;qexpr&quot;))  { x = lval_qexpr(); }
@@ -1313,37 +1240,37 @@ lval</em> lval_read(mpc_ast_t<em> t) {
   return x;
 }
 
-/<em> Main </em>/
+/* Main */
 
-int main(int argc, char<em>* argv) {
+int main(int argc, char** argv) {
 
-  mpc_parser_t</em> Number = mpc_new(&quot;number&quot;);
-  mpc_parser_t<em> Symbol = mpc_new(&quot;symbol&quot;);
-  mpc_parser_t</em> Sexpr  = mpc_new(&quot;sexpr&quot;);
-  mpc_parser_t<em> Qexpr  = mpc_new(&quot;qexpr&quot;);
-  mpc_parser_t</em> Expr   = mpc_new(&quot;expr&quot;);
+  mpc_parser_t* Number = mpc_new(&quot;number&quot;);
+  mpc_parser_t* Symbol = mpc_new(&quot;symbol&quot;);
+  mpc_parser_t* Sexpr  = mpc_new(&quot;sexpr&quot;);
+  mpc_parser_t* Qexpr  = mpc_new(&quot;qexpr&quot;);
+  mpc_parser_t* Expr   = mpc_new(&quot;expr&quot;);
   mpc_parser_t* Lispy  = mpc_new(&quot;lispy&quot;);
 
   mpca_lang(MPC_LANG_DEFAULT,
     &quot;                                                     \
       number : /-?[0-9]+/ ;                               \
-      symbol : /[a-zA-Z0-9</em>+\-<em>\/\\=&lt;&gt;!&amp;]+/ ;         \
-      sexpr  : &#39;(&#39; &lt;expr&gt;</em> &#39;)&#39; ;                          \
-      qexpr  : &#39;{&#39; &lt;expr&gt;<em> &#39;}&#39; ;                          \
+      symbol : /[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/ ;         \
+      sexpr  : &#39;(&#39; &lt;expr&gt;* &#39;)&#39; ;                          \
+      qexpr  : &#39;{&#39; &lt;expr&gt;* &#39;}&#39; ;                          \
       expr   : &lt;number&gt; | &lt;symbol&gt; | &lt;sexpr&gt; | &lt;qexpr&gt; ;  \
-      lispy  : /^/ &lt;expr&gt;</em> /$/ ;                          \
+      lispy  : /^/ &lt;expr&gt;* /$/ ;                          \
     &quot;,
     Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
   puts(&quot;Lispy Version 0.0.0.0.7&quot;);
   puts(&quot;Press Ctrl+c to Exit\n&quot;);
 
-  lenv<em> e = lenv_new();
+  lenv* e = lenv_new();
   lenv_add_builtins(e);
 
   while (1) {
 
-    char</em> input = readline(&quot;lispy&gt; &quot;);
+    char* input = readline(&quot;lispy&gt; &quot;);
     add_history(input);
 
     mpc_result_t r;
@@ -1368,14 +1295,13 @@ int main(int argc, char<em>* argv) {
   mpc_cleanup(6, Number, Symbol, Sexpr, Qexpr, Expr, Lispy);
 
   return 0;
-}
-</code></pre>
+}</code>
       </div>
     </div>
   </div>
 </div>
 
-<p><h2>Bonus Marks</h2> <hr/></p>
+<h2 id="bonus-marks">Bonus Marks</h2>
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; Create a Macro to aid specifically with reporting type errors.</li>

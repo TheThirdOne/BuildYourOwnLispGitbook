@@ -290,7 +290,7 @@
 
 
 <h2 id="polish-notation">Polish Notation</h2>
-<p>To try out <code>mpc</code> we&#39;re going to implement a simple grammar that resembles a mathematical subset of our Lisp. It&#39;s called <a href="http://en.wikipedia.org/wiki/Polish_notation">Polish Notation</a> and is a notation for arithmetic where the operator comes before the operands.</p>
+<p>To try out <code>mpc</code> we&#39;re going to implement a simple grammar that resembles a mathematical subset of our Lisp. It&#39;s called <a href="http://en.wikipedia.org/wiki/Polish_notation" target="_blank">Polish Notation</a> and is a notation for arithmetic where the operator comes before the operands.</p>
 <p>For example...</p>
 <table class='table' style='display: inline'>
   <tr><td><code>1 + 2 + 6</code></td><td><em>is</em></td><td><code>+ 1 2 6</code></td></tr>
@@ -323,10 +323,10 @@
   <tr><td><code>$</code></td><td>The end of input is required.</td></tr>
 </table>
 
-<p>These are all the regular expression rules we need for now. <a href="http://regex.learncodethehardway.org/">Whole books</a> have been written on learning regular expressions. For those curious much more information can be found online or from these sources. We will be using them in later chapters, so some basic knowledge will be required, but you won&#39;t need to master them for now.</p>
+<p>These are all the regular expression rules we need for now. <a href="http://regex.learncodethehardway.org/" target="_blank">Whole books</a> have been written on learning regular expressions. For those curious much more information can be found online or from these sources. We will be using them in later chapters, so some basic knowledge will be required, but you won&#39;t need to master them for now.</p>
 <p>In an <code>mpc</code> grammar we write regular expressions by putting them between forward slashes <code>/</code>. Using the above guide our <em>Number</em> rule can be expressed as a regular expression using the string <code>/-?[0-9]+/</code>.</p>
 <h2 id="installing-mpc">Installing mpc</h2>
-<p>Before we work on writing this grammar we first need to <em>include</em> the <code>mpc</code> headers, and then <em>link</em> to the <code>mpc</code> library, just as we did for <code>editline</code> on Linux and Mac. Starting with your code from chapter 4, you can rename the file to <code>parsing.c</code> and download <code>mpc.h</code> and <code>mpc.c</code> from the <a href="http://github.com/orangeduck/mpc">mpc repo</a>. Put these in the same directory as your source file.</p>
+<p>Before we work on writing this grammar we first need to <em>include</em> the <code>mpc</code> headers, and then <em>link</em> to the <code>mpc</code> library, just as we did for <code>editline</code> on Linux and Mac. Starting with your code from chapter 4, you can rename the file to <code>parsing.c</code> and download <code>mpc.h</code> and <code>mpc.c</code> from the <a href="http://github.com/orangeduck/mpc" target="_blank">mpc repo</a>. Put these in the same directory as your source file.</p>
 <p>To <em>include</em> <code>mpc</code> put <code>#include &quot;mpc.h&quot;</code> at the top of the file. To <em>link</em> to <code>mpc</code> put <code>mpc.c</code> directly into the compile command. On linux you will also have to link to the maths library by adding the flag <code>-lm</code>.</p>
 <p>On <strong>Linux</strong> and <strong>Mac</strong></p>
 <pre><code>cc <span class="hljs-attribute">-std</span><span class="hljs-subst">=</span>c99 <span class="hljs-attribute">-Wall</span> parsing<span class="hljs-built_in">.</span>c mpc<span class="hljs-built_in">.</span>c <span class="hljs-attribute">-ledit</span> <span class="hljs-attribute">-lm</span> <span class="hljs-attribute">-o</span> parsing

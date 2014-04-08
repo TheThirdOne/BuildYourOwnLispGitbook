@@ -398,10 +398,10 @@ mpc_ast_t* c0 = a-&gt;children[<span class="hljs-number">0</span>];
 <p>We can define the <code>eval_op</code> function as follows. It takes in a number, an operator string, and another number. It tests for which operator is passed in, an performs the corresponding C operation on the inputs.</p>
 <pre><code class="lang-c"><span class="hljs-comment">/* Use operator string to see which operation to perform */</span>
 <span class="hljs-keyword">long</span> eval_op(<span class="hljs-keyword">long</span> x, <span class="hljs-keyword">char</span>* op, <span class="hljs-keyword">long</span> y) {
-  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;+&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x + y; }
-  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;-&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x - y; }
-  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;*&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x * y; }
-  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, &amp;quot;/&amp;quot;) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x / y; }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"+"</span>) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x + y; }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"-"</span>) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x - y; }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"*"</span>) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x * y; }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"/"</span>) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> x / y; }
   <span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
 }
 </code></pre>
@@ -409,7 +409,7 @@ mpc_ast_t* c0 = a-&gt;children[<span class="hljs-number">0</span>];
 <p>Instead of printing the tree we now want to print the result of the evaluation. Therefore we need to pass the tree into our <code>eval</code> function, and print the result we get using <code>printf</code> and the specifier <code>%li</code>, which is used for <code>long</code> type.</p>
 <p>We also need to remember to delete the output tree after we are done evaluating it.</p>
 <pre><code class="lang-c"><span class="hljs-keyword">long</span> result = eval(r.output);
-<span class="hljs-built_in">printf</span>(&amp;quot;%li\n&amp;quot;, result);
+<span class="hljs-built_in">printf</span>(<span class="hljs-string">"%li\n"</span>, result);
 mpc_ast_delete(r.output);
 </code></pre>
 <p>If all of this is successful we should be able to do some basic maths with our new programming language!</p>

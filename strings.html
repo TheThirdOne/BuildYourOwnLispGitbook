@@ -283,179 +283,135 @@
                 <section class="normal" id="section-gitbook_17">
                 
                     <h1 id="strings">Strings</h1>
-<h2>Libraries</h2> <hr/>
-
+<h2 id="libraries">Libraries</h2>
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="static/img/string.png" alt="string"/>
-  <p><small>String &bull; How long is it.</small></p>
+  <small>String &bull; How long is it.</small>
 </div>
 
 <p>Our Lisp is finally pretty functional. We should be able to write almost any functions we want. We can build some quite complex constructs using it, and even do some cool things that can&#39;t be done in lots of other heavyweight and popular languages!</p>
-
 <p>Every time we update our program and run it again it is getting annoying having to type in again all of our functions. In this chapter we&#39;ll add the functionality to load code from a file and run it. This will allow us to start building a standard library up. Along the way we&#39;ll also add support for code comments, strings, and printing.</p>
-
-
-<h2>String Type</h2> <hr/>
-
+<h2 id="string-type">String Type</h2>
 <p>For the user to load a file we&#39;ll have to let them supply a string consisting of the file name. Our language supports symbols, but still doesn&#39;t support strings, which can include spaces and other characters. We need to add this possible <code>lval</code> type to specify the file names we need.</p>
-
 <p>We start, as in other chapters, by adding an entry to our enum and adding an entry to our <code>lval</code> to represent the type&#39;s data.</p>
-
-<pre><code data-language='c'>enum { LVAL<em>ERR, LVAL_NUM, LVAL_SYM, LVAL_STR, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };</code></pre>
-
-<pre><code data-language='c'>/<em> Basic </em>/
-long num;
-char<em> err;
-char</em> sym;
-char<em> str;
+<pre><code class="lang-c"><span class="hljs-keyword">enum</span> { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_STR, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
 </code></pre>
-
+<pre><code class="lang-c"><span class="hljs-comment">/* Basic */</span>
+<span class="hljs-keyword">long</span> num;
+<span class="hljs-keyword">char</span>* err;
+<span class="hljs-keyword">char</span>* sym;
+<span class="hljs-keyword">char</span>* str;
+</code></pre>
 <p>Next we can add a function for constructing string <code>lval</code>, very similar to how we construct constructing symbols.</p>
-
-<pre><code data-language='c'>lval</em> lval_str(char<em> s) {
-  lval</em> v = malloc(sizeof(lval));
+<pre><code class="lang-c">lval* lval_str(<span class="hljs-keyword">char</span>* s) {
+  lval* v = <span class="hljs-built_in">malloc</span>(<span class="hljs-keyword">sizeof</span>(lval));
   v-&gt;type = LVAL_STR;
-  v-&gt;str = malloc(strlen(s) + 1);
-  strcpy(v-&gt;str, s);
-  return v;
-}</code></pre>
-
-<p>We also need to add the relevant entries into our functions that deal with <code>lval</code>.
-
+  v-&gt;str = <span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">strlen</span>(s) + <span class="hljs-number">1</span>);
+  <span class="hljs-built_in">strcpy</span>(v-&gt;str, s);
+  <span class="hljs-keyword">return</span> v;
+}
+</code></pre>
+<p>We also need to add the relevant entries into our functions that deal with <code>lval</code>.</p>
 <p>For <strong>Deletion</strong>...</p>
-
-<pre><code data-language='c'>case LVAL_STR: free(v-&gt;str); break;</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> LVAL_STR: <span class="hljs-built_in">free</span>(v-&gt;str); <span class="hljs-keyword">break</span>;
+</code></pre>
 <p>For <strong>Copying</strong>...</p>
-
-<pre><code data-language='c'>case LVAL_STR: x-&gt;str = malloc(strlen(v-&gt;str) + 1); strcpy(x-&gt;str, v-&gt;str); break;</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> LVAL_STR: x-&gt;str = <span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">strlen</span>(v-&gt;str) + <span class="hljs-number">1</span>); <span class="hljs-built_in">strcpy</span>(x-&gt;str, v-&gt;str); <span class="hljs-keyword">break</span>;
+</code></pre>
 <p>For <strong>Equality</strong>...</p>
-
-<pre><code data-language='c'>case LVAL_STR: return (strcmp(x-&gt;str, y-&gt;str) == 0);</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> LVAL_STR: <span class="hljs-keyword">return</span> (<span class="hljs-built_in">strcmp</span>(x-&gt;str, y-&gt;str) == <span class="hljs-number">0</span>);
+</code></pre>
 <p>For <strong>Type Name</strong>...</p>
-
-<pre><code data-language='c'>case LVAL_STR: return &quot;String&quot;;</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> LVAL_STR: <span class="hljs-keyword">return</span> <span class="hljs-string">"String"</span>;
+</code></pre>
 <p>For <strong>Printing</strong> we need to do a little more. The string we store internally is different to the string we want to print. We want to print a string as a user might input it, using escape characters such as <code>\n</code> to represent a newline.</p>
-
 <p>We therefore need to escape it before we print it. Luckily we can make use of a <code>mpc</code> function that will do this for us.</p>
-
 <p>In the printing function we add the following...</p>
-
-<pre><code data-language='c'>case LVAL_STR:   lval_print_str(v); break;</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">case</span> LVAL_STR:   lval_print_str(v); <span class="hljs-keyword">break</span>;
+</code></pre>
 <p>Where...</p>
-
-<pre><code data-language='c'>void lval_print_str(lval<em> v) {
-  /</em> Make a Copy of the string <em>/
-  char</em> escaped = malloc(strlen(v-&gt;str)+1);
-  strcpy(escaped, v-&gt;str);
-  /<em> Pass it through the escape function </em>/
+<pre><code class="lang-c"><span class="hljs-keyword">void</span> lval_print_str(lval* v) {
+  <span class="hljs-comment">/* Make a Copy of the string */</span>
+  <span class="hljs-keyword">char</span>* escaped = <span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">strlen</span>(v-&gt;str)+<span class="hljs-number">1</span>);
+  <span class="hljs-built_in">strcpy</span>(escaped, v-&gt;str);
+  <span class="hljs-comment">/* Pass it through the escape function */</span>
   escaped = mpcf_escape(escaped);
-  /<em> Print it between &quot; characters </em>/
-  printf(&quot;\&quot;%s\&quot;&quot;, escaped);
-  /<em> free the copied string </em>/
-  free(escaped);
-}</code></pre>
-
-
-<h2>Reading Strings</h2> <hr/>
-
+  <span class="hljs-comment">/* Print it between " characters */</span>
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">"\"%s\""</span>, escaped);
+  <span class="hljs-comment">/* free the copied string */</span>
+  <span class="hljs-built_in">free</span>(escaped);
+}
+</code></pre>
+<h2 id="reading-strings">Reading Strings</h2>
 <p>Now we need to add support for parsing strings. As usual this requires first adding a new grammar rule called <code>string</code> and add it to our parser.</p>
-
 <p>The rule we are going to use that represents a string is going to be the same as for C style strings. This means a string is essentially a series of escape characters, or normal characters, between two quotation marks <code>&quot;&quot;</code>. We can specify this as a regular expression inside our grammar string as follows.</p>
-
-<pre><code>string  : /\&quot;(\\.|[^\&quot;])<em>\&quot;/ ;</code></pre>
-
-<p>This looks pretty complicated but makes a lot more sense when explained in parts. It reads like this. A string is a <code>&quot;</code> character, followed by zero or more of either a backslash <code>\</code> followed by any other character <code>.</code>, or anything that <em>isn&#39;t</em> a <code>&quot;</code> character <code>[^\&quot;]</code>. Finally it ends with another <code>&quot;</code> character.</p>
-
+<pre><code>string  : /<span class="hljs-command">\"</span>(<span class="hljs-command">\\</span><span class="hljs-command">\\</span>.|<span class="hljs-special">[</span>^<span class="hljs-command">\"</span><span class="hljs-special">]</span>)*<span class="hljs-command">\"</span>/ ;
+</code></pre><p>This looks pretty complicated but makes a lot more sense when explained in parts. It reads like this. A string is a <code>&quot;</code> character, followed by zero or more of either a backslash <code>\\</code> followed by any other character <code>.</code>, or anything that <em>isn&#39;t*</em> a <code>&quot;</code> character <code>[^\\&quot;]</code>. Finally it ends with another <code>&quot;</code> character.</p>
 <p>We also need to add a case to deal with this in the <code>lval_read</code> function.</p>
-
-<pre><code data-language='c'>if (strstr(t-&gt;tag, &quot;string&quot;)) { return lval_read_str(t); }</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">if</span> (<span class="hljs-built_in">strstr</span>(t-&gt;tag, <span class="hljs-string">"string"</span>)) { <span class="hljs-keyword">return</span> lval_read_str(t); }
+</code></pre>
 <p>Because the input string is input in an escaped form we need to create a function <code>lval_read_str</code> which deals with this. This function is a little tricky because it has to do a few tasks. First it must strip the input string of the <code>&quot;</code> characters on either side. Then it must unescape the string, converting series of characters such as <code>\n</code> to their actual encoded characters. Finally it has to create a new <code>lval</code> and clean up anything that has happened in-between.</p>
-
-<pre><code data-language='c'>lval</em> lval_read_str(mpc_ast_t<em> t) {
-  /</em> Cut off the final quote character <em>/
-  t-&gt;contents[strlen(t-&gt;contents)-1] = &#39;\0&#39;;
-  /</em> Copy the string missing out the first quote character <em>/
-  char</em> unescaped = malloc(strlen(t-&gt;contents+1));
-  strcpy(unescaped, t-&gt;contents+1);
-  /<em> Pass through the unescape function </em>/
+<pre><code class="lang-c">lval* lval_read_str(mpc_ast_t* t) {
+  <span class="hljs-comment">/* Cut off the final quote character */</span>
+  t-&gt;contents[<span class="hljs-built_in">strlen</span>(t-&gt;contents)-<span class="hljs-number">1</span>] = <span class="hljs-string">'\0'</span>;
+  <span class="hljs-comment">/* Copy the string missing out the first quote character */</span>
+  <span class="hljs-keyword">char</span>* unescaped = <span class="hljs-built_in">malloc</span>(<span class="hljs-built_in">strlen</span>(t-&gt;contents+<span class="hljs-number">1</span>));
+  <span class="hljs-built_in">strcpy</span>(unescaped, t-&gt;contents+<span class="hljs-number">1</span>);
+  <span class="hljs-comment">/* Pass through the unescape function */</span>
   unescaped = mpcf_unescape(unescaped);
-  /<em> Construct a new lval using the string </em>/
-  lval<em> str = lval_str(unescaped);
-  /</em> Free the string and return <em>/
-  free(unescaped);
-  return str;
-}</code></pre>
-
+  <span class="hljs-comment">/* Construct a new lval using the string */</span>
+  lval* str = lval_str(unescaped);
+  <span class="hljs-comment">/* Free the string and return */</span>
+  <span class="hljs-built_in">free</span>(unescaped);
+  <span class="hljs-keyword">return</span> str;
+}
+</code></pre>
 <p>If this all works we should be able to play around with strings in the prompt. Next we&#39;ll add functions which can actually make use of them.</p>
-
-<pre><code data-language='lispy'>lispy&gt; &quot;hello&quot;
-&quot;hello&quot;
-lispy&gt; &quot;hello\n&quot;
-&quot;hello\n&quot;
-lispy&gt; &quot;hello\&quot;&quot;
-&quot;hello\&quot;&quot;
-lispy&gt; head {&quot;hello&quot; &quot;world&quot;}
-{&quot;hello&quot;}
-lispy&gt; eval (head {&quot;hello&quot; &quot;world&quot;})
-&quot;hello&quot;
-lispy&gt;</code></pre>
-
-
-<h2>Comments</h2> <hr/>
-
+<pre><code class="lang-lispy">lispy&gt; <span class="hljs-string">"hello"</span>
+<span class="hljs-string">"hello"</span>
+lispy&gt; <span class="hljs-string">"hello\n"</span>
+<span class="hljs-string">"hello\n"</span>
+lispy&gt; <span class="hljs-string">"hello\<span class="hljs-dquote">""</span></span>
+<span class="hljs-string">"hello\<span class="hljs-dquote">""</span></span>
+lispy&gt; head {<span class="hljs-string">"hello"</span> <span class="hljs-string">"world"</span>}
+{<span class="hljs-string">"hello"</span>}
+lispy&gt; eval (head {<span class="hljs-string">"hello"</span> <span class="hljs-string">"world"</span>})
+<span class="hljs-string">"hello"</span>
+lispy&gt;
+</code></pre>
+<h2 id="comments">Comments</h2>
 <p>While we&#39;re building in new syntax to the language we may as well look at comments.</p>
-
-<p>Just like in C, we can use comments in inform other people (or ourselves) about what the code is meant to do or why it has been written. In C comments go between <code>/</em></code> and <code><em>/</code>. Lisp comments, on the other hand, start with <code>;</code> and run to the end of the line.</p>
-
+<p>Just like in C, we can use comments in inform other people (or ourselves) about what the code is meant to do or why it has been written. In C comments go between <code>/*</code> and <code>*/</code>. Lisp comments, on the other hand, start with <code>;</code> and run to the end of the line.</p>
 <p>I attempted to research why Lisps use <code>;</code> for comments, but it appears that the origins of this have been lost in the mists of time. In absence of real truth I imagine it as a small rebellion against the imperative languages such as C and Java which use semicolons so shamelessly and frequently to separate/terminate statements. Compared to Lisp all these languages are just comments!</p>
-
 <p>So in lisp a comment is defined by a semicolon <code>;</code> followed by any number of characters that are not newline characters represented by either <code>\r</code> or <code>\n</code>. We can use another regex to define it.</p>
-
-<pre><code>comment : /;[^\r\n]</em>/ ;</code></pre>
-
-<p>As with strings we need to create a new parser and use this to update our language in <code>mpca_lang</code>. We also need to remember to add the parser to <code>mpc_cleanup</code>, and update the first integer argument to reflect the new number of parsers passed in.</p>
-
+<pre><code>comment : /;<span class="hljs-special">[</span>^<span class="hljs-command">\\</span>r<span class="hljs-command">\\</span>n<span class="hljs-special">]</span>*/ ;
+</code></pre><p>As with strings we need to create a new parser and use this to update our language in <code>mpca_lang</code>. We also need to remember to add the parser to <code>mpc_cleanup</code>, and update the first integer argument to reflect the new number of parsers passed in.</p>
 <p>Our final grammar now look like this.</p>
-
-<pre><code data-language='c'>mpca_lang(MPC_LANG_DEFAULT,
-  &quot;                                              \
+<pre><code class="lang-c">mpca_lang(MPC_LANG_DEFAULT,
+  <span class="hljs-string">"                                              \
     number  : /-?[0-9]+/ ;                       \
-    symbol  : /[a-zA-Z0-9</em>+\-<em>\/\\=&lt;&gt;!&amp;]+/ ; \
-    string  : /\&quot;(\\.|[^\&quot;])</em>\&quot;/ ;             \
-    comment : /;[^\r\n]<em>/ ;                    \
-    sexpr   : &#39;(&#39; &lt;expr&gt;</em> &#39;)&#39; ;                  \
-    qexpr   : &#39;{&#39; &lt;expr&gt;<em> &#39;}&#39; ;                  \
+    symbol  : /[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/ ; \
+    string  : /\"(\\\\.|[^\"])*\"/ ;             \
+    comment : /;[^\\r\\n]*/ ;                    \
+    sexpr   : '(' &lt;expr&gt;* ')' ;                  \
+    qexpr   : '{' &lt;expr&gt;* '}' ;                  \
     expr    : &lt;number&gt;  | &lt;symbol&gt; | &lt;string&gt;    \
             | &lt;comment&gt; | &lt;sexpr&gt;  | &lt;qexpr&gt;;    \
-    lispy   : /^/ &lt;expr&gt;</em> /$/ ;                  \
-  &quot;,
+    lispy   : /^/ &lt;expr&gt;* /$/ ;                  \
+  "</span>,
   Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
 </code></pre>
-
 <p>And the cleanup function looks like this.</p>
-
-<pre><code data-language='c'>mpc_cleanup(8, Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);</code></pre>
-
+<pre><code class="lang-c">mpc_cleanup(<span class="hljs-number">8</span>, Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
+</code></pre>
 <p>Because comments are only for programmings reading the code, our internal function for reading them in just consists of ignoring them. We can add a clause to deal with them in a similar way to brackets and parenthesis in <code>lval_read</code>.</p>
-
-<pre><code data-language='c'>if (strstr(t-&gt;children[i]-&gt;tag, &quot;comment&quot;)) { continue; }</code></pre>
-
+<pre><code class="lang-c"><span class="hljs-keyword">if</span> (<span class="hljs-built_in">strstr</span>(t-&gt;children[i]-&gt;tag, <span class="hljs-string">"comment"</span>)) { <span class="hljs-keyword">continue</span>; }
+</code></pre>
 <p>Comments won&#39;t be of much use on the interactive prompt, but they will be very helpful for adding into files of code to annotate them.</p>
-
-
-<h2>Load Function</h2>
-
+<h2 id="load-function">Load Function</h2>
 <p>We want to built a function that can load and evaluate a file when passed a string of its name. To implement this function we&#39;ll need to make used of our grammar as we&#39;ll need it to to read in the file contents, parse, and evaluate them. Our load function is going to rely on our <code>mpc_parser*</code> called <code>Lispy</code>.</p>
-
 <p>Therefore, just like with functions, we need to forward declare our parser pointers, and place them to the top of the file.</p>
-
-<pre><code data-language='c'>mpc_parser_t* Number;
+<pre><code class="lang-c">mpc_parser_t* Number;
 mpc_parser_t* Symbol;
 mpc_parser_t* String;
 mpc_parser_t* Comment;
@@ -464,150 +420,126 @@ mpc_parser_t* Qexpr;
 mpc_parser_t* Expr;
 mpc_parser_t* Lispy;
 </code></pre>
-
-<p>Our <code>load</code> function will be just like any other builtin. We need to start by checking that the input argument is a single string. Then we can use the <code>mpc_fparse_contents</code> function to read in the contents of a file using a grammar. Just like <code>mpc_parse</code> this parses the contents of a file into some <code>mpc_result</code> object, which is our case is an <em>abstract syntax tree</em> again or an <em>error</em>.</p>
-
+<p>Our <code>load</code> function will be just like any other builtin. We need to start by checking that the input argument is a single string. Then we can use the <code>mpc_fparse_contents</code> function to read in the contents of a file using a grammar. Just like <code>mpc_parse</code> this parses the contents of a file into some <code>mpc_result</code> object, which is our case is an <em>abstract syntax tree** again or an </em>error**.</p>
 <p>Slightly differently to our command prompt, on successfully parsing a file we shouldn&#39;t treat it like one expression. When typing into a file we let users list multiple expressions and evaluate all of them individually. To achieve this behaviour we need to loop over each expression in the contents of the file and evaluate it one by one. If there are any errors we should print them and continue.</p>
-
 <p>If there is a parse error instead of chucking it away we&#39;re going to extract the message and put it into a error <code>lval</code> which we return. If there are no errors the return value for this builtin can just be the empty expression. The full code for this looks like this.</p>
+<pre><code class="lang-c">lval* builtin_load(lenv* e, lval* a) {
+  LASSERT_NUM(<span class="hljs-string">"load"</span>, a, <span class="hljs-number">1</span>);
+  LASSERT_TYPE(<span class="hljs-string">"load"</span>, a, <span class="hljs-number">0</span>, LVAL_STR);
 
-<pre><code data-language='c'>lval* builtin_load(lenv* e, lval* a) {
-  LASSERT_NUM("load", a, 1);
-  LASSERT_TYPE("load", a, 0, LVAL_STR);
-
-  /* Parse File given by string name */
+  <span class="hljs-comment">/* Parse File given by string name */</span>
   mpc_result_t r;
-  if (mpc_fparse_contents(a-&gt;cell[0]-&gt;str, Lispy, &r)) {
+  <span class="hljs-keyword">if</span> (mpc_fparse_contents(a-&gt;cell[<span class="hljs-number">0</span>]-&gt;str, Lispy, &amp;r)) {
 
-    /* Read contents */
+    <span class="hljs-comment">/* Read contents */</span>
     lval* expr = lval_read(r.output);
     mpc_ast_delete(r.output);
 
-    /* Evaluate each Expression */
-    while (expr-&gt;count) {
-      lval* x = lval_eval(e, lval_pop(expr, 0));
-      /* If Evaluation leads to error print it */
-      if (x-&gt;type == LVAL_ERR) { lval_println(x); }
+    <span class="hljs-comment">/* Evaluate each Expression */</span>
+    <span class="hljs-keyword">while</span> (expr-&gt;count) {
+      lval* x = lval_eval(e, lval_pop(expr, <span class="hljs-number">0</span>));
+      <span class="hljs-comment">/* If Evaluation leads to error print it */</span>
+      <span class="hljs-keyword">if</span> (x-&gt;type == LVAL_ERR) { lval_println(x); }
       lval_del(x);
     }
 
-    /* Delete expressions and arguments */
+    <span class="hljs-comment">/* Delete expressions and arguments */</span>
     lval_del(expr);
     lval_del(a);
 
-    /* Return empty list */
-    return lval_sexpr();
+    <span class="hljs-comment">/* Return empty list */</span>
+    <span class="hljs-keyword">return</span> lval_sexpr();
 
-  } else {
-    /* Get Parse Error as String */
-    char* err_msg = mpc_err_string(r.error);
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-comment">/* Get Parse Error as String */</span>
+    <span class="hljs-keyword">char</span>* err_msg = mpc_err_string(r.error);
     mpc_err_delete(r.error);
 
-    /* Create new error message using it */
-    lval* err = lval_err("Could not load Library %s", err_msg);
-    free(err_msg);
+    <span class="hljs-comment">/* Create new error message using it */</span>
+    lval* err = lval_err(<span class="hljs-string">"Could not load Library %s"</span>, err_msg);
+    <span class="hljs-built_in">free</span>(err_msg);
     lval_del(a);
 
-    /* Cleanup and return error */
-    return err;
+    <span class="hljs-comment">/* Cleanup and return error */</span>
+    <span class="hljs-keyword">return</span> err;
   }
-}</code></pre>
-
-
-<p><h2>Command Line Arguments</h2> <hr/></p>
+}
+</code></pre>
+<h2 id="command-line-arguments">Command Line Arguments</h2>
 <p>With the ability to load files, we can take the chance to add in some functionality typical of other programming languages. When file names are given as arguments to the command line we can try to run these files. For example to run a python file one might write <code>python filename.py</code>.</p>
-
 <p>These command line arguments are accessible using the <code>argc</code> and <code>argv</code> variables that are given to <code>main</code>. The <code>argc</code> variable gives the number of arguments, and <code>argv</code> specifies each string. The <code>argc</code> is always set to at least one, where the first argument is always the complete command invoked.</p>
-
 <p>That means if <code>argc</code> is set to <code>1</code> we can invoke the interpreter, otherwise we can run each of the arguments through the <code>builtin_load</code> function.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Supplied with list of files */</span>
+<span class="hljs-keyword">if</span> (argc &gt;= <span class="hljs-number">2</span>) {
 
-<pre><code data-language='c'>/* Supplied with list of files */
-if (argc &gt;= 2) {
+  <span class="hljs-comment">/* loop over each supplied filename (starting from 1) */</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">1</span>; i &lt; argc; i++) {
 
-  /* loop over each supplied filename (starting from 1) */
-  for (int i = 1; i &lt; argc; i++) {
-
-    /* Create an argument list with a single argument being the filename */
+    <span class="hljs-comment">/* Create an argument list with a single argument being the filename */</span>
     lval* args = lval_add(lval_sexpr(), lval_str(argv[i]));
 
-    /* Pass to builtin load and get the result */
+    <span class="hljs-comment">/* Pass to builtin load and get the result */</span>
     lval* x = builtin_load(e, args);
 
-    /* If the result is an error be sure to print it */
-    if (x-&gt;type == LVAL_ERR) { lval_println(x); }
+    <span class="hljs-comment">/* If the result is an error be sure to print it */</span>
+    <span class="hljs-keyword">if</span> (x-&gt;type == LVAL_ERR) { lval_println(x); }
     lval_del(x);
   }
 }
 </code></pre>
-
 <p>It&#39;s now possible to write some basic program and try to invoke it using this method.</p>
-
-<pre><code>lispy example.lspy</code></pre>
-
-
-<p><h2>Print Function</h2> <hr/></p>
+<pre><code>lispy example<span class="hljs-preprocessor">.lspy</span>
+</code></pre><h2 id="print-function">Print Function</h2>
 <p>If we are running programs from the command line we might want them to output some data, rather than just define functions and other values. We can add a <code>print</code> function to our Lisp which makes use of our existing <code>lval_print</code> function.</p>
-
 <p>This function prints each argument separated by a space and then prints a newline character to finish. It returns the empty expression.</p>
+<pre><code class="lang-c">lval* builtin_print(lenv* e, lval* a) {
 
-<pre><code data-language='c'>lval* builtin_print(lenv* e, lval* a) {
-
-  /* Print each argument followed by a space */
-  for (int i = 0; i &lt; a-&gt;count; i++) {
-    lval_print(a-&gt;cell[i]); putchar(&#39; &#39;);
+  <span class="hljs-comment">/* Print each argument followed by a space */</span>
+  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">int</span> i = <span class="hljs-number">0</span>; i &lt; a-&gt;count; i++) {
+    lval_print(a-&gt;cell[i]); <span class="hljs-built_in">putchar</span>(<span class="hljs-string">' '</span>);
   }
 
-  /* Print a newline and delete arguments */
-  putchar(&#39;\n&#39;);
+  <span class="hljs-comment">/* Print a newline and delete arguments */</span>
+  <span class="hljs-built_in">putchar</span>(<span class="hljs-string">'\n'</span>);
   lval_del(a);
 
-  return lval_sexpr();
-}</code></pre>
-
-
-<p><h2>Error Function</h2> <hr/></p>
-<p>We can also make use of strings to add in an error reporting function. This can take as input a user supplied string and provide it as an error message for <code>lval_err</code>.</p>
-
-<pre><code data-language='c'>lval* builtin_error(lenv* e, lval* a) {
-  LASSERT_NUM("error", a, 1);
-  LASSERT_TYPE("error", a, 0, LVAL_STR);
-
-  /* Construct Error from first argument */
-  lval* err = lval_err(a-&gt;cell[0]-&gt;str);
-
-  /* Delete arguments and return */
-  lval_del(a);
-  return err;
-}</code></pre>
-
-<p>The final step is to register these as builtins. Now finally we can start building up libraries and writing them to files!</p>
-
-<pre><code data-language='c'>/* String Functions */
-lenv_add_builtin(e, &quot;load&quot;, builtin_load);
-lenv_add_builtin(e, &quot;error&quot;, builtin_error); lenv_add_builtin(e, &quot;print&quot;, builtin_print);
+  <span class="hljs-keyword">return</span> lval_sexpr();
+}
 </code></pre>
+<h2 id="error-function">Error Function</h2>
+<p>We can also make use of strings to add in an error reporting function. This can take as input a user supplied string and provide it as an error message for <code>lval_err</code>.</p>
+<pre><code class="lang-c">lval* builtin_error(lenv* e, lval* a) {
+  LASSERT_NUM(<span class="hljs-string">"error"</span>, a, <span class="hljs-number">1</span>);
+  LASSERT_TYPE(<span class="hljs-string">"error"</span>, a, <span class="hljs-number">0</span>, LVAL_STR);
 
-<pre><code data-language='lispy'>lispy&gt; print "Hello World!"
-"Hello World!"
+  <span class="hljs-comment">/* Construct Error from first argument */</span>
+  lval* err = lval_err(a-&gt;cell[<span class="hljs-number">0</span>]-&gt;str);
+
+  <span class="hljs-comment">/* Delete arguments and return */</span>
+  lval_del(a);
+  <span class="hljs-keyword">return</span> err;
+}
+</code></pre>
+<p>The final step is to register these as builtins. Now finally we can start building up libraries and writing them to files!</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* String Functions */</span>
+lenv_add_builtin(e, <span class="hljs-string">"load"</span>, builtin_load);
+lenv_add_builtin(e, <span class="hljs-string">"error"</span>, builtin_error); lenv_add_builtin(e, <span class="hljs-string">"print"</span>, builtin_print);
+</code></pre>
+<pre><code class="lang-lispy">lispy&gt; <span class="hljs-built_in">print</span> <span class="hljs-string">"Hello World!"</span>
+<span class="hljs-string">"Hello World!"</span>
 ()
-lispy&gt; error "This is an error"
-Error: This is an error
-lispy&gt; load "hello.lspy"
-"Hello World!"
+lispy&gt; <span class="hljs-built_in">error</span> <span class="hljs-string">"This is an error"</span>
+Error: This is an <span class="hljs-built_in">error</span>
+lispy&gt; <span class="hljs-built_in">load</span> <span class="hljs-string">"hello.lspy"</span>
+<span class="hljs-string">"Hello World!"</span>
 ()
 lispy&gt;
 </code></pre>
-
-
-<p><h2>Finishing Up</h2> <hr/></p>
+<h2 id="finishing-up">Finishing Up</h2>
 <p>This is the last chapter in which we are going to explicitly work on our C implementation of Lisp. The result of this chapter will be the final state of your language implementation while I am still involved.</p>
-
 <p>The final line count should clock in somewhere close to 1000 lines of code. Writing this amount of code is not trivial. If you&#39;ve made it this far you&#39;ve written a real program and started on a proper project. The skills you&#39;ve learnt here should be transferable, and give you the confidence to seek out your own goals and targets. You now have a complex and beautiful program which you can interact and play with. This is something you should be proud of. Go show it off to your parents and friends!</p>
-
 <p>In the next chapter we start using our Lisp to build up a standard library of common functions. After that I describe some possible improvements and directions in which the language should be taken. Although we&#39;ve finished with my involvement this is really this is only the beginning. Thanks for following along, and good luck with whatever C you write in the future!</p>
-
-
-<p><h2>Reference</h2> <hr/></p>
+<h2 id="reference">Reference</h2>
 <div class="panel-group alert alert-warning" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -619,22 +551,23 @@ lispy&gt;
     </div>
     <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
-<pre><code data-language='c'>#include &quot;mpc.h&quot;
+<code>c
+#include &quot;mpc.h&quot;
 
-#ifdef <em>WIN32
+#ifdef _WIN32
 
 static char buffer[2048];
 
-char<em> readline(char</em> prompt) {
+char* readline(char* prompt) {
   fputs(&quot;lispy&gt; &quot;, stdout);
   fgets(buffer, 2048, stdin);
-  char<em> cpy = malloc(strlen(buffer)+1);
+  char* cpy = malloc(strlen(buffer)+1);
   strcpy(cpy, buffer);
   cpy[strlen(cpy)-1] = &#39;\0&#39;;
   return cpy;
 }
 
-void add_history(char</em> unused) {}
+void add_history(char* unused) {}
 
 #else
 
@@ -643,59 +576,59 @@ void add_history(char</em> unused) {}
 
 #endif
 
-/<em> Parser Declariations </em>/
+/* Parser Declariations */
 
-mpc<em>parser<em>t<em> Number;
-mpc_parser_t</em> Symbol;
-mpc_parser_t<em> String;
-mpc_parser_t</em> Comment;
-mpc_parser_t<em> Sexpr;
-mpc_parser_t</em> Qexpr;
-mpc_parser_t<em> Expr;
-mpc_parser_t</em> Lispy;
+mpc_parser_t* Number;
+mpc_parser_t* Symbol;
+mpc_parser_t* String;
+mpc_parser_t* Comment;
+mpc_parser_t* Sexpr;
+mpc_parser_t* Qexpr;
+mpc_parser_t* Expr;
+mpc_parser_t* Lispy;
 
-/<em> Forward Declarations </em>/
+/* Forward Declarations */
 
 struct lval;
 struct lenv;
 typedef struct lval lval;
 typedef struct lenv lenv;
 
-/<em> Lisp Value </em>/
+/* Lisp Value */
 
 enum { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_STR, LVAL_FUN, LVAL_SEXPR, LVAL_QEXPR };
 
-typedef lval<em>(</em>lbuiltin)(lenv<em>, lval</em>);
+typedef lval*(*lbuiltin)(lenv*, lval*);
 
 struct lval {
   int type;
 
-  /<em> Basic </em>/
+  /* Basic */
   long num;
-  char<em> err;
-  char</em> sym;
-  char<em> str;
+  char* err;
+  char* sym;
+  char* str;
 
-  /</em> Function <em>/
+  /* Function */
   lbuiltin builtin;
-  lenv</em> env;
-  lval<em> formals;
-  lval</em> body;
+  lenv* env;
+  lval* formals;
+  lval* body;
 
-  /<em> Expression </em>/
+  /* Expression */
   int count;
-  lval<strong> cell;
+  lval** cell;
 };
 
-lval<em> lval_num(long x) {
-  lval</em> v = malloc(sizeof(lval));
+lval* lval_num(long x) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_NUM;
   v-&gt;num = x;
   return v;
 }
 
-lval<em> lval_err(char</em> fmt, ...) {
-  lval<em> v = malloc(sizeof(lval));
+lval* lval_err(char* fmt, ...) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_ERR;
   va_list va;
   va_start(va, fmt);
@@ -706,33 +639,33 @@ lval<em> lval_err(char</em> fmt, ...) {
   return v;
 }
 
-lval</em> lval_sym(char<em> s) {
-  lval</em> v = malloc(sizeof(lval));
+lval* lval_sym(char* s) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_SYM;
   v-&gt;sym = malloc(strlen(s) + 1);
   strcpy(v-&gt;sym, s);
   return v;
 }
 
-lval<em> lval_str(char</em> s) {
-  lval<em> v = malloc(sizeof(lval));
+lval* lval_str(char* s) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_STR;
   v-&gt;str = malloc(strlen(s) + 1);
   strcpy(v-&gt;str, s);
   return v;
 }
 
-lval</em> lval_builtin(lbuiltin func) {
-  lval<em> v = malloc(sizeof(lval));
+lval* lval_builtin(lbuiltin func) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_FUN;
   v-&gt;builtin = func;
   return v;
 }
 
-lenv</em> lenv_new(void);
+lenv* lenv_new(void);
 
-lval<em> lval_lambda(lval</em> formals, lval<em> body) {
-  lval</em> v = malloc(sizeof(lval));
+lval* lval_lambda(lval* formals, lval* body) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_FUN;
   v-&gt;builtin = NULL;
   v-&gt;env = lenv_new();
@@ -741,25 +674,25 @@ lval<em> lval_lambda(lval</em> formals, lval<em> body) {
   return v;
 }
 
-lval<em> lval_sexpr(void) {
-  lval</em> v = malloc(sizeof(lval));
+lval* lval_sexpr(void) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_SEXPR;
   v-&gt;count = 0;
   v-&gt;cell = NULL;
   return v;
 }
 
-lval<em> lval_qexpr(void) {
-  lval</em> v = malloc(sizeof(lval));
+lval* lval_qexpr(void) {
+  lval* v = malloc(sizeof(lval));
   v-&gt;type = LVAL_QEXPR;
   v-&gt;count = 0;
   v-&gt;cell = NULL;
   return v;
 }
 
-void lenv_del(lenv<em> e);
+void lenv_del(lenv* e);
 
-void lval_del(lval</em> v) {
+void lval_del(lval* v) {
 
   switch (v-&gt;type) {
     case LVAL_NUM: break;
@@ -785,10 +718,10 @@ void lval_del(lval</em> v) {
   free(v);
 }
 
-lenv<em> lenv_copy(lenv</em> e);
+lenv* lenv_copy(lenv* e);
 
-lval<em> lval_copy(lval</em> v) {
-  lval<em> x = malloc(sizeof(lval));
+lval* lval_copy(lval* v) {
+  lval* x = malloc(sizeof(lval));
   x-&gt;type = v-&gt;type;
   switch (v-&gt;type) {
     case LVAL_FUN:
@@ -808,7 +741,7 @@ lval<em> lval_copy(lval</em> v) {
     case LVAL_SEXPR:
     case LVAL_QEXPR:
       x-&gt;count = v-&gt;count;
-      x-&gt;cell = malloc(sizeof(lval</em>) <em> x-&gt;count);
+      x-&gt;cell = malloc(sizeof(lval*) * x-&gt;count);
       for (int i = 0; i &lt; x-&gt;count; i++) {
         x-&gt;cell[i] = lval_copy(v-&gt;cell[i]);
       }
@@ -817,14 +750,14 @@ lval<em> lval_copy(lval</em> v) {
   return x;
 }
 
-lval</em> lval_add(lval<em> v, lval</em> x) {
+lval* lval_add(lval* v, lval* x) {
   v-&gt;count++;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval<em>) </em> v-&gt;count);
+  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
   v-&gt;cell[v-&gt;count-1] = x;
   return v;
 }
 
-lval<em> lval_join(lval</em> x, lval<em> y) {
+lval* lval_join(lval* x, lval* y) {
   for (int i = 0; i &lt; y-&gt;count; i++) {
     x = lval_add(x, y-&gt;cell[i]);
   }
@@ -833,23 +766,23 @@ lval<em> lval_join(lval</em> x, lval<em> y) {
   return x;
 }
 
-lval</em> lval_pop(lval<em> v, int i) {
-  lval</em> x = v-&gt;cell[i];
-  memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval<em>) </em> (v-&gt;count-i-1));
+lval* lval_pop(lval* v, int i) {
+  lval* x = v-&gt;cell[i];
+  memmove(&amp;v-&gt;cell[i], &amp;v-&gt;cell[i+1], sizeof(lval*) * (v-&gt;count-i-1));
   v-&gt;count--;
-  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval<em>) </em> v-&gt;count);
+  v-&gt;cell = realloc(v-&gt;cell, sizeof(lval*) * v-&gt;count);
   return x;
 }
 
-lval<em> lval_take(lval</em> v, int i) {
-  lval<em> x = lval_pop(v, i);
+lval* lval_take(lval* v, int i) {
+  lval* x = lval_pop(v, i);
   lval_del(v);
   return x;
 }
 
-void lval_print(lval</em> v);
+void lval_print(lval* v);
 
-void lval_print_expr(lval<em> v, char open, char close) {
+void lval_print_expr(lval* v, char open, char close) {
   putchar(open);
   for (int i = 0; i &lt; v-&gt;count; i++) {
     lval_print(v-&gt;cell[i]);
@@ -860,25 +793,25 @@ void lval_print_expr(lval<em> v, char open, char close) {
   putchar(close);
 }
 
-void lval_print_str(lval</em> v) {
-  /<em> Make a Copy of the string </em>/
-  char<em> escaped = malloc(strlen(v-&gt;str)+1);
+void lval_print_str(lval* v) {
+  /* Make a Copy of the string */
+  char* escaped = malloc(strlen(v-&gt;str)+1);
   strcpy(escaped, v-&gt;str);
-  /</em> Pass it through the escape function <em>/
+  /* Pass it through the escape function */
   escaped = mpcf_escape(escaped);
-  /</em> Print it between &quot; characters <em>/
+  /* Print it between &quot; characters */
   printf(&quot;\&quot;%s\&quot;&quot;, escaped);
-  /</em> free the copied string <em>/
+  /* free the copied string */
   free(escaped);
 }
 
-void lval_print(lval</em> v) {
+void lval_print(lval* v) {
   switch (v-&gt;type) {
     case LVAL_FUN:
       if (v-&gt;builtin) {
         printf(&quot;&lt;builtin&gt;&quot;);
       } else {
-        printf(&quot;(\ &quot;); lval_print(v-&gt;formals); putchar(&#39; &#39;); lval_print(v-&gt;body); putchar(&#39;)&#39;);
+        printf(&quot;(\\ &quot;); lval_print(v-&gt;formals); putchar(&#39; &#39;); lval_print(v-&gt;body); putchar(&#39;)&#39;);
       }
     break;
     case LVAL_NUM:   printf(&quot;%li&quot;, v-&gt;num); break;
@@ -890,9 +823,9 @@ void lval_print(lval</em> v) {
   }
 }
 
-void lval_println(lval<em> v) { lval_print(v); putchar(&#39;\n&#39;); }
+void lval_println(lval* v) { lval_print(v); putchar(&#39;\n&#39;); }
 
-int lval_eq(lval</em> x, lval<em> y) {
+int lval_eq(lval* x, lval* y) {
 
   if (x-&gt;type != y-&gt;type) { return 0; }
 
@@ -919,7 +852,7 @@ int lval_eq(lval</em> x, lval<em> y) {
   return 0;
 }
 
-char</em> ltype_name(int t) {
+char* ltype_name(int t) {
   switch(t) {
     case LVAL_FUN: return &quot;Function&quot;;
     case LVAL_NUM: return &quot;Number&quot;;
@@ -932,17 +865,17 @@ char</em> ltype_name(int t) {
   }
 }
 
-/<em> Lisp Environment </em>/
+/* Lisp Environment */
 
 struct lenv {
   lenv* par;
   int count;
-  char</strong> syms;
-  lval<em>* vals;
+  char** syms;
+  lval** vals;
 };
 
-lenv</em> lenv_new(void) {
-  lenv<em> e = malloc(sizeof(lenv));
+lenv* lenv_new(void) {
+  lenv* e = malloc(sizeof(lenv));
   e-&gt;par = NULL;
   e-&gt;count = 0;
   e-&gt;syms = NULL;
@@ -950,7 +883,7 @@ lenv</em> lenv_new(void) {
   return e;
 }
 
-void lenv_del(lenv</em> e) {
+void lenv_del(lenv* e) {
   for (int i = 0; i &lt; e-&gt;count; i++) {
     free(e-&gt;syms[i]);
     lval_del(e-&gt;vals[i]);
@@ -960,12 +893,12 @@ void lenv_del(lenv</em> e) {
   free(e);
 }
 
-lenv<em> lenv_copy(lenv</em> e) {
-  lenv<em> n = malloc(sizeof(lenv));
+lenv* lenv_copy(lenv* e) {
+  lenv* n = malloc(sizeof(lenv));
   n-&gt;par = e-&gt;par;
   n-&gt;count = e-&gt;count;
-  n-&gt;syms = malloc(sizeof(char</em>) <em> n-&gt;count);
-  n-&gt;vals = malloc(sizeof(lval</em>) <em> n-&gt;count);
+  n-&gt;syms = malloc(sizeof(char*) * n-&gt;count);
+  n-&gt;vals = malloc(sizeof(lval*) * n-&gt;count);
   for (int i = 0; i &lt; e-&gt;count; i++) {
     n-&gt;syms[i] = malloc(strlen(e-&gt;syms[i]) + 1);
     strcpy(n-&gt;syms[i], e-&gt;syms[i]);
@@ -974,7 +907,7 @@ lenv<em> lenv_copy(lenv</em> e) {
   return n;
 }
 
-lval</em> lenv_get(lenv<em> e, lval</em> k) {
+lval* lenv_get(lenv* e, lval* k) {
 
   for (int i = 0; i &lt; e-&gt;count; i++) {
     if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) { return lval_copy(e-&gt;vals[i]); }
@@ -987,7 +920,7 @@ lval</em> lenv_get(lenv<em> e, lval</em> k) {
   }
 }
 
-void lenv_put(lenv<em> e, lval</em> k, lval<em> v) {
+void lenv_put(lenv* e, lval* k, lval* v) {
 
   for (int i = 0; i &lt; e-&gt;count; i++) {
     if (strcmp(e-&gt;syms[i], k-&gt;sym) == 0) {
@@ -1000,22 +933,22 @@ void lenv_put(lenv<em> e, lval</em> k, lval<em> v) {
   }
 
   e-&gt;count++;
-  e-&gt;vals = realloc(e-&gt;vals, sizeof(lval</em>) <em> e-&gt;count);
-  e-&gt;syms = realloc(e-&gt;syms, sizeof(char</em>) <em> e-&gt;count);
+  e-&gt;vals = realloc(e-&gt;vals, sizeof(lval*) * e-&gt;count);
+  e-&gt;syms = realloc(e-&gt;syms, sizeof(char*) * e-&gt;count);
   e-&gt;vals[e-&gt;count-1] = lval_copy(v);
   e-&gt;syms[e-&gt;count-1] = malloc(strlen(k-&gt;sym)+1);
   strcpy(e-&gt;syms[e-&gt;count-1], k-&gt;sym);
 }
 
-void lenv_def(lenv</em> e, lval<em> k, lval</em> v) {
+void lenv_def(lenv* e, lval* k, lval* v) {
   while (e-&gt;par) { e = e-&gt;par; }
   lenv_put(e, k, v);
 }
 
-/<em> Builtins </em>/
+/* Builtins */
 
 #define LASSERT(args, cond, fmt, ...) \
-  if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS</em></em>); lval_del(args); return err; }
+  if (!(cond)) { lval* err = lval_err(fmt, ##__VA_ARGS__); lval_del(args); return err; }
 
 #define LASSERT_TYPE(func, args, index, expect) \
   LASSERT(args, args-&gt;cell[index]-&gt;type == expect, \
@@ -1031,12 +964,12 @@ void lenv_def(lenv</em> e, lval<em> k, lval</em> v) {
   LASSERT(args, args-&gt;cell[index]-&gt;count != 0, \
     &quot;Function &#39;%s&#39; passed {} for argument %i.&quot;, func, index);
 
-lval<em> lval_eval(lenv</em> e, lval<em> v);
+lval* lval_eval(lenv* e, lval* v);
 
-lval</em> builtin_lambda(lenv<em> e, lval</em> a) {
-  LASSERT_NUM(&quot;\&quot;, a, 2);
-  LASSERT_TYPE(&quot;\&quot;, a, 0, LVAL_QEXPR);
-  LASSERT_TYPE(&quot;\&quot;, a, 1, LVAL_QEXPR);
+lval* builtin_lambda(lenv* e, lval* a) {
+  LASSERT_NUM(&quot;\\&quot;, a, 2);
+  LASSERT_TYPE(&quot;\\&quot;, a, 0, LVAL_QEXPR);
+  LASSERT_TYPE(&quot;\\&quot;, a, 1, LVAL_QEXPR);
 
   for (int i = 0; i &lt; a-&gt;cell[0]-&gt;count; i++) {
     LASSERT(a, (a-&gt;cell[0]-&gt;cell[i]-&gt;type == LVAL_SYM),
@@ -1044,55 +977,55 @@ lval</em> builtin_lambda(lenv<em> e, lval</em> a) {
       ltype_name(a-&gt;cell[0]-&gt;cell[i]-&gt;type), ltype_name(LVAL_SYM));
   }
 
-  lval<em> formals = lval_pop(a, 0);
-  lval</em> body = lval_pop(a, 0);
+  lval* formals = lval_pop(a, 0);
+  lval* body = lval_pop(a, 0);
   lval_del(a);
 
   return lval_lambda(formals, body);
 }
 
-lval<em> builtin_list(lenv</em> e, lval<em> a) {
+lval* builtin_list(lenv* e, lval* a) {
   a-&gt;type = LVAL_QEXPR;
   return a;
 }
 
-lval</em> builtin_head(lenv<em> e, lval</em> a) {
+lval* builtin_head(lenv* e, lval* a) {
   LASSERT_NUM(&quot;head&quot;, a, 1);
   LASSERT_TYPE(&quot;head&quot;, a, 0, LVAL_QEXPR);
   LASSERT_NOT_EMPTY(&quot;head&quot;, a, 0);
 
-  lval<em> v = lval_take(a, 0);
+  lval* v = lval_take(a, 0);
   while (v-&gt;count &gt; 1) { lval_del(lval_pop(v, 1)); }
   return v;
 }
 
-lval</em> builtin_tail(lenv<em> e, lval</em> a) {
+lval* builtin_tail(lenv* e, lval* a) {
   LASSERT_NUM(&quot;tail&quot;, a, 1);
   LASSERT_TYPE(&quot;tail&quot;, a, 0, LVAL_QEXPR);
   LASSERT_NOT_EMPTY(&quot;tail&quot;, a, 0);
 
-  lval<em> v = lval_take(a, 0);
+  lval* v = lval_take(a, 0);
   lval_del(lval_pop(v, 0));
   return v;
 }
 
-lval</em> builtin_eval(lenv<em> e, lval</em> a) {
+lval* builtin_eval(lenv* e, lval* a) {
   LASSERT_NUM(&quot;eval&quot;, a, 1);
   LASSERT_TYPE(&quot;tail&quot;, a, 0, LVAL_QEXPR);
 
-  lval<em> x = lval_take(a, 0);
+  lval* x = lval_take(a, 0);
   x-&gt;type = LVAL_SEXPR;
   return lval_eval(e, x);
 }
 
-lval</em> builtin_join(lenv<em> e, lval</em> a) {
+lval* builtin_join(lenv* e, lval* a) {
 
   for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE(&quot;join&quot;, a, i, LVAL_QEXPR); }
 
-  lval<em> x = lval_pop(a, 0);
+  lval* x = lval_pop(a, 0);
 
   while (a-&gt;count) {
-    lval</em> y = lval_pop(a, 0);
+    lval* y = lval_pop(a, 0);
     x = lval_join(x, y);
   }
 
@@ -1100,20 +1033,20 @@ lval</em> builtin_join(lenv<em> e, lval</em> a) {
   return x;
 }
 
-lval<em> builtin_op(lenv</em> e, lval<em> a, char</em> op) {
+lval* builtin_op(lenv* e, lval* a, char* op) {
 
   for (int i = 0; i &lt; a-&gt;count; i++) { LASSERT_TYPE(op, a, i, LVAL_NUM); }
 
-  lval<em> x = lval_pop(a, 0);
+  lval* x = lval_pop(a, 0);
 
   if ((strcmp(op, &quot;-&quot;) == 0) &amp;&amp; a-&gt;count == 0) { x-&gt;num = -x-&gt;num; }
 
   while (a-&gt;count &gt; 0) {
-    lval</em> y = lval_pop(a, 0);
+    lval* y = lval_pop(a, 0);
 
     if (strcmp(op, &quot;+&quot;) == 0) { x-&gt;num += y-&gt;num; }
     if (strcmp(op, &quot;-&quot;) == 0) { x-&gt;num -= y-&gt;num; }
-    if (strcmp(op, &quot;<em>&quot;) == 0) { x-&gt;num </em>= y-&gt;num; }
+    if (strcmp(op, &quot;*&quot;) == 0) { x-&gt;num *= y-&gt;num; }
     if (strcmp(op, &quot;/&quot;) == 0) {
       if (y-&gt;num != 0) {
         lval_del(x); lval_del(y); lval_del(a);
@@ -1129,15 +1062,15 @@ lval<em> builtin_op(lenv</em> e, lval<em> a, char</em> op) {
   return x;
 }
 
-lval<em> builtin_add(lenv</em> e, lval<em> a) { return builtin_op(e, a, &quot;+&quot;); }
-lval</em> builtin_sub(lenv<em> e, lval</em> a) { return builtin_op(e, a, &quot;-&quot;); }
-lval<em> builtin_mul(lenv</em> e, lval<em> a) { return builtin_op(e, a, &quot;</em>&quot;); }
-lval<em> builtin_div(lenv</em> e, lval<em> a) { return builtin_op(e, a, &quot;/&quot;); }
+lval* builtin_add(lenv* e, lval* a) { return builtin_op(e, a, &quot;+&quot;); }
+lval* builtin_sub(lenv* e, lval* a) { return builtin_op(e, a, &quot;-&quot;); }
+lval* builtin_mul(lenv* e, lval* a) { return builtin_op(e, a, &quot;*&quot;); }
+lval* builtin_div(lenv* e, lval* a) { return builtin_op(e, a, &quot;/&quot;); }
 
-lval</em> builtin_var(lenv<em> e, lval</em> a, char<em> func) {
+lval* builtin_var(lenv* e, lval* a, char* func) {
   LASSERT_TYPE(func, a, 0, LVAL_QEXPR);
 
-  lval</em> syms = a-&gt;cell[0];
+  lval* syms = a-&gt;cell[0];
   for (int i = 0; i &lt; syms-&gt;count; i++) {
     LASSERT(a, (syms-&gt;cell[i]-&gt;type == LVAL_SYM),
       &quot;Function &#39;%s&#39; cannot define non-symbol. Got %s, Expected %s.&quot;,
@@ -1157,10 +1090,10 @@ lval</em> builtin_var(lenv<em> e, lval</em> a, char<em> func) {
   return lval_sexpr();
 }
 
-lval<em> builtin_def(lenv</em> e, lval<em> a) { return builtin_var(e, a, &quot;def&quot;); }
-lval</em> builtin_put(lenv<em> e, lval</em> a) { return builtin_var(e, a, &quot;=&quot;); }
+lval* builtin_def(lenv* e, lval* a) { return builtin_var(e, a, &quot;def&quot;); }
+lval* builtin_put(lenv* e, lval* a) { return builtin_var(e, a, &quot;=&quot;); }
 
-lval<em> builtin_ord(lenv</em> e, lval<em> a, char</em> op) {
+lval* builtin_ord(lenv* e, lval* a, char* op) {
   LASSERT_NUM(op, a, 2);
   LASSERT_TYPE(op, a, 0, LVAL_NUM);
   LASSERT_TYPE(op, a, 1, LVAL_NUM);
@@ -1174,12 +1107,12 @@ lval<em> builtin_ord(lenv</em> e, lval<em> a, char</em> op) {
   return lval_num(r);
 }
 
-lval<em> builtin_gt(lenv</em> e, lval<em> a) { return builtin_ord(e, a, &quot;&gt;&quot;);  }
-lval</em> builtin_lt(lenv<em> e, lval</em> a) { return builtin_ord(e, a, &quot;&lt;&quot;);  }
-lval<em> builtin_ge(lenv</em> e, lval<em> a) { return builtin_ord(e, a, &quot;&gt;=&quot;); }
-lval</em> builtin_le(lenv<em> e, lval</em> a) { return builtin_ord(e, a, &quot;&lt;=&quot;); }
+lval* builtin_gt(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&gt;&quot;);  }
+lval* builtin_lt(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&lt;&quot;);  }
+lval* builtin_ge(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&gt;=&quot;); }
+lval* builtin_le(lenv* e, lval* a) { return builtin_ord(e, a, &quot;&lt;=&quot;); }
 
-lval<em> builtin_cmp(lenv</em> e, lval<em> a, char</em> op) {
+lval* builtin_cmp(lenv* e, lval* a, char* op) {
   LASSERT_NUM(op, a, 2);
   int r;
   if (strcmp(op, &quot;==&quot;) == 0) { r =  lval_eq(a-&gt;cell[0], a-&gt;cell[1]); }
@@ -1188,16 +1121,16 @@ lval<em> builtin_cmp(lenv</em> e, lval<em> a, char</em> op) {
   return lval_num(r);
 }
 
-lval<em> builtin_eq(lenv</em> e, lval<em> a) { return builtin_cmp(e, a, &quot;==&quot;); }
-lval</em> builtin_ne(lenv<em> e, lval</em> a) { return builtin_cmp(e, a, &quot;!=&quot;); }
+lval* builtin_eq(lenv* e, lval* a) { return builtin_cmp(e, a, &quot;==&quot;); }
+lval* builtin_ne(lenv* e, lval* a) { return builtin_cmp(e, a, &quot;!=&quot;); }
 
-lval<em> builtin_if(lenv</em> e, lval<em> a) {
+lval* builtin_if(lenv* e, lval* a) {
   LASSERT_NUM(&quot;if&quot;, a, 3);
   LASSERT_TYPE(&quot;if&quot;, a, 0, LVAL_NUM);
   LASSERT_TYPE(&quot;if&quot;, a, 1, LVAL_QEXPR);
   LASSERT_TYPE(&quot;if&quot;, a, 2, LVAL_QEXPR);
 
-  lval</em> x;
+  lval* x;
   a-&gt;cell[1]-&gt;type = LVAL_SEXPR;
   a-&gt;cell[2]-&gt;type = LVAL_SEXPR;
 
@@ -1211,111 +1144,111 @@ lval<em> builtin_if(lenv</em> e, lval<em> a) {
   return x;
 }
 
-lval<em> lval_read(mpc_ast_t</em> t);
+lval* lval_read(mpc_ast_t* t);
 
-lval<em> builtin_load(lenv</em> e, lval<em> a) {
+lval* builtin_load(lenv* e, lval* a) {
   LASSERT_NUM(&quot;load&quot;, a, 1);
   LASSERT_TYPE(&quot;load&quot;, a, 0, LVAL_STR);
 
-  /</em> Parse File given by string name <em>/
+  /* Parse File given by string name */
   mpc_result_t r;
   if (mpc_fparse_contents(a-&gt;cell[0]-&gt;str, Lispy, &amp;r)) {
 
-    /</em> Read contents <em>/
-    lval</em> expr = lval_read(r.output);
+    /* Read contents */
+    lval* expr = lval_read(r.output);
     mpc_ast_delete(r.output);
 
-    /<em> Evaluate each Expression </em>/
+    /* Evaluate each Expression */
     while (expr-&gt;count) {
-      lval<em> x = lval_eval(e, lval_pop(expr, 0));
-      /</em> If Evaluation leads to error print it <em>/
+      lval* x = lval_eval(e, lval_pop(expr, 0));
+      /* If Evaluation leads to error print it */
       if (x-&gt;type == LVAL_ERR) { lval_println(x); }
       lval_del(x);
     }
 
-    /</em> Delete expressions and arguments <em>/
+    /* Delete expressions and arguments */
     lval_del(expr);
     lval_del(a);
 
-    /</em> Return empty list <em>/
+    /* Return empty list */
     return lval_sexpr();
 
   } else {
-    /</em> Get Parse Error as String <em>/
-    char</em> err_msg = mpc_err_string(r.error);
+    /* Get Parse Error as String */
+    char* err_msg = mpc_err_string(r.error);
     mpc_err_delete(r.error);
 
-    /<em> Create new error message using it </em>/
-    lval<em> err = lval_err(&quot;Could not load Library %s&quot;, err_msg);
+    /* Create new error message using it */
+    lval* err = lval_err(&quot;Could not load Library %s&quot;, err_msg);
     free(err_msg);
     lval_del(a);
 
-    /</em> Cleanup and return error <em>/
+    /* Cleanup and return error */
     return err;
   }
 }
 
-lval</em> builtin_print(lenv<em> e, lval</em> a) {
+lval* builtin_print(lenv* e, lval* a) {
 
-  /<em> Print each argument followed by a space </em>/
+  /* Print each argument followed by a space */
   for (int i = 0; i &lt; a-&gt;count; i++) {
     lval_print(a-&gt;cell[i]); putchar(&#39; &#39;);
   }
 
-  /<em> Print a newline and delete arguments </em>/
+  /* Print a newline and delete arguments */
   putchar(&#39;\n&#39;);
   lval_del(a);
 
   return lval_sexpr();
 }
 
-lval<em> builtin_error(lenv</em> e, lval<em> a) {
+lval* builtin_error(lenv* e, lval* a) {
   LASSERT_NUM(&quot;error&quot;, a, 1);
   LASSERT_TYPE(&quot;error&quot;, a, 0, LVAL_STR);
 
-  /</em> Construct Error from first argument <em>/
-  lval</em> err = lval_err(a-&gt;cell[0]-&gt;str);
+  /* Construct Error from first argument */
+  lval* err = lval_err(a-&gt;cell[0]-&gt;str);
 
-  /<em> Delete arguments and return </em>/
+  /* Delete arguments and return */
   lval_del(a);
   return err;
 }
 
-void lenv_add_builtin(lenv<em> e, char</em> name, lbuiltin func) {
-  lval<em> k = lval_sym(name);
-  lval</em> v = lval_builtin(func);
+void lenv_add_builtin(lenv* e, char* name, lbuiltin func) {
+  lval* k = lval_sym(name);
+  lval* v = lval_builtin(func);
   lenv_put(e, k, v);
   lval_del(k); lval_del(v);
 }
 
-void lenv_add_builtins(lenv<em> e) {
-  /</em> Variable Functions <em>/
-  lenv_add_builtin(e, &quot;\&quot;,  builtin_lambda);
+void lenv_add_builtins(lenv* e) {
+  /* Variable Functions */
+  lenv_add_builtin(e, &quot;\\&quot;,  builtin_lambda);
   lenv_add_builtin(e, &quot;def&quot;, builtin_def); lenv_add_builtin(e, &quot;=&quot;, builtin_put);
 
-  /</em> List Functions <em>/
+  /* List Functions */
   lenv_add_builtin(e, &quot;list&quot;, builtin_list);
   lenv_add_builtin(e, &quot;head&quot;, builtin_head); lenv_add_builtin(e, &quot;tail&quot;,  builtin_tail);
   lenv_add_builtin(e, &quot;eval&quot;, builtin_eval); lenv_add_builtin(e, &quot;join&quot;,  builtin_join);
 
-  /</em> Mathematical Functions <em>/
+  /* Mathematical Functions */
   lenv_add_builtin(e, &quot;+&quot;,    builtin_add); lenv_add_builtin(e, &quot;-&quot;,     builtin_sub);
-  lenv_add_builtin(e, &quot;</em>&quot;,    builtin_mul); lenv_add_builtin(e, &quot;/&quot;,     builtin_div);
+  lenv_add_builtin(e, &quot;*&quot;,    builtin_mul); lenv_add_builtin(e, &quot;/&quot;,     builtin_div);
 
-  /<em> Comparison Functions </em>/
+  /* Comparison Functions */
   lenv_add_builtin(e, &quot;if&quot;,   builtin_if);
   lenv_add_builtin(e, &quot;==&quot;,   builtin_eq); lenv_add_builtin(e, &quot;!=&quot;,   builtin_ne);
   lenv_add_builtin(e, &quot;&gt;&quot;,    builtin_gt); lenv_add_builtin(e, &quot;&lt;&quot;,    builtin_lt);
   lenv_add_builtin(e, &quot;&gt;=&quot;,   builtin_ge); lenv_add_builtin(e, &quot;&lt;=&quot;,   builtin_le);
 
-  /<em> String Functions </em>/
+  /* String Functions */
   lenv_add_builtin(e, &quot;load&quot;, builtin_load);
   lenv_add_builtin(e, &quot;error&quot;, builtin_error); lenv_add_builtin(e, &quot;print&quot;, builtin_print);
 }
 
-/<em> Evaluation </em>/
+/* Evaluation */
 
-lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
+lval* lval_call(lenv* e, lval* f, lval* a) {
 
   if (f-&gt;builtin) { return f-&gt;builtin(e, a); }
 
@@ -1329,7 +1262,7 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
       return lval_err(&quot;Function passed too many arguments. Got %i, Expected %i.&quot;, given, total);
     }
 
-    lval<em> sym = lval_pop(f-&gt;formals, 0);
+    lval* sym = lval_pop(f-&gt;formals, 0);
 
     if (strcmp(sym-&gt;sym, &quot;&amp;&quot;) == 0) {
 
@@ -1338,13 +1271,13 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
         return lval_err(&quot;Function format invalid. Symbol &#39;&amp;&#39; not followed by single symbol.&quot;);
       }
 
-      lval</em> nsym = lval_pop(f-&gt;formals, 0);
+      lval* nsym = lval_pop(f-&gt;formals, 0);
       lenv_put(f-&gt;env, nsym, builtin_list(e, a));
       lval_del(sym); lval_del(nsym);
       break;
     }
 
-    lval<em> val = lval_pop(a, 0);
+    lval* val = lval_pop(a, 0);
     lenv_put(f-&gt;env, sym, val);
     lval_del(sym); lval_del(val);
   }
@@ -1360,8 +1293,8 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
 
     lval_del(lval_pop(f-&gt;formals, 0));
 
-    lval</em> sym = lval_pop(f-&gt;formals, 0);
-    lval<em> val = lval_qexpr();
+    lval* sym = lval_pop(f-&gt;formals, 0);
+    lval* val = lval_qexpr();
     lenv_put(f-&gt;env, sym, val);
     lval_del(sym); lval_del(val);
   }
@@ -1375,7 +1308,7 @@ lval<em> lval_call(lenv</em> e, lval<em> f, lval</em> a) {
 
 }
 
-lval</em> lval_eval_sexpr(lenv<em> e, lval</em> v) {
+lval* lval_eval_sexpr(lenv* e, lval* v) {
 
   for (int i = 0; i &lt; v-&gt;count; i++) { v-&gt;cell[i] = lval_eval(e, v-&gt;cell[i]); }
   for (int i = 0; i &lt; v-&gt;count; i++) { if (v-&gt;cell[i]-&gt;type == LVAL_ERR) { return lval_take(v, i); } }
@@ -1383,55 +1316,55 @@ lval</em> lval_eval_sexpr(lenv<em> e, lval</em> v) {
   if (v-&gt;count == 0) { return v; }
   if (v-&gt;count == 1) { return lval_eval(e, lval_take(v, 0)); }
 
-  lval<em> f = lval_pop(v, 0);
+  lval* f = lval_pop(v, 0);
   if (f-&gt;type != LVAL_FUN) {
-    lval</em> err = lval_err(
+    lval* err = lval_err(
       &quot;S-Expression starts with incorrect type. Got %s, Expected %s.&quot;,
       ltype_name(f-&gt;type), ltype_name(LVAL_FUN));
     lval_del(f); lval_del(v);
     return err;
   }
 
-  lval<em> result = lval_call(e, f, v);
+  lval* result = lval_call(e, f, v);
   lval_del(f);
   return result;
 }
 
-lval</em> lval_eval(lenv<em> e, lval</em> v) {
+lval* lval_eval(lenv* e, lval* v) {
   if (v-&gt;type == LVAL_SYM)   { return lenv_get(e, v); }
   if (v-&gt;type == LVAL_SEXPR) { return lval_eval_sexpr(e, v); }
   return v;
 }
 
-/<em> Reading </em>/
+/* Reading */
 
-lval<em> lval_read_num(mpc_ast_t</em> t) {
+lval* lval_read_num(mpc_ast_t* t) {
   long x = strtol(t-&gt;contents, NULL, 10);
   return errno != ERANGE ? lval_num(x) : lval_err(&quot;Invalid Number.&quot;);
 }
 
-lval<em> lval_read_str(mpc_ast_t</em> t) {
-  /<em> Cut off the final quote character </em>/
+lval* lval_read_str(mpc_ast_t* t) {
+  /* Cut off the final quote character */
   t-&gt;contents[strlen(t-&gt;contents)-1] = &#39;\0&#39;;
-  /<em> Copy the string missing out the first quote character </em>/
-  char<em> unescaped = malloc(strlen(t-&gt;contents+1));
+  /* Copy the string missing out the first quote character */
+  char* unescaped = malloc(strlen(t-&gt;contents+1));
   strcpy(unescaped, t-&gt;contents+1);
-  /</em> Pass through the unescape function <em>/
+  /* Pass through the unescape function */
   unescaped = mpcf_unescape(unescaped);
-  /</em> Construct a new lval using the string <em>/
-  lval</em> str = lval_str(unescaped);
-  /<em> Free the string and return </em>/
+  /* Construct a new lval using the string */
+  lval* str = lval_str(unescaped);
+  /* Free the string and return */
   free(unescaped);
   return str;
 }
 
-lval<em> lval_read(mpc_ast_t</em> t) {
+lval* lval_read(mpc_ast_t* t) {
 
   if (strstr(t-&gt;tag, &quot;number&quot;)) { return lval_read_num(t); }
   if (strstr(t-&gt;tag, &quot;string&quot;)) { return lval_read_str(t); }
   if (strstr(t-&gt;tag, &quot;symbol&quot;)) { return lval_sym(t-&gt;contents); }
 
-  lval<em> x = NULL;
+  lval* x = NULL;
   if (strcmp(t-&gt;tag, &quot;&gt;&quot;) == 0) { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, &quot;sexpr&quot;))  { x = lval_sexpr(); }
   if (strstr(t-&gt;tag, &quot;qexpr&quot;))  { x = lval_qexpr(); }
@@ -1449,9 +1382,9 @@ lval<em> lval_read(mpc_ast_t</em> t) {
   return x;
 }
 
-/</em> Main <em>/
+/* Main */
 
-int main(int argc, char*</em> argv) {
+int main(int argc, char** argv) {
 
   Number  = mpc_new(&quot;number&quot;);
   Symbol  = mpc_new(&quot;symbol&quot;);
@@ -1465,21 +1398,21 @@ int main(int argc, char*</em> argv) {
   mpca_lang(MPC_LANG_DEFAULT,
     &quot;                                              \
       number  : /-?[0-9]+/ ;                       \
-      symbol  : /[a-zA-Z0-9</em>+\-<em>\/\\=&lt;&gt;!&amp;]+/ ; \
-      string  : /\&quot;(\\.|[^\&quot;])</em>\&quot;/ ;             \
-      comment : /;[^\r\n]<em>/ ;                    \
-      sexpr   : &#39;(&#39; &lt;expr&gt;</em> &#39;)&#39; ;                  \
-      qexpr   : &#39;{&#39; &lt;expr&gt;<em> &#39;}&#39; ;                  \
+      symbol  : /[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/ ; \
+      string  : /\&quot;(\\\\.|[^\&quot;])*\&quot;/ ;             \
+      comment : /;[^\\r\\n]*/ ;                    \
+      sexpr   : &#39;(&#39; &lt;expr&gt;* &#39;)&#39; ;                  \
+      qexpr   : &#39;{&#39; &lt;expr&gt;* &#39;}&#39; ;                  \
       expr    : &lt;number&gt;  | &lt;symbol&gt; | &lt;string&gt;    \
               | &lt;comment&gt; | &lt;sexpr&gt;  | &lt;qexpr&gt;;    \
-      lispy   : /^/ &lt;expr&gt;</em> /$/ ;                  \
+      lispy   : /^/ &lt;expr&gt;* /$/ ;                  \
     &quot;,
     Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
 
-  lenv<em> e = lenv_new();
+  lenv* e = lenv_new();
   lenv_add_builtins(e);
 
-  /</em> Interactive Prompt <em>/
+  /* Interactive Prompt */
   if (argc == 1) {
 
     puts(&quot;Lispy Version 0.0.0.1.0&quot;);
@@ -1487,13 +1420,13 @@ int main(int argc, char*</em> argv) {
 
     while (1) {
 
-      char</em> input = readline(&quot;lispy&gt; &quot;);
+      char* input = readline(&quot;lispy&gt; &quot;);
       add_history(input);
 
       mpc_result_t r;
       if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
 
-        lval<em> x = lval_eval(e, lval_read(r.output));
+        lval* x = lval_eval(e, lval_read(r.output));
         lval_println(x);
         lval_del(x);
 
@@ -1508,19 +1441,19 @@ int main(int argc, char*</em> argv) {
     }
   }
 
-  /</em> Supplied with list of files <em>/
+  /* Supplied with list of files */
   if (argc &gt;= 2) {
 
-    /</em> loop over each supplied filename (starting from 1) <em>/
+    /* loop over each supplied filename (starting from 1) */
     for (int i = 1; i &lt; argc; i++) {
 
-      /</em> Create an argument list with a single argument being the filename <em>/
-      lval</em> args = lval_add(lval_sexpr(), lval_str(argv[i]));
+      /* Create an argument list with a single argument being the filename */
+      lval* args = lval_add(lval_sexpr(), lval_str(argv[i]));
 
-      /<em> Pass to builtin load and get the result </em>/
-      lval<em> x = builtin_load(e, args);
+      /* Pass to builtin load and get the result */
+      lval* x = builtin_load(e, args);
 
-      /</em> If the result is an error be sure to print it */
+      /* If the result is an error be sure to print it */
       if (x-&gt;type == LVAL_ERR) { lval_println(x); }
       lval_del(x);
     }
@@ -1531,15 +1464,14 @@ int main(int argc, char*</em> argv) {
   mpc_cleanup(8, Number, Symbol, String, Comment, Sexpr, Qexpr, Expr, Lispy);
 
   return 0;
-}
-</code></pre>
+}</code>
       </div>
     </div>
   </div>
 </div>
 
 
-<p><h2>Bonus Marks</h2> <hr/></p>
+<h2 id="bonus-marks">Bonus Marks</h2>
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; Adapt the builtin function <code>join</code> to work on strings.</li>

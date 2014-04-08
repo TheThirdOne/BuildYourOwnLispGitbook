@@ -354,21 +354,21 @@ mpc_parser_t* Noun = mpc_or(<span class="hljs-number">5</span>,
 <h2 id="natural-grammars">Natural Grammars</h2>
 <p><code>mpc</code> lets us write grammars in a more natural form too. Rather than using C functions that look less like a grammar, we can specify the whole thing in one long string. When using this method we don&#39;t have to worry about how to join or discard inputs, with functions such as <code>mpcf_strfold</code>, or <code>free</code>. All of that is done automatically for us!</p>
 <p>Here is how we would recreate the previous examples using this method.</p>
-<pre><code class="lang-c">mpc_parser_t* Adjective = mpc_new(&amp;quot;adjective&amp;quot;);
-mpc_parser_t* Noun      = mpc_new(&amp;quot;noun&amp;quot;);
-mpc_parser_t* Phrase    = mpc_new(&amp;quot;phrase&amp;quot;);
-mpc_parser_t* Doge      = mpc_new(&amp;quot;doge&amp;quot;);
+<pre><code class="lang-c">mpc_parser_t* Adjective = mpc_new(<span class="hljs-string">"adjective"</span>);
+mpc_parser_t* Noun      = mpc_new(<span class="hljs-string">"noun"</span>);
+mpc_parser_t* Phrase    = mpc_new(<span class="hljs-string">"phrase"</span>);
+mpc_parser_t* Doge      = mpc_new(<span class="hljs-string">"doge"</span>);
 
 mpca_lang(MPC_LANG_DEFAULT,
-  &amp;quot;                                                                     \
-    adjective : \&amp;quot;wow\&amp;quot; | \&amp;quot;many\&amp;quot; | \&amp;quot;so\&amp;quot; | \&amp;quot;such\&amp;quot;;                 \
-    noun      : \&amp;quot;lisp\&amp;quot; | \&amp;quot;language\&amp;quot; | \&amp;quot;c\&amp;quot; | \&amp;quot;book\&amp;quot; | \&amp;quot;build\&amp;quot;; \
-    phrase    : &amp;lt;adjective&amp;gt; &amp;lt;noun&amp;gt;;                                     \
-    doge      : &amp;lt;phrase&amp;gt;*;                                              \
-  &amp;quot;,
+  <span class="hljs-string">"                                                                     \
+    adjective : \"wow\" | \"many\" | \"so\" | \"such\";                 \
+    noun      : \"lisp\" | \"language\" | \"c\" | \"book\" | \"build\"; \
+    phrase    : &lt;adjective&gt; &lt;noun&gt;;                                     \
+    doge      : &lt;phrase&gt;*;                                              \
+  "</span>,
   Adjective, Noun, Phrase, Doge);
 
-<span class="hljs-comment">/* Do some parsing here... */</span>
+<span class="hljs-comment">/* Do some parsing here... */</span>m
 
 mpc_cleanup(<span class="hljs-number">4</span>, Adjective, Noun, Phrase, Doge);
 </code></pre>
@@ -383,7 +383,7 @@ mpc_cleanup(<span class="hljs-number">4</span>, Adjective, Noun, Phrase, Doge);
   <tr><td><code>&#39;a&#39; | &#39;b&#39;</code></td><td>Either <code>&#39;a&#39;</code> is required, or <code>&#39;b&#39;</code> is required.</td></tr>
   <tr><td><code>&#39;a&#39;*</code></td><td>Zero or more <code>&#39;a&#39;</code> are required.</td></tr>
   <tr><td><code>&#39;a&#39;+</code></td><td>One or more <code>&#39;a&#39;</code> are required.</td></tr>
-  <tr><td><code>&amp;lt;abba&amp;gt;</code></td><td>The rule called <code>abba</code> is required.</td></tr>
+  <tr><td><code>&lt;abba&gt;</code></td><td>The rule called <code>abba</code> is required.</td></tr>
 </table>
 
 <div class="alert alert-warning">
@@ -465,8 +465,8 @@ int main(int argc, char** argv) {
     &quot;                                                                     \
       adjective : \&quot;wow\&quot; | \&quot;many\&quot; | \&quot;so\&quot; | \&quot;such\&quot;;                 \
       noun      : \&quot;lisp\&quot; | \&quot;language\&quot; | \&quot;c\&quot; | \&quot;book\&quot; | \&quot;build\&quot;; \
-      phrase    : &amp;lt;adjective&amp;gt; &amp;lt;noun&amp;gt;;                                     \
-      doge      : &amp;lt;phrase&amp;gt;*;                                              \
+      phrase    : &lt;adjective&gt; &lt;noun&gt;;                                     \
+      doge      : &lt;phrase&gt;*;                                              \
     &quot;,
     Adjective, Noun, Phrase, Doge);
 

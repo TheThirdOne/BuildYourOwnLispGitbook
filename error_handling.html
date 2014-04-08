@@ -283,58 +283,207 @@
                 <section class="normal" id="section-gitbook_7">
                 
                     <h1 id="error-handling">Error Handling</h1>
-<p><h2>Crashes</h2> <hr/></p>
+<h2 id="crashes">Crashes</h2>
 <p>Some of you may have noticed a problem with the previous chapter&#39;s program. Try entering this into the prompt and see what happens.</p>
+<pre><code class="lang-lispy">Lispy <span class="hljs-keyword">Version</span> <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><span class="hljs-number">.3</span>
+Press Ctrl+c to <span class="hljs-keyword">Exit</span>
 
-<pre><code data-language='lispy'>Lispy Version 0.0.0.0.3
-Press Ctrl+c to Exit
-
-lispy&gt; / 10 0</code></pre>
-
+lispy&gt; / <span class="hljs-number">10</span> <span class="hljs-number">0</span>
+</code></pre>
 <p>Ouch. The program crashed upon trying to divide by zero. It&#39;s okay if a program crashes during development, but our final program would hopefully never crash, and always explain to the user what went wrong.</p>
-
 <p>At the moment our program can produce syntax errors but it still has no functionality for reporting errors in the evaluation of expressions. We need to build in some kind of error handling functionality to do this. It can be awkward in C, but if we start off on the right track, it will pay off later on when our system gets more complicated.</p>
-
-
-<p><h2>Lisp Value</h2> <hr/></p>
+<h2 id="lisp-value">Lisp Value</h2>
 <p>There are several ways to deal with errors in C, but in this context my preferred method is to make errors a possible result of evaluating an expression. Then we can say that, in Lispy, an expression will evaluate to <em>either</em> a <em>number</em>, or an <em>error</em>. For example <code>+ 1 2</code> will evaluate to a number, but <code>/ 10 0</code> will evaluate to an error.</p>
-
 <p>For this we need a data structure that can act as either one thing or anything. For simplicity sake we are just going to use a <code>struct</code> with fields specific to each thing that can be represented, and a special field <code>type</code> to tell us exactly what fields are meaningful to access.</p>
-
 <p>This we are going to call an <code>lval</code>, which stands for <em>Lisp Value</em>.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Declare New lval Struct */</span>
+<span class="hljs-keyword">typedef</span> <span class="hljs-keyword">struct</span> {
+  <span class="hljs-keyword">int</span> type;
+  <span class="hljs-keyword">long</span> num;
+  <span class="hljs-keyword">int</span> err;
+} lval;
+</code></pre>
+<h2 id="enumerations">Enumerations</h2>
+<p>You&#39;ll notice the type of the fields <code>type</code>, and <code>err</code>, is <code>int</code>. This means they are represented by a single integer number.</p>
+<p>The reason we pick <code>int</code> is because we will assign meaning to each integer value, to encode what we require. For example we can make a rule <em>&quot;If <code>type</code> is <code>0</code> then the structure is a Number.&quot;</em>, or <em>&quot;If <code>type</code> is <code>1</code> then the structure is an Error.&quot;</em> This is a good way of doing things. It is simple and effective.</p>
+<p>But if we litter our code with stray <code>0</code> and <code>1</code> then it is going to become increasingly unclear as to what is happening. Instead we can use named constants that have been assigned these integer values. This gives the reader an indication as to <em>why</em> one might be comparing a number to <code>0</code> or <code>1</code> and <em>what</em> is meant in this context.</p>
+<p>In C this is supported using something called an <code>enum</code>.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Create Enumeration of Possible lval Types */</span>
+<span class="hljs-keyword">enum</span> { LVAL_NUM, LVAL_ERR };
+</code></pre>
+<p>An <code>enum</code> is a declaration of variables which under the hood are automatically assigned integer constant values. Above is how we would declare some enumerated values for the <code>type</code> field.</p>
+<p>We also want to declare an enumeration for the <em>error</em> field. We have three error cases in our particular program. There is division by zero, an unknown operator, or being passed a number that is too large to be represented internally using a <code>long</code>. These can be enumerated as follows.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Create Enumeration of Possible Error Types */</span>
+<span class="hljs-keyword">enum</span> { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
+</code></pre>
+<h2 id="lisp-value-functions">Lisp Value Functions</h2>
+<p>Our <code>lval</code> type is almost ready to go. Unlike the previous <code>long</code> type we have no current method for creating new instances of it. To do this we can declare two functions that construct an <code>lval</code> of either an <em>error</em> type or a <em>number</em> type.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Create a new number type lval */</span>
+lval lval_num(<span class="hljs-keyword">long</span> x) {
+  lval v;
+  v.type = LVAL_NUM;
+  v.num = x;
+  <span class="hljs-keyword">return</span> v;
+}
 
-<pre><code data-language='c'>/* Declare New lval Struct */
+<span class="hljs-comment">/* Create a new error type lval */</span>
+lval lval_err(<span class="hljs-keyword">int</span> x) {
+  lval v;
+  v.type = LVAL_ERR;
+  v.err = x;
+  <span class="hljs-keyword">return</span> v;
+}
+</code></pre>
+<p>These functions first create an <code>lval</code> called <code>v</code>, and assign the fields before returning it.</p>
+<p>Because our <code>lval</code> function can now be one of two things we can no longer just use <code>printf</code> to output it. We will want to do different behaviour depending upon the type of the <code>lval</code> that is given. There is a concise way to do this in C using the <code>switch</code> statement. This takes some value as input and compares it to other known values, known as <em>cases</em>. When the values are equal it executes the code that follows up until the next <code>break</code> statement.</p>
+<p>Using this we can build a function that can print an <code>lval</code> of any type like this.</p>
+<pre><code class="lang-c"><span class="hljs-comment">/* Print an "lval" */</span>
+<span class="hljs-keyword">void</span> lval_print(lval v) {
+  <span class="hljs-keyword">switch</span> (v.type) {
+    <span class="hljs-comment">/* In the case the type is a number print it, then 'break' out of the switch. */</span>
+    <span class="hljs-keyword">case</span> LVAL_NUM: <span class="hljs-built_in">printf</span>(<span class="hljs-string">"%li"</span>, v.num); <span class="hljs-keyword">break</span>;
+
+    <span class="hljs-comment">/* In the case the type is an error */</span>
+    <span class="hljs-keyword">case</span> LVAL_ERR:
+      <span class="hljs-comment">/* Check What exact type of error it is and print it */</span>
+      <span class="hljs-keyword">if</span> (v.err == LERR_DIV_ZERO) { <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Error: Division By Zero!"</span>); }
+      <span class="hljs-keyword">if</span> (v.err == LERR_BAD_OP)   { <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Error: Invalid Operator!"</span>); }
+      <span class="hljs-keyword">if</span> (v.err == LERR_BAD_NUM)  { <span class="hljs-built_in">printf</span>(<span class="hljs-string">"Error: Invalid Number!"</span>); }
+    <span class="hljs-keyword">break</span>;
+  }
+}
+
+<span class="hljs-comment">/* Print an "lval" followed by a newline */</span>
+<span class="hljs-keyword">void</span> lval_println(lval v) { lval_print(v); <span class="hljs-built_in">putchar</span>(<span class="hljs-string">'\n'</span>); }
+</code></pre>
+<h2 id="evaluating-errors">Evaluating Errors</h2>
+<p>Now that we know how to work with the <code>lval</code> type, we need to change our evaluation functions to use it instead of <code>long</code>.</p>
+<p>As well as changing the type signatures we need to change the functions such that they work correctly upon encountering either an <em>error</em> as input, or a <em>number</em> as input.</p>
+<p>In our <code>eval_op</code> function, if we encounter an error we should return it right away, and only do computation if both the arguments are numbers. We should modify our code to return an error rather than attempt to divide by zero. This will fix the crash from right at the beginning of this chapter.</p>
+<pre><code class="lang-c">lval eval_op(lval x, <span class="hljs-keyword">char</span>* op, lval y) {
+
+  <span class="hljs-comment">/* If either value is an error return it */</span>
+  <span class="hljs-keyword">if</span> (x.type == LVAL_ERR) { <span class="hljs-keyword">return</span> x; }
+  <span class="hljs-keyword">if</span> (y.type == LVAL_ERR) { <span class="hljs-keyword">return</span> y; }
+
+  <span class="hljs-comment">/* Otherwise do maths on the number values */</span>
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"+"</span>) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> lval_num(x.num + y.num); }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"-"</span>) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> lval_num(x.num - y.num); }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"*"</span>) == <span class="hljs-number">0</span>) { <span class="hljs-keyword">return</span> lval_num(x.num * y.num); }
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strcmp</span>(op, <span class="hljs-string">"/"</span>) == <span class="hljs-number">0</span>) {
+    <span class="hljs-comment">/* If second operand is zero return error instead of result */</span>
+    <span class="hljs-keyword">return</span> y.num == <span class="hljs-number">0</span> ? lval_err(LERR_DIV_ZERO) : lval_num(x.num / y.num);
+  }
+
+  <span class="hljs-keyword">return</span> lval_err(LERR_BAD_OP);
+}
+</code></pre>
+<div class="alert alert-warning">
+  <strong>What is that <code>?</code> doing there?</strong>
+
+  You&#39;ll notice that for division to check if the second argument is zero we use a question mark symbol <code>?</code>, followed by a colon <code>:</code>. This is called the <em>ternary operator</em>, and it allows you to write conditional expressions on one line.
+
+  It works something like this. <code>&lt;condition&gt; ? &lt;then&gt; : &lt;else&gt;</code>. In other words, if the condition is true it returns what follows the <code>?</code>, otherwise it returns what follows <code>:</code>.
+
+  Some people dislike this operator because they believe it makes code unclear. If you are unfamiliar with the ternary operator, initially, you may feel awkward to use it; but once you get to know it there are rarely problems.
+</div>
+
+<p>We need to give a similar treatment to our <code>eval</code> function. In this case because we&#39;ve defined <code>eval_op</code> to robustly handle errors we just need to add the error conditions to our number conversion function.</p>
+<p>In this case we use the <code>strtol</code> function to convert from string to <code>long</code>. This allows us to check a special variable <code>errno</code> to ensure the conversion goes correctly. This is a more robust way to convert numbers than our previous method using <code>atoi</code>.</p>
+<pre><code class="lang-c">lval eval(mpc_ast_t* t) {
+
+  <span class="hljs-keyword">if</span> (<span class="hljs-built_in">strstr</span>(t-&gt;tag, <span class="hljs-string">"number"</span>)) {
+    <span class="hljs-comment">/* Check if there is some error in conversion */</span>
+    <span class="hljs-keyword">long</span> x = strtol(t-&gt;contents, NULL, <span class="hljs-number">10</span>);
+    <span class="hljs-keyword">return</span> errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
+  }
+
+  <span class="hljs-keyword">char</span>* op = t-&gt;children[<span class="hljs-number">1</span>]-&gt;contents;
+  lval x = eval(t-&gt;children[<span class="hljs-number">2</span>]);
+
+  <span class="hljs-keyword">int</span> i = <span class="hljs-number">3</span>;
+  <span class="hljs-keyword">while</span> (<span class="hljs-built_in">strstr</span>(t-&gt;children[i]-&gt;tag, <span class="hljs-string">"expr"</span>)) {
+    x = eval_op(x, op, eval(t-&gt;children[i]));
+    i++;
+  }
+
+  <span class="hljs-keyword">return</span> x;
+}
+</code></pre>
+<p>The final small step is to change how we print the result found by our evaluation to use our newly defined printing function which can print any type of <code>lval</code>.</p>
+<pre><code class="lang-c">lval result = eval(r.output);
+lval_println(result);
+mpc_ast_delete(r.output);
+</code></pre>
+<p>And we are done! Try running this new program and make sure there are no crashes when dividing by zero!</p>
+<pre><code class="lang-lispy">lispy&gt; / <span class="hljs-number">10</span> <span class="hljs-number">0</span>
+<span class="hljs-keyword">Error</span>: Division <span class="hljs-keyword">By</span> Zero!
+lispy&gt; / <span class="hljs-number">10</span> <span class="hljs-number">2</span>
+<span class="hljs-number">5</span>
+</code></pre>
+<h2 id="plumbing">Plumbing</h2>
+<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
+  <img src="static/img/plumbing.png" alt="plumbing"/>
+  <small>Plumbing &bull; Harder than you think</small>
+</div>
+
+<p>Some of you who have gotten this far in the book may feel uncomfortable with how it is progressing. You may feel you&#39;ve managed to follow instructions well enough, but don&#39;t have a clear understanding of all of the underlying mechanisms going on behind the scenes.</p>
+<p>If this is the case I want to reassure you that you are doing well. If you don&#39;t understand the internals it&#39;s because I have not explained everything in sufficient depth. This is okay.</p>
+<p>To be able to progress and get code to work under these conditions is a really great skill in programming, and if you&#39;ve made it this far it shows you have it.</p>
+<p>In programming we call this <em>plumbing</em>. Roughly speaking this is following instructions to try and tie together a bunch libraries or components, without fully understanding how they work internally.</p>
+<p>It requires <em>faith</em> and <em>intuition</em>. <em>Faith</em> is required to believe that if the stars align, and every incantation is correctly performed for this magical machine, the right thing will really happen. And <em>intuition</em> is required to work out what has gone wrong, and how to fix things when they don&#39;t go as planned.</p>
+<p>Unfortunately these can&#39;t be taught directly, so if you&#39;ve made it this far then <em>congratulations!</em> You&#39;ve made it over a difficult hump, and in the following chapters I promise we&#39;ll finish up with the plumbing, and actually start to programming that feels fresh and wholesome.</p>
+<h2 id="reference">Reference</h2>
+<div class="panel-group alert alert-warning" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          error_handling.c
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+<code>c
+#include &quot;mpc.h&quot;
+
+#ifdef _WIN32
+
+static char buffer[2048];
+
+char* readline(char* prompt) {
+  fputs(&quot;lispy&gt; &quot;, stdout);
+  fgets(buffer, 2048, stdin);
+  char* cpy = malloc(strlen(buffer)+1);
+  strcpy(cpy, buffer);
+  cpy[strlen(cpy)-1] = &#39;\0&#39;;
+  return cpy;
+}
+
+void add_history(char* unused) {}
+
+#else
+
+#include &lt;editline/readline.h&gt;
+#include &lt;editline/history.h&gt;
+
+#endif
+
+/* Create Enumeration of Possible Error Types */
+enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
+
+/* Create Enumeration of Possible lval Types */
+enum { LVAL_NUM, LVAL_ERR };
+
+/* Declare New lval Struct */
 typedef struct {
   int type;
   long num;
   int err;
-} lval;</code></pre>
+} lval;
 
-
-<p><h2>Enumerations</h2> <hr/></p>
-<p>You&#39;ll notice the type of the fields <code>type</code>, and <code>err</code>, is <code>int</code>. This means they are represented by a single integer number.</p>
-
-<p>The reason we pick <code>int</code> is because we will assign meaning to each integer value, to encode what we require. For example we can make a rule <em>&quot;If <code>type</code> is <code>0</code> then the structure is a Number.&quot;</em>, or <em>&quot;If <code>type</code> is <code>1</code> then the structure is an Error.&quot;</em> This is a good way of doing things. It is simple and effective.</p>
-
-<p>But if we litter our code with stray <code>0</code> and <code>1</code> then it is going to become increasingly unclear as to what is happening. Instead we can use named constants that have been assigned these integer values. This gives the reader an indication as to <em>why</em> one might be comparing a number to <code>0</code> or <code>1</code> and <em>what</em> is meant in this context.</p>
-
-<p>In C this is supported using something called an <code>enum</code>.</p>
-
-<pre><code data-language='c'>/* Create Enumeration of Possible lval Types */
-enum { LVAL_NUM, LVAL_ERR };</code></pre>
-
-<p>An <code>enum</code> is a declaration of variables which under the hood are automatically assigned integer constant values. Above is how we would declare some enumerated values for the <code>type</code> field.</p>
-
-<p>We also want to declare an enumeration for the <em>error</em> field. We have three error cases in our particular program. There is division by zero, an unknown operator, or being passed a number that is too large to be represented internally using a <code>long</code>. These can be enumerated as follows.</p>
-
-<pre><code data-language='c'>/* Create Enumeration of Possible Error Types */
-enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };</code></pre>
-
-
-<p><h2>Lisp Value Functions</h2> <hr/></p>
-<p>Our <code>lval</code> type is almost ready to go. Unlike the previous <code>long</code> type we have no current method for creating new instances of it. To do this we can declare two functions that construct an <code>lval</code> of either an <em>error</em> type or a <em>number</em> type.</p>
-
-<pre><code data-language='c'>/* Create a new number type lval */
+/* Create a new number type lval */
 lval lval_num(long x) {
   lval v;
   v.type = LVAL_NUM;
@@ -348,15 +497,9 @@ lval lval_err(int x) {
   v.type = LVAL_ERR;
   v.err = x;
   return v;
-}</code></pre>
+}
 
-<p>These functions first create an <code>lval</code> called <code>v</code>, and assign the fields before returning it.</p>
-
-<p>Because our <code>lval</code> function can now be one of two things we can no longer just use <code>printf</code> to output it. We will want to do different behaviour depending upon the type of the <code>lval</code> that is given. There is a concise way to do this in C using the <code>switch</code> statement. This takes some value as input and compares it to other known values, known as <em>cases</em>. When the values are equal it executes the code that follows up until the next <code>break</code> statement.</p>
-
-<p>Using this we can build a function that can print an <code>lval</code> of any type like this.</p>
-
-<pre><code data-language='c'>/* Print an "lval" */
+/* Print an &quot;lval&quot; */
 void lval_print(lval v) {
   switch (v.type) {
     /* In the case the type is a number print it, then &#39;break&#39; out of the switch. */
@@ -372,18 +515,10 @@ void lval_print(lval v) {
   }
 }
 
-/* Print an "lval" followed by a newline */
-void lval_println(lval v) { lval_print(v); putchar(&#39;\n&#39;); }</code></pre>
+/* Print an &quot;lval&quot; followed by a newline */
+void lval_println(lval v) { lval_print(v); putchar(&#39;\n&#39;); }
 
-
-<p><h2>Evaluating Errors</h2> <hr/></p>
-<p>Now that we know how to work with the <code>lval</code> type, we need to change our evaluation functions to use it instead of <code>long</code>.</p>
-
-<p>As well as changing the type signatures we need to change the functions such that they work correctly upon encountering either an <em>error</em> as input, or a <em>number</em> as input.</p>
-
-<p>In our <code>eval_op</code> function, if we encounter an error we should return it right away, and only do computation if both the arguments are numbers. We should modify our code to return an error rather than attempt to divide by zero. This will fix the crash from right at the beginning of this chapter.</p>
-
-<pre><code data-language='c'>lval eval_op(lval x, char* op, lval y) {
+lval eval_op(lval x, char* op, lval y) {
 
   /* If either value is an error return it */
   if (x.type == LVAL_ERR) { return x; }
@@ -399,186 +534,17 @@ void lval_println(lval v) { lval_print(v); putchar(&#39;\n&#39;); }</code></pre>
   }
 
   return lval_err(LERR_BAD_OP);
-}</code></pre>
+}
 
-<div class="alert alert-warning">
-  <p><strong>What is that <code>?</code> doing there?</strong></p>
+lval eval(mpc_ast_t* t) {
 
-  <p>You&#39;ll notice that for division to check if the second argument is zero we use a question mark symbol <code>?</code>, followed by a colon <code>:</code>. This is called the <em>ternary operator</em>, and it allows you to write conditional expressions on one line.</p>
-
-  <p>It works something like this. <code>&lt;condition&gt; ? &lt;then&gt; : &lt;else&gt;</code>. In other words, if the condition is true it returns what follows the <code>?</code>, otherwise it returns what follows <code>:</code>.</p>
-
-  <p>Some people dislike this operator because they believe it makes code unclear. If you are unfamiliar with the ternary operator, initially, you may feel awkward to use it; but once you get to know it there are rarely problems.</p>
-</div>
-
-<p>We need to give a similar treatment to our <code>eval</code> function. In this case because we&#39;ve defined <code>eval_op</code> to robustly handle errors we just need to add the error conditions to our number conversion function.</p>
-
-<p>In this case we use the <code>strtol</code> function to convert from string to <code>long</code>. This allows us to check a special variable <code>errno</code> to ensure the conversion goes correctly. This is a more robust way to convert numbers than our previous method using <code>atoi</code>.</p>
-
-<pre><code data-language='c'>lval eval(mpc_ast_t* t) {
-
-  if (strstr(t-&gt;tag, "number")) {
+  if (strstr(t-&gt;tag, &quot;number&quot;)) {
     /* Check if there is some error in conversion */
     long x = strtol(t-&gt;contents, NULL, 10);
     return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
   }
 
   char* op = t-&gt;children[1]-&gt;contents;
-  lval x = eval(t-&gt;children[2]);
-
-  int i = 3;
-  while (strstr(t-&gt;children[i]-&gt;tag, "expr")) {
-    x = eval_op(x, op, eval(t-&gt;children[i]));
-    i++;
-  }
-
-  return x;
-}</code></pre>
-
-<p>The final small step is to change how we print the result found by our evaluation to use our newly defined printing function which can print any type of <code>lval</code>.</p>
-
-<pre><code data-language='c'>lval result = eval(r.output);
-lval_println(result);
-mpc_ast_delete(r.output);</code></pre>
-
-<p>And we are done! Try running this new program and make sure there are no crashes when dividing by zero!</p>
-
-<pre><code data-language='lispy'>lispy> / 10 0
-Error: Division By Zero!
-lispy> / 10 2
-5</code></pre>
-
-
-<p><h2>Plumbing</h2> <hr/></p>
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/plumbing.png" alt="plumbing"/>
-  <p><small>Plumbing &bull; Harder than you think</small></p>
-</div>
-
-<p>Some of you who have gotten this far in the book may feel uncomfortable with how it is progressing. You may feel you&#39;ve managed to follow instructions well enough, but don&#39;t have a clear understanding of all of the underlying mechanisms going on behind the scenes.</p>
-
-<p>If this is the case I want to reassure you that you are doing well. If you don&#39;t understand the internals it&#39;s because I have not explained everything in sufficient depth. This is okay.</p>
-
-<p>To be able to progress and get code to work under these conditions is a really great skill in programming, and if you&#39;ve made it this far it shows you have it.</p>
-
-<p>In programming we call this <em>plumbing</em>. Roughly speaking this is following instructions to try and tie together a bunch libraries or components, without fully understanding how they work internally.</p>
-
-<p>It requires <em>faith</em> and <em>intuition</em>. <em>Faith</em> is required to believe that if the stars align, and every incantation is correctly performed for this magical machine, the right thing will really happen. And <em>intuition</em> is required to work out what has gone wrong, and how to fix things when they don&#39;t go as planned.<p>
-
-<p>Unfortunately these can&#39;t be taught directly, so if you&#39;ve made it this far then <em>congratulations!</em> You&#39;ve made it over a difficult hump, and in the following chapters I promise we&#39;ll finish up with the plumbing, and actually start to programming that feels fresh and wholesome.</p>
-
-
-<p><h2>Reference</h2> <hr/></p>
-<div class="panel-group alert alert-warning" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-          error_handling.c
-        </a>
-      </h4>
-    </div>
-    <div id="collapseOne" class="panel-collapse collapse">
-      <div class="panel-body">
-<pre><code data-language='c'>#include &quot;mpc.h&quot;
-
-#ifdef _WIN32
-
-static char buffer[2048];
-
-char<em> readline(char</em> prompt) {
-  fputs(&quot;lispy&gt; &quot;, stdout);
-  fgets(buffer, 2048, stdin);
-  char<em> cpy = malloc(strlen(buffer)+1);
-  strcpy(cpy, buffer);
-  cpy[strlen(cpy)-1] = &#39;\0&#39;;
-  return cpy;
-}
-
-void add_history(char</em> unused) {}
-
-#else
-
-#include &lt;editline/readline.h&gt;
-#include &lt;editline/history.h&gt;
-
-#endif
-
-/<em> Create Enumeration of Possible Error Types </em>/
-enum { LERR_DIV_ZERO, LERR_BAD_OP, LERR_BAD_NUM };
-
-/<em> Create Enumeration of Possible lval Types </em>/
-enum { LVAL_NUM, LVAL_ERR };
-
-/<em> Declare New lval Struct </em>/
-typedef struct {
-  int type;
-  long num;
-  int err;
-} lval;
-
-/<em> Create a new number type lval </em>/
-lval lval_num(long x) {
-  lval v;
-  v.type = LVAL_NUM;
-  v.num = x;
-  return v;
-}
-
-/<em> Create a new error type lval </em>/
-lval lval_err(int x) {
-  lval v;
-  v.type = LVAL_ERR;
-  v.err = x;
-  return v;
-}
-
-/<em> Print an &quot;lval&quot; </em>/
-void lval_print(lval v) {
-  switch (v.type) {
-    /<em> In the case the type is a number print it, then &#39;break&#39; out of the switch. </em>/
-    case LVAL_NUM: printf(&quot;%li&quot;, v.num); break;
-
-    /<em> In the case the type is an error </em>/
-    case LVAL_ERR:
-      /<em> Check What exact type of error it is and print it </em>/
-      if (v.err == LERR_DIV_ZERO) { printf(&quot;Error: Division By Zero!&quot;); }
-      if (v.err == LERR_BAD_OP)   { printf(&quot;Error: Invalid Operator!&quot;); }
-      if (v.err == LERR_BAD_NUM)  { printf(&quot;Error: Invalid Number!&quot;); }
-    break;
-  }
-}
-
-/<em> Print an &quot;lval&quot; followed by a newline </em>/
-void lval_println(lval v) { lval_print(v); putchar(&#39;\n&#39;); }
-
-lval eval_op(lval x, char<em> op, lval y) {
-
-  /</em> If either value is an error return it <em>/
-  if (x.type == LVAL_ERR) { return x; }
-  if (y.type == LVAL_ERR) { return y; }
-
-  /</em> Otherwise do maths on the number values <em>/
-  if (strcmp(op, &quot;+&quot;) == 0) { return lval_num(x.num + y.num); }
-  if (strcmp(op, &quot;-&quot;) == 0) { return lval_num(x.num - y.num); }
-  if (strcmp(op, &quot;</em>&quot;) == 0) { return lval_num(x.num <em> y.num); }
-  if (strcmp(op, &quot;/&quot;) == 0) {
-    /</em> If second operand is zero return error instead of result <em>/
-    return y.num == 0 ? lval_err(LERR_DIV_ZERO) : lval_num(x.num / y.num);
-  }
-
-  return lval_err(LERR_BAD_OP);
-}
-
-lval eval(mpc_ast_t</em> t) {
-
-  if (strstr(t-&gt;tag, &quot;number&quot;)) {
-    /<em> Check if there is some error in conversion </em>/
-    long x = strtol(t-&gt;contents, NULL, 10);
-    return errno != ERANGE ? lval_num(x) : lval_err(LERR_BAD_NUM);
-  }
-
-  char<em> op = t-&gt;children[1]-&gt;contents;
   lval x = eval(t-&gt;children[2]);
 
   int i = 3;
@@ -592,15 +558,15 @@ lval eval(mpc_ast_t</em> t) {
 
 int main(int argc, char** argv) {
 
-  mpc_parser_t</em> Number = mpc_new(&quot;number&quot;);
-  mpc_parser_t<em> Operator = mpc_new(&quot;operator&quot;);
-  mpc_parser_t</em> Expr = mpc_new(&quot;expr&quot;);
-  mpc_parser_t<em> Lispy = mpc_new(&quot;lispy&quot;);
+  mpc_parser_t* Number = mpc_new(&quot;number&quot;);
+  mpc_parser_t* Operator = mpc_new(&quot;operator&quot;);
+  mpc_parser_t* Expr = mpc_new(&quot;expr&quot;);
+  mpc_parser_t* Lispy = mpc_new(&quot;lispy&quot;);
 
   mpca_lang(MPC_LANG_DEFAULT,
     &quot;                                                     \
       number   : /-?[0-9]+/ ;                             \
-      operator : &#39;+&#39; | &#39;-&#39; | &#39;</em>&#39; | &#39;/&#39; ;                  \
+      operator : &#39;+&#39; | &#39;-&#39; | &#39;*&#39; | &#39;/&#39; ;                  \
       expr     : &lt;number&gt; | &#39;(&#39; &lt;operator&gt; &lt;expr&gt;+ &#39;)&#39; ;  \
       lispy    : /^/ &lt;operator&gt; &lt;expr&gt;+ /$/ ;             \
     &quot;,
@@ -615,7 +581,7 @@ int main(int argc, char** argv) {
     add_history(input);
 
     mpc_result_t r;
-    if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
+      if (mpc_parse(&quot;&lt;stdin&gt;&quot;, input, Lispy, &amp;r)) {
 
       lval result = eval(r.output);
       lval_println(result);
@@ -633,14 +599,13 @@ int main(int argc, char** argv) {
   mpc_cleanup(4, Number, Operator, Expr, Lispy);
 
   return 0;
-}
-</code></pre>
+}</code>
       </div>
     </div>
   </div>
 </div>
 
-<p><h2>Bonus Marks</h2> <hr/></p>
+<h2 id="bonus-marks">Bonus Marks</h2>
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; How do you give an <code>enum</code> a name?</li>
