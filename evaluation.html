@@ -280,14 +280,14 @@
 
             <div class="page-inner">
             
-                <section class="normal" id="section-gitbook_8">
+                <section class="normal" id="section-gitbook_7">
                 
                     <h1 id="evaluation">Evaluation</h1>
 <h2 id="trees">Trees</h2>
 <p>Now we can read input, and we have it structured internally, but we are still unable to evaluate it. In this chapter we add the code that evaluates this structure and actually performs the computations encoded within.</p>
 <p>This internal structure is what we saw printed out by the program in the previous chapter. It is called an <em>Abstract Syntax Tree</em>, and it represents the structure of the program based on the input entered by the user. At the leaves of this tree are numbers and operators - the actual data to be processed. At the branches are the rules used to produce this part of the tree - the information on how to traverse and evaluate it.</p>
 <div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/tree.png" alt="tree"/>
+  <img src="img/tree.png" alt="tree"/>
   <small>Abstract Christmas Tree &bull; A seasonal variation</small>
 </div>
 
@@ -322,7 +322,7 @@ mpc_ast_t* c0 = a-&gt;children[<span class="hljs-number">0</span>];
 <h2 id="recursion">Recursion</h2>
 <p>There is a funny thing about this tree structure. It refers to itself. Each of its children are themselves trees again, and the children of those children are trees yet again. Just like our languages, and re-write rules, data in this structure contains repeated substructures, that resemble their parents.</p>
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="static/img/recursion.png" alt="recursion"/>
+  <img src="img/recursion.png" alt="recursion"/>
   <small>Recursion &bull; Dangerous in a fire.</small>
 </div>
 
