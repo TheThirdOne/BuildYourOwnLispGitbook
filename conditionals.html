@@ -3,12 +3,12 @@
     <head prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
         
         <meta charset="UTF-8">
-        <title>Conditionals | Build Your Own Lisp</title>
+        <title>Conditionals | Introduction</title>
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="robots" content="index, follow">
         <meta name="author" content="TheThirdOne">
-        <meta name="description" content="Learn C and make a Lisp Dialect">
+        <meta name="description" content="In this book you&#39;ll learn the C programming language, and at the same time learn how to build *your very own programming language*, a minimal Lisp, in under 1000 lines of code! We&#39;ll be using a library to do some of the initial work, so I&#39;m cheating a little bit on the line count, but the rest of the code will be completely original, and you really will create a powerful little Lisp by the end.">
         <meta name="keywords" content="gitbook,github" >
         <meta name="generator" content="www.gitbook.io">
 
@@ -19,8 +19,8 @@
         <link rel="prev" href="./functions.html" />
         
 
-        <meta property="og:title" content="Conditionals | Build Your Own Lisp">
-        <meta property="og:site_name" content="Build Your Own Lisp">
+        <meta property="og:title" content="Conditionals | Introduction">
+        <meta property="og:site_name" content="Introduction">
         <meta property="og:type" content="book">
         <meta property="og:locale" content="en_US">
 
@@ -32,35 +32,39 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
         <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
-
-        
-        <link rel="stylesheet" href="gitbook/style.css">
-        
         
     </head>
     <body>
         
-<div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="12">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="12" data-basepath="." data-revision="1397765575020">
     <div class="book-header">
     <!-- Actions Left -->
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook" target="_blank" class="btn pull-left"><i class="fa fa-github-alt"></i></a>
+    
     <a href="#" class="btn pull-left toggle-summary"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search"><i class="fa fa-search"></i></a>
 
     <!-- Actions Right -->
     <a href="#" target="_blank" class="btn pull-right" data-sharing="google-plus"><i class="fa fa-google-plus"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="facebook"><i class="fa fa-facebook"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="twitter"><i class="fa fa-twitter"></i></a>
 
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/stargazers" target="_blank" class="btn pull-right count-star"><i class="fa fa-star-o"></i> Star (<span>-</span>)</a>
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/watchers" target="_blank" class="btn pull-right count-watch"><i class="fa fa-eye"></i> Watch (<span>-</span>)</a>
-
+    
 
     <!-- Title -->
-    <h1><a href="./README.html" >Build Your Own Lisp</a></h1>
+    <h1><a href="./" >Introduction</a></h1>
 </div>
 
     <div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Search" class="form-control" />
+    </div>
     <ul class="summary">
+        
         <li>
             <a href="https://github.com/TheThirdOne" target="blank">About the author</a>
         </li>
@@ -71,158 +75,159 @@
             <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/edit/master/conditionals.md" target="blank">Edit and Contribute</a>
         </li>
         <li class="divider"></li>
-        <li data-level="0">
-            <a href="./README.html"><i class="fa fa-check"></i> Introduction</a>
+        
+        <li data-level="0" data-path="index.html">
+            <a href="./"><i class="fa fa-check"></i> Introduction</a>
         </li>
         
-            <li  data-level="1">
+            <li  data-level="1" data-path="installation.html">
                 
                 <a href="./installation.html">
-                    <i class="fa fa-check"></i> <b>1)</b> Installation
+                    <i class="fa fa-check"></i> <b>1.</b> Installation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="2">
+            <li  data-level="2" data-path="basics.html">
                 
                 <a href="./basics.html">
-                    <i class="fa fa-check"></i> <b>2)</b> Basics
+                    <i class="fa fa-check"></i> <b>2.</b> Basics
                 </a>
                 
                 
             </li>
         
-            <li  data-level="3">
+            <li  data-level="3" data-path="interactive_prompt.html">
                 
                 <a href="./interactive_prompt.html">
-                    <i class="fa fa-check"></i> <b>3)</b> Interactive Prompt
+                    <i class="fa fa-check"></i> <b>3.</b> Interactive Prompt
                 </a>
                 
                 
             </li>
         
-            <li  data-level="4">
+            <li  data-level="4" data-path="languages.html">
                 
                 <a href="./languages.html">
-                    <i class="fa fa-check"></i> <b>4)</b> Languages
+                    <i class="fa fa-check"></i> <b>4.</b> Languages
                 </a>
                 
                 
             </li>
         
-            <li  data-level="5">
+            <li  data-level="5" data-path="parsing.html">
                 
                 <a href="./parsing.html">
-                    <i class="fa fa-check"></i> <b>5)</b> Parsing
+                    <i class="fa fa-check"></i> <b>5.</b> Parsing
                 </a>
                 
                 
             </li>
         
-            <li  data-level="6">
+            <li  data-level="6" data-path="evaluation.html">
                 
                 <a href="./evaluation.html">
-                    <i class="fa fa-check"></i> <b>6)</b> Evaluation
+                    <i class="fa fa-check"></i> <b>6.</b> Evaluation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="7">
+            <li  data-level="7" data-path="error_handling.html">
                 
                 <a href="./error_handling.html">
-                    <i class="fa fa-check"></i> <b>7)</b> Error Handling
+                    <i class="fa fa-check"></i> <b>7.</b> Error Handling
                 </a>
                 
                 
             </li>
         
-            <li  data-level="8">
+            <li  data-level="8" data-path="s_expressions.html">
                 
                 <a href="./s_expressions.html">
-                    <i class="fa fa-check"></i> <b>8)</b> S-Expressions
+                    <i class="fa fa-check"></i> <b>8.</b> S-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="9">
+            <li  data-level="9" data-path="q_expressions.html">
                 
                 <a href="./q_expressions.html">
-                    <i class="fa fa-check"></i> <b>9)</b> Q-Expressions
+                    <i class="fa fa-check"></i> <b>9.</b> Q-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="10">
+            <li  data-level="10" data-path="variables.html">
                 
                 <a href="./variables.html">
-                    <i class="fa fa-check"></i> <b>10)</b> Variables
+                    <i class="fa fa-check"></i> <b>10.</b> Variables
                 </a>
                 
                 
             </li>
         
-            <li  data-level="11">
+            <li  data-level="11" data-path="functions.html">
                 
                 <a href="./functions.html">
-                    <i class="fa fa-check"></i> <b>11)</b> Functions
+                    <i class="fa fa-check"></i> <b>11.</b> Functions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="12">
+            <li  data-level="12" data-path="conditionals.html">
                 
                 <a href="./conditionals.html">
-                    <i class="fa fa-check"></i> <b>12)</b> Conditionals
+                    <i class="fa fa-check"></i> <b>12.</b> Conditionals
                 </a>
                 
                 
             </li>
         
-            <li  data-level="13">
+            <li  data-level="13" data-path="strings.html">
                 
                 <a href="./strings.html">
-                    <i class="fa fa-check"></i> <b>13)</b> Strings
+                    <i class="fa fa-check"></i> <b>13.</b> Strings
                 </a>
                 
                 
             </li>
         
-            <li  data-level="14">
+            <li  data-level="14" data-path="standard_library.html">
                 
                 <a href="./standard_library.html">
-                    <i class="fa fa-check"></i> <b>14)</b> Standard Library
+                    <i class="fa fa-check"></i> <b>14.</b> Standard Library
                 </a>
                 
                 
             </li>
         
-            <li  data-level="15">
+            <li  data-level="15" data-path="bonus_projects.html">
                 
                 <a href="./bonus_projects.html">
-                    <i class="fa fa-check"></i> <b>15)</b> Bonus Projects
+                    <i class="fa fa-check"></i> <b>15.</b> Bonus Projects
                 </a>
                 
                 
             </li>
         
-            <li  data-level="16">
+            <li  data-level="16" data-path="faq.html">
                 
                 <a href="./faq.html">
-                    <i class="fa fa-check"></i> <b>16)</b> FAQ
+                    <i class="fa fa-check"></i> <b>16.</b> FAQ
                 </a>
                 
                 
             </li>
         
-            <li  data-level="17">
+            <li  data-level="17" data-path="credits.html">
                 
                 <a href="./credits.html">
-                    <i class="fa fa-check"></i> <b>17)</b> Credits
+                    <i class="fa fa-check"></i> <b>17.</b> Credits
                 </a>
                 
                 
@@ -231,15 +236,16 @@
     </ul>
 </div>
 
-    <div class="book-body" tabindex="-1">
-        <div class="page-wrapper">
-            <div class="book-progress">
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="page-wrapper" tabindex="-1">
+                <div class="book-progress">
     <div class="bar">
         <div class="inner" style="width: 23.529411764705884%;min-width: 17.647058823529413%;"></div>
     </div>
     <div class="chapters">
     
-        <a href="./README.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
+        <a href="./index.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
     
         <a href="./installation.html" title="Installation" class="chapter done new-chapter" data-progress="1" style="left: 5.882352941176471%;"></a>
     
@@ -278,11 +284,11 @@
     </div>
 </div>
 
-            <div class="page-inner">
-            
-                <section class="normal" id="section-gitbook_4">
+                <div class="page-inner">
                 
-                    <h1 id="conditionals">Conditionals</h1>
+                    <section class="normal" id="section-gitbook_5">
+                    
+                        <h1 id="conditionals">Conditionals</h1>
 <h2 id="doing-it-yourself">Doing it yourself</h2>
 <p>We&#39;ve come quite far now. Your knowledge of C should be good enough for you to stand on your own feet a little more. If you&#39;re feeling confident, this chapter is a perfect opportunity to stretch your wings out, and attempt something on your own. It is a fairly short chapter and essentially consists of adding a couple of new builtin functions to deal with comparison and ordering.</p>
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
@@ -404,42 +410,42 @@ lenv_add_builtin(e, <span class="hljs-string">"&gt;"</span>,    builtin_gt); len
 lenv_add_builtin(e, <span class="hljs-string">"&gt;="</span>,   builtin_ge); lenv_add_builtin(e, <span class="hljs-string">"&lt;="</span>,   builtin_le);
 </code></pre>
 <p>Have a quick mess around to check that everything is working correctly.</p>
-<pre><code class="lang-lispy">lispy&gt; &gt; <span class="hljs-number">10</span> <span class="hljs-number">5</span>
-<span class="hljs-number">1</span>
-lispy&gt; &lt;= <span class="hljs-number">88</span> <span class="hljs-number">5</span>
-<span class="hljs-number">0</span>
-lispy&gt; == <span class="hljs-number">5</span> <span class="hljs-number">6</span>
-<span class="hljs-number">0</span>
-lispy&gt; == <span class="hljs-number">5</span> <span class="hljs-cell">{}</span>
-<span class="hljs-number">0</span>
-lispy&gt; == <span class="hljs-number">1</span> <span class="hljs-number">1</span>
-<span class="hljs-number">1</span>
-lispy&gt; != <span class="hljs-cell">{}</span> <span class="hljs-number">56</span>
-<span class="hljs-number">1</span>
-lispy&gt; == <span class="hljs-cell">{<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> {<span class="hljs-number">5</span> <span class="hljs-number">6</span>}</span>} <span class="hljs-cell">{<span class="hljs-number">1</span>   <span class="hljs-number">2</span>  <span class="hljs-number">3</span>   {<span class="hljs-number">5</span> <span class="hljs-number">6</span>}</span>}
-<span class="hljs-number">1</span>
-lispy&gt; def <span class="hljs-cell">{x y}</span> <span class="hljs-number">100</span> <span class="hljs-number">200</span>
+<pre><code class="lang-lispy">lispy&gt; &gt; 10 5
+1
+lispy&gt; &lt;= 88 5
+0
+lispy&gt; == 5 6
+0
+lispy&gt; == 5 {}
+0
+lispy&gt; == 1 1
+1
+lispy&gt; != {} 56
+1
+lispy&gt; == {1 2 3 {5 6}} {1   2  3   {5 6}}
+1
+lispy&gt; def {x y} 100 200
 ()
-lispy&gt; <span class="hljs-keyword">if</span> (== x y) <span class="hljs-cell">{+ x y}</span> <span class="hljs-cell">{- x y}</span>
--<span class="hljs-number">100</span>
+lispy&gt; if (== x y) {+ x y} {- x y}
+-100
 </code></pre>
 <h2 id="recursive-functions">Recursive Functions</h2>
 <p>By Introducing conditionals we&#39;ve actually made our language a lot more powerful. This is because they effectively let us implement recursive functions.</p>
 <p>Recursive functions are those which call themselves. We&#39;ve used these already in C to perform reading in and evaluation of expressions. The reason we require conditionals for these is because they let us test for the situation where we wish to terminate the recursion.</p>
 <p>For example we can use conditionals to implement a function <code>len</code> which tells us the number of items in a list. If we encounter the empty list we just return <code>0</code>. Otherwise we return the length of the <code>tail</code> of the input list, plus <code>1</code>. Think about why this works. It repeatedly uses the <code>len</code> function until it reaches the empty list. At this point it returns <code>0</code> and adds all the other partial results together.</p>
-<pre><code class="lang-lispy"><span class="hljs-list">(<span class="hljs-title">fun</span> <span class="hljs-collection">{len l}</span> <span class="hljs-collection">{
-  if <span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">==</span></span> l <span class="hljs-collection">{}</span>)</span><span class="hljs-number">
-    {0</span>}</span>
-    <span class="hljs-collection">{+<span class="hljs-number"> 1</span> <span class="hljs-list">(<span class="hljs-title">len</span> <span class="hljs-list">(<span class="hljs-title">tail</span> l)</span>)</span>}</span>
-})</span>
+<pre><code class="lang-lispy">(fun {len l} {
+  if (== l {})
+    {0}
+    {+ 1 (len (tail l))}
+})
 </code></pre>
 <p>There is a pleasant symmetry to this sort of recursive function. First we do something for the empty list (this is often called <em>the base case</em>). Then if we get something bigger, we take off a chunk such as the head of the list, and do something to it, before combining it with the rest of the thing to which the function has been already applied.</p>
 <p>Here is another function for reversing a list. Like before it checks for the empty list, but this time it returns the empty list back. This makes sense. The reverse of the empty list is just the empty list. But if it gets something bigger than the empty list, it reverses the tail, and stick this in front of the head.</p>
-<pre><code class="lang-lispy"><span class="hljs-list">(<span class="hljs-title">fun</span> <span class="hljs-collection">{reverse l}</span> <span class="hljs-collection">{
-  if <span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">==</span></span> l <span class="hljs-collection">{}</span>)</span>
-    <span class="hljs-collection">{<span class="hljs-collection">{}</span>}</span>
-    <span class="hljs-collection">{join <span class="hljs-list">(<span class="hljs-title"><span class="hljs-built_in">reverse</span></span> <span class="hljs-list">(<span class="hljs-title">tail</span> l)</span>)</span> <span class="hljs-list">(<span class="hljs-title">head</span> l)</span>}</span>
-}</span>)</span>
+<pre><code class="lang-lispy">(fun {reverse l} {
+  if (== l {})
+    {{}}
+    {join (reverse (tail l)) (head l)}
+})
 </code></pre>
 <p>We&#39;re going to use this technique to build lots functions like this, this is because it is going to be the primary way to achieve looping in our language.</p>
 <h2 id="reference">Reference</h2>
@@ -1245,24 +1251,25 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; Add a specific boolean type to the language with the builtin variables <code>true</code> and <code>false</code>.</li>
   </ul>
 </div>
+                    
+                    </section>
                 
-                </section>
-            
+                </div>
             </div>
-
-            <div class="page-footer">
-    
-        
-            
-            <a href="./strings.html" class="navigation-link next">Next</a>
-            
-        
-    
-</div>
         </div>
+
+        
+        <a href="./functions.html" class="navigation navigation-prev"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./strings.html" class="navigation navigation-next"><i class="fa fa-angle-right"></i></a>
+        
     </div>
 </div>
 
+        
+        <link rel="stylesheet" href="gitbook/style.css">
+        
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-javascript.js"></script>

@@ -3,12 +3,12 @@
     <head prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
         
         <meta charset="UTF-8">
-        <title>Variables | Build Your Own Lisp</title>
+        <title>Variables | Introduction</title>
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="robots" content="index, follow">
         <meta name="author" content="TheThirdOne">
-        <meta name="description" content="Learn C and make a Lisp Dialect">
+        <meta name="description" content="In this book you&#39;ll learn the C programming language, and at the same time learn how to build *your very own programming language*, a minimal Lisp, in under 1000 lines of code! We&#39;ll be using a library to do some of the initial work, so I&#39;m cheating a little bit on the line count, but the rest of the code will be completely original, and you really will create a powerful little Lisp by the end.">
         <meta name="keywords" content="gitbook,github" >
         <meta name="generator" content="www.gitbook.io">
 
@@ -19,8 +19,8 @@
         <link rel="prev" href="./q_expressions.html" />
         
 
-        <meta property="og:title" content="Variables | Build Your Own Lisp">
-        <meta property="og:site_name" content="Build Your Own Lisp">
+        <meta property="og:title" content="Variables | Introduction">
+        <meta property="og:site_name" content="Introduction">
         <meta property="og:type" content="book">
         <meta property="og:locale" content="en_US">
 
@@ -32,35 +32,39 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
         <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
-
-        
-        <link rel="stylesheet" href="gitbook/style.css">
-        
         
     </head>
     <body>
         
-<div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="10">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="10" data-basepath="." data-revision="1397765575020">
     <div class="book-header">
     <!-- Actions Left -->
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook" target="_blank" class="btn pull-left"><i class="fa fa-github-alt"></i></a>
+    
     <a href="#" class="btn pull-left toggle-summary"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search"><i class="fa fa-search"></i></a>
 
     <!-- Actions Right -->
     <a href="#" target="_blank" class="btn pull-right" data-sharing="google-plus"><i class="fa fa-google-plus"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="facebook"><i class="fa fa-facebook"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="twitter"><i class="fa fa-twitter"></i></a>
 
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/stargazers" target="_blank" class="btn pull-right count-star"><i class="fa fa-star-o"></i> Star (<span>-</span>)</a>
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/watchers" target="_blank" class="btn pull-right count-watch"><i class="fa fa-eye"></i> Watch (<span>-</span>)</a>
-
+    
 
     <!-- Title -->
-    <h1><a href="./README.html" >Build Your Own Lisp</a></h1>
+    <h1><a href="./" >Introduction</a></h1>
 </div>
 
     <div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Search" class="form-control" />
+    </div>
     <ul class="summary">
+        
         <li>
             <a href="https://github.com/TheThirdOne" target="blank">About the author</a>
         </li>
@@ -71,158 +75,159 @@
             <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/edit/master/variables.md" target="blank">Edit and Contribute</a>
         </li>
         <li class="divider"></li>
-        <li data-level="0">
-            <a href="./README.html"><i class="fa fa-check"></i> Introduction</a>
+        
+        <li data-level="0" data-path="index.html">
+            <a href="./"><i class="fa fa-check"></i> Introduction</a>
         </li>
         
-            <li  data-level="1">
+            <li  data-level="1" data-path="installation.html">
                 
                 <a href="./installation.html">
-                    <i class="fa fa-check"></i> <b>1)</b> Installation
+                    <i class="fa fa-check"></i> <b>1.</b> Installation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="2">
+            <li  data-level="2" data-path="basics.html">
                 
                 <a href="./basics.html">
-                    <i class="fa fa-check"></i> <b>2)</b> Basics
+                    <i class="fa fa-check"></i> <b>2.</b> Basics
                 </a>
                 
                 
             </li>
         
-            <li  data-level="3">
+            <li  data-level="3" data-path="interactive_prompt.html">
                 
                 <a href="./interactive_prompt.html">
-                    <i class="fa fa-check"></i> <b>3)</b> Interactive Prompt
+                    <i class="fa fa-check"></i> <b>3.</b> Interactive Prompt
                 </a>
                 
                 
             </li>
         
-            <li  data-level="4">
+            <li  data-level="4" data-path="languages.html">
                 
                 <a href="./languages.html">
-                    <i class="fa fa-check"></i> <b>4)</b> Languages
+                    <i class="fa fa-check"></i> <b>4.</b> Languages
                 </a>
                 
                 
             </li>
         
-            <li  data-level="5">
+            <li  data-level="5" data-path="parsing.html">
                 
                 <a href="./parsing.html">
-                    <i class="fa fa-check"></i> <b>5)</b> Parsing
+                    <i class="fa fa-check"></i> <b>5.</b> Parsing
                 </a>
                 
                 
             </li>
         
-            <li  data-level="6">
+            <li  data-level="6" data-path="evaluation.html">
                 
                 <a href="./evaluation.html">
-                    <i class="fa fa-check"></i> <b>6)</b> Evaluation
+                    <i class="fa fa-check"></i> <b>6.</b> Evaluation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="7">
+            <li  data-level="7" data-path="error_handling.html">
                 
                 <a href="./error_handling.html">
-                    <i class="fa fa-check"></i> <b>7)</b> Error Handling
+                    <i class="fa fa-check"></i> <b>7.</b> Error Handling
                 </a>
                 
                 
             </li>
         
-            <li  data-level="8">
+            <li  data-level="8" data-path="s_expressions.html">
                 
                 <a href="./s_expressions.html">
-                    <i class="fa fa-check"></i> <b>8)</b> S-Expressions
+                    <i class="fa fa-check"></i> <b>8.</b> S-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="9">
+            <li  data-level="9" data-path="q_expressions.html">
                 
                 <a href="./q_expressions.html">
-                    <i class="fa fa-check"></i> <b>9)</b> Q-Expressions
+                    <i class="fa fa-check"></i> <b>9.</b> Q-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="10">
+            <li  data-level="10" data-path="variables.html">
                 
                 <a href="./variables.html">
-                    <i class="fa fa-check"></i> <b>10)</b> Variables
+                    <i class="fa fa-check"></i> <b>10.</b> Variables
                 </a>
                 
                 
             </li>
         
-            <li  data-level="11">
+            <li  data-level="11" data-path="functions.html">
                 
                 <a href="./functions.html">
-                    <i class="fa fa-check"></i> <b>11)</b> Functions
+                    <i class="fa fa-check"></i> <b>11.</b> Functions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="12">
+            <li  data-level="12" data-path="conditionals.html">
                 
                 <a href="./conditionals.html">
-                    <i class="fa fa-check"></i> <b>12)</b> Conditionals
+                    <i class="fa fa-check"></i> <b>12.</b> Conditionals
                 </a>
                 
                 
             </li>
         
-            <li  data-level="13">
+            <li  data-level="13" data-path="strings.html">
                 
                 <a href="./strings.html">
-                    <i class="fa fa-check"></i> <b>13)</b> Strings
+                    <i class="fa fa-check"></i> <b>13.</b> Strings
                 </a>
                 
                 
             </li>
         
-            <li  data-level="14">
+            <li  data-level="14" data-path="standard_library.html">
                 
                 <a href="./standard_library.html">
-                    <i class="fa fa-check"></i> <b>14)</b> Standard Library
+                    <i class="fa fa-check"></i> <b>14.</b> Standard Library
                 </a>
                 
                 
             </li>
         
-            <li  data-level="15">
+            <li  data-level="15" data-path="bonus_projects.html">
                 
                 <a href="./bonus_projects.html">
-                    <i class="fa fa-check"></i> <b>15)</b> Bonus Projects
+                    <i class="fa fa-check"></i> <b>15.</b> Bonus Projects
                 </a>
                 
                 
             </li>
         
-            <li  data-level="16">
+            <li  data-level="16" data-path="faq.html">
                 
                 <a href="./faq.html">
-                    <i class="fa fa-check"></i> <b>16)</b> FAQ
+                    <i class="fa fa-check"></i> <b>16.</b> FAQ
                 </a>
                 
                 
             </li>
         
-            <li  data-level="17">
+            <li  data-level="17" data-path="credits.html">
                 
                 <a href="./credits.html">
-                    <i class="fa fa-check"></i> <b>17)</b> Credits
+                    <i class="fa fa-check"></i> <b>17.</b> Credits
                 </a>
                 
                 
@@ -231,15 +236,16 @@
     </ul>
 </div>
 
-    <div class="book-body" tabindex="-1">
-        <div class="page-wrapper">
-            <div class="book-progress">
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="page-wrapper" tabindex="-1">
+                <div class="book-progress">
     <div class="bar">
         <div class="inner" style="width: 11.764705882352942%;min-width: 5.882352941176471%;"></div>
     </div>
     <div class="chapters">
     
-        <a href="./README.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
+        <a href="./index.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
     
         <a href="./installation.html" title="Installation" class="chapter done new-chapter" data-progress="1" style="left: 5.882352941176471%;"></a>
     
@@ -278,11 +284,11 @@
     </div>
 </div>
 
-            <div class="page-inner">
-            
-                <section class="normal" id="section-gitbook_18">
+                <div class="page-inner">
                 
-                    <h1 id="variables">Variables</h1>
+                    <section class="normal" id="section-gitbook_18">
+                    
+                        <h1 id="variables">Variables</h1>
 <h2 id="immutability">Immutability</h2>
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="img/turtle.png" alt="turtle"/>
@@ -304,7 +310,7 @@
 <h2 id="symbol-syntax">Symbol Syntax</h2>
 <p>Now that we&#39;re going to allow for user defined variables we need to update the grammar for symbols to be more flexible. Rather than just our builtin functions it should match any possible valid symbol. Unlike in C, where the name a variable can be given is fairly restrictive, we&#39;re going to allow for all sorts of characters in the name of a variable.</p>
 <p>We can create a regular expression that expresses the range of characters available as follows.</p>
-<pre><code>/<span class="hljs-special">[</span>a-zA-Z0-9_+<span class="hljs-command">\\</span>-*<span class="hljs-command">\\</span>/<span class="hljs-command">\\</span><span class="hljs-command">\\</span>=&lt;&gt;!<span class="hljs-special">&amp;</span><span class="hljs-special">]</span>+/
+<pre><code>/[a-zA-Z0-9_+\\-*\\/\\\\=&lt;&gt;!&amp;]+/
 </code></pre><p>On first glace this looks like we&#39;ve just bashed our hands in the keyboard. Actually it is a regular expression using a big range specifier <code>[]</code>. Inside range specifiers special characters lose their meaning, but some of these characters still need to be escaped with backslashes. Because this is part of a C string we need to put two back slashes to represent a single backslash character in the input.</p>
 <p>This rule lets symbols be any of, the standard C identifier characters <code>a-zA-Z0-9_</code>, the arithmetic operator characters <code>+\\-*\\/</code>, the backslash character <code>\\\\</code>, the comparison operator characters <code>=&lt;&gt;!</code>, or an ampersands <code>&amp;</code>. This will give us all the flexibility we need for defining new and existing symbols.</p>
 <pre><code class="lang-c">mpca_lang(MPC_LANG_DEFAULT,
@@ -569,13 +575,13 @@ lenv_del(e);
 </code></pre>
 <p>If everything is working correctly we should have a play around in the prompt and verify that functions are actually a new type of value now, not symbols.</p>
 <pre><code class="lang-lispy">lispy&gt; +
-&lt;<span class="hljs-function"><span class="hljs-keyword">function</span>&gt;</span>
-lispy&gt; eval (head <span class="hljs-cell">{<span class="hljs-number">5</span> <span class="hljs-number">10</span> <span class="hljs-number">11</span> <span class="hljs-number">15</span>}</span>)
-<span class="hljs-number">5</span>
-lispy&gt; eval (head <span class="hljs-cell">{+ - + - * /}</span>)
-&lt;<span class="hljs-function"><span class="hljs-keyword">function</span>&gt;</span>
-lispy&gt; (eval (head <span class="hljs-cell">{+ - + - * /}</span>)) <span class="hljs-number">10</span> <span class="hljs-number">20</span>
-<span class="hljs-number">30</span>
+&lt;function&gt;
+lispy&gt; eval (head {5 10 11 15})
+5
+lispy&gt; eval (head {+ - + - * /})
+&lt;function&gt;
+lispy&gt; (eval (head {+ - + - * /})) 10 20
+30
 lispy&gt; hello
 Error: unbound symbol!
 lispy&gt;
@@ -613,28 +619,28 @@ lispy&gt;
 lenv_add_builtin(e, <span class="hljs-string">"def"</span>,  builtin_def);
 </code></pre>
 <p>Now we should be able to support user defined variables! Because our <code>def</code> function takes in a list of symbols we can do some cool things storing and manipulating symbols in lists before passing them to be defined. Have a play around in the prompt and ensure everything is working correctly. You should get behaviour as follows. See what other complex methods are possible for the definition and evaluation of variables. Once we get to defining functions we&#39;ll really see some of the neat things that can be done with this approach.</p>
-<pre><code class="lang-lispy">lispy&gt; def <span class="hljs-list">{x}</span> <span class="hljs-number">100</span>
+<pre><code class="lang-lispy">lispy&gt; def {x} 100
 ()
-lispy&gt; def <span class="hljs-list">{y}</span> <span class="hljs-number">200</span>
+lispy&gt; def {y} 200
 ()
 lispy&gt; x
-<span class="hljs-number">100</span>
+100
 lispy&gt; y
-<span class="hljs-number">200</span>
+200
 lispy&gt; + x y
-<span class="hljs-number">300</span>
-lispy&gt; def <span class="hljs-list">{a b}</span> <span class="hljs-number">5</span> <span class="hljs-number">6</span>
+300
+lispy&gt; def {a b} 5 6
 ()
 lispy&gt; + a b
-<span class="hljs-number">11</span>
-lispy&gt; def <span class="hljs-list">{arglist}</span> <span class="hljs-list">{a b x y}</span>
+11
+lispy&gt; def {arglist} {a b x y}
 ()
 lispy&gt; arglist
-<span class="hljs-list">{a b x y}</span>
-lispy&gt; def arglist <span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span> <span class="hljs-number">4</span>
+{a b x y}
+lispy&gt; def arglist 1 2 3 4
 ()
 lispy&gt; list a b x y
-<span class="hljs-list">{1 2 3 4}</span>
+{1 2 3 4}
 lispy&gt;
 </code></pre>
 <h2 id="error-reporting">Error Reporting</h2>
@@ -707,10 +713,10 @@ lispy&gt;
   ltype_name(a-&gt;cell[<span class="hljs-number">0</span>]-&gt;type), type_name(LVAL_QEXPR));
 </code></pre>
 <p>Go ahead and improve the error reporting in all situations where we return an error in the code. This should make debugging many of the next stages much easier as we begin to write real, and complicated code using our new language! See if you can use macros to save on typing and automatically generate code for common methods of error reporting.</p>
-<pre><code class="lang-lispy">lispy&gt; + <span class="hljs-number">1</span> {<span class="hljs-number">5</span> <span class="hljs-number">6</span> <span class="hljs-number">7</span>}
-<span class="hljs-built_in">Error</span>: <span class="hljs-built_in">Function</span> <span class="hljs-string">'+'</span> passed incorrect type <span class="hljs-keyword">for</span> argument <span class="hljs-number">1.</span> Got Q-Expression, Expected <span class="hljs-built_in">Number</span>.
-lispy&gt; head {<span class="hljs-number">1</span> <span class="hljs-number">2</span> <span class="hljs-number">3</span>} {<span class="hljs-number">4</span> <span class="hljs-number">5</span> <span class="hljs-number">6</span>}
-<span class="hljs-built_in">Error</span>: <span class="hljs-built_in">Function</span> <span class="hljs-string">'head'</span> passed incorrect number of <span class="hljs-built_in">arguments</span>. Got <span class="hljs-number">2</span>, Expected <span class="hljs-number">1.</span>
+<pre><code class="lang-lispy">lispy&gt; + 1 {5 6 7}
+Error: Function &#39;+&#39; passed incorrect type for argument 1. Got Q-Expression, Expected Number.
+lispy&gt; head {1 2 3} {4 5 6}
+Error: Function &#39;head&#39; passed incorrect number of arguments. Got 2, Expected 1.
 lispy&gt;
 </code></pre>
 <h2 id="reference">Reference</h2>
@@ -1314,24 +1320,25 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; Create an <code>exit</code> function for stopping the prompt and exiting.</li>
   </ul>
 </div>
+                    
+                    </section>
                 
-                </section>
-            
+                </div>
             </div>
-
-            <div class="page-footer">
-    
-        
-            
-            <a href="./functions.html" class="navigation-link next">Next</a>
-            
-        
-    
-</div>
         </div>
+
+        
+        <a href="./q_expressions.html" class="navigation navigation-prev"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./functions.html" class="navigation navigation-next"><i class="fa fa-angle-right"></i></a>
+        
     </div>
 </div>
 
+        
+        <link rel="stylesheet" href="gitbook/style.css">
+        
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-javascript.js"></script>

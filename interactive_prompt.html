@@ -3,12 +3,12 @@
     <head prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
         
         <meta charset="UTF-8">
-        <title>Interactive Prompt | Build Your Own Lisp</title>
+        <title>Interactive Prompt | Introduction</title>
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="robots" content="index, follow">
         <meta name="author" content="TheThirdOne">
-        <meta name="description" content="Learn C and make a Lisp Dialect">
+        <meta name="description" content="In this book you&#39;ll learn the C programming language, and at the same time learn how to build *your very own programming language*, a minimal Lisp, in under 1000 lines of code! We&#39;ll be using a library to do some of the initial work, so I&#39;m cheating a little bit on the line count, but the rest of the code will be completely original, and you really will create a powerful little Lisp by the end.">
         <meta name="keywords" content="gitbook,github" >
         <meta name="generator" content="www.gitbook.io">
 
@@ -19,8 +19,8 @@
         <link rel="prev" href="./basics.html" />
         
 
-        <meta property="og:title" content="Interactive Prompt | Build Your Own Lisp">
-        <meta property="og:site_name" content="Build Your Own Lisp">
+        <meta property="og:title" content="Interactive Prompt | Introduction">
+        <meta property="og:site_name" content="Introduction">
         <meta property="og:type" content="book">
         <meta property="og:locale" content="en_US">
 
@@ -32,35 +32,39 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
         <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
-
-        
-        <link rel="stylesheet" href="gitbook/style.css">
-        
         
     </head>
     <body>
         
-<div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="3">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="3" data-basepath="." data-revision="1397765575020">
     <div class="book-header">
     <!-- Actions Left -->
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook" target="_blank" class="btn pull-left"><i class="fa fa-github-alt"></i></a>
+    
     <a href="#" class="btn pull-left toggle-summary"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search"><i class="fa fa-search"></i></a>
 
     <!-- Actions Right -->
     <a href="#" target="_blank" class="btn pull-right" data-sharing="google-plus"><i class="fa fa-google-plus"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="facebook"><i class="fa fa-facebook"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="twitter"><i class="fa fa-twitter"></i></a>
 
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/stargazers" target="_blank" class="btn pull-right count-star"><i class="fa fa-star-o"></i> Star (<span>-</span>)</a>
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/watchers" target="_blank" class="btn pull-right count-watch"><i class="fa fa-eye"></i> Watch (<span>-</span>)</a>
-
+    
 
     <!-- Title -->
-    <h1><a href="./README.html" >Build Your Own Lisp</a></h1>
+    <h1><a href="./" >Introduction</a></h1>
 </div>
 
     <div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Search" class="form-control" />
+    </div>
     <ul class="summary">
+        
         <li>
             <a href="https://github.com/TheThirdOne" target="blank">About the author</a>
         </li>
@@ -71,158 +75,159 @@
             <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/edit/master/interactive_prompt.md" target="blank">Edit and Contribute</a>
         </li>
         <li class="divider"></li>
-        <li data-level="0">
-            <a href="./README.html"><i class="fa fa-check"></i> Introduction</a>
+        
+        <li data-level="0" data-path="index.html">
+            <a href="./"><i class="fa fa-check"></i> Introduction</a>
         </li>
         
-            <li  data-level="1">
+            <li  data-level="1" data-path="installation.html">
                 
                 <a href="./installation.html">
-                    <i class="fa fa-check"></i> <b>1)</b> Installation
+                    <i class="fa fa-check"></i> <b>1.</b> Installation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="2">
+            <li  data-level="2" data-path="basics.html">
                 
                 <a href="./basics.html">
-                    <i class="fa fa-check"></i> <b>2)</b> Basics
+                    <i class="fa fa-check"></i> <b>2.</b> Basics
                 </a>
                 
                 
             </li>
         
-            <li  data-level="3">
+            <li  data-level="3" data-path="interactive_prompt.html">
                 
                 <a href="./interactive_prompt.html">
-                    <i class="fa fa-check"></i> <b>3)</b> Interactive Prompt
+                    <i class="fa fa-check"></i> <b>3.</b> Interactive Prompt
                 </a>
                 
                 
             </li>
         
-            <li  data-level="4">
+            <li  data-level="4" data-path="languages.html">
                 
                 <a href="./languages.html">
-                    <i class="fa fa-check"></i> <b>4)</b> Languages
+                    <i class="fa fa-check"></i> <b>4.</b> Languages
                 </a>
                 
                 
             </li>
         
-            <li  data-level="5">
+            <li  data-level="5" data-path="parsing.html">
                 
                 <a href="./parsing.html">
-                    <i class="fa fa-check"></i> <b>5)</b> Parsing
+                    <i class="fa fa-check"></i> <b>5.</b> Parsing
                 </a>
                 
                 
             </li>
         
-            <li  data-level="6">
+            <li  data-level="6" data-path="evaluation.html">
                 
                 <a href="./evaluation.html">
-                    <i class="fa fa-check"></i> <b>6)</b> Evaluation
+                    <i class="fa fa-check"></i> <b>6.</b> Evaluation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="7">
+            <li  data-level="7" data-path="error_handling.html">
                 
                 <a href="./error_handling.html">
-                    <i class="fa fa-check"></i> <b>7)</b> Error Handling
+                    <i class="fa fa-check"></i> <b>7.</b> Error Handling
                 </a>
                 
                 
             </li>
         
-            <li  data-level="8">
+            <li  data-level="8" data-path="s_expressions.html">
                 
                 <a href="./s_expressions.html">
-                    <i class="fa fa-check"></i> <b>8)</b> S-Expressions
+                    <i class="fa fa-check"></i> <b>8.</b> S-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="9">
+            <li  data-level="9" data-path="q_expressions.html">
                 
                 <a href="./q_expressions.html">
-                    <i class="fa fa-check"></i> <b>9)</b> Q-Expressions
+                    <i class="fa fa-check"></i> <b>9.</b> Q-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="10">
+            <li  data-level="10" data-path="variables.html">
                 
                 <a href="./variables.html">
-                    <i class="fa fa-check"></i> <b>10)</b> Variables
+                    <i class="fa fa-check"></i> <b>10.</b> Variables
                 </a>
                 
                 
             </li>
         
-            <li  data-level="11">
+            <li  data-level="11" data-path="functions.html">
                 
                 <a href="./functions.html">
-                    <i class="fa fa-check"></i> <b>11)</b> Functions
+                    <i class="fa fa-check"></i> <b>11.</b> Functions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="12">
+            <li  data-level="12" data-path="conditionals.html">
                 
                 <a href="./conditionals.html">
-                    <i class="fa fa-check"></i> <b>12)</b> Conditionals
+                    <i class="fa fa-check"></i> <b>12.</b> Conditionals
                 </a>
                 
                 
             </li>
         
-            <li  data-level="13">
+            <li  data-level="13" data-path="strings.html">
                 
                 <a href="./strings.html">
-                    <i class="fa fa-check"></i> <b>13)</b> Strings
+                    <i class="fa fa-check"></i> <b>13.</b> Strings
                 </a>
                 
                 
             </li>
         
-            <li  data-level="14">
+            <li  data-level="14" data-path="standard_library.html">
                 
                 <a href="./standard_library.html">
-                    <i class="fa fa-check"></i> <b>14)</b> Standard Library
+                    <i class="fa fa-check"></i> <b>14.</b> Standard Library
                 </a>
                 
                 
             </li>
         
-            <li  data-level="15">
+            <li  data-level="15" data-path="bonus_projects.html">
                 
                 <a href="./bonus_projects.html">
-                    <i class="fa fa-check"></i> <b>15)</b> Bonus Projects
+                    <i class="fa fa-check"></i> <b>15.</b> Bonus Projects
                 </a>
                 
                 
             </li>
         
-            <li  data-level="16">
+            <li  data-level="16" data-path="faq.html">
                 
                 <a href="./faq.html">
-                    <i class="fa fa-check"></i> <b>16)</b> FAQ
+                    <i class="fa fa-check"></i> <b>16.</b> FAQ
                 </a>
                 
                 
             </li>
         
-            <li  data-level="17">
+            <li  data-level="17" data-path="credits.html">
                 
                 <a href="./credits.html">
-                    <i class="fa fa-check"></i> <b>17)</b> Credits
+                    <i class="fa fa-check"></i> <b>17.</b> Credits
                 </a>
                 
                 
@@ -231,15 +236,16 @@
     </ul>
 </div>
 
-    <div class="book-body" tabindex="-1">
-        <div class="page-wrapper">
-            <div class="book-progress">
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="page-wrapper" tabindex="-1">
+                <div class="book-progress">
     <div class="bar">
         <div class="inner" style="width: 64.70588235294117%;min-width: 58.8235294117647%;"></div>
     </div>
     <div class="chapters">
     
-        <a href="./README.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
+        <a href="./index.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
     
         <a href="./installation.html" title="Installation" class="chapter done new-chapter" data-progress="1" style="left: 5.882352941176471%;"></a>
     
@@ -278,11 +284,11 @@
     </div>
 </div>
 
-            <div class="page-inner">
-            
-                <section class="normal" id="section-gitbook_11">
+                <div class="page-inner">
                 
-                    <h1 id="an-interactive-prompt">An Interactive Prompt</h1>
+                    <section class="normal" id="section-gitbook_11">
+                    
+                        <h1 id="an-interactive-prompt">An Interactive Prompt</h1>
 <h2 id="read-evaluate-print">Read, Evaluate, Print</h2>
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="img/reptile.png" alt="reptile"/>
@@ -345,26 +351,26 @@
 
 <h2 id="compilation">Compilation</h2>
 <p>You can compile this with the same command as was used in the second chapter.</p>
-<pre><code class="lang-shell">cc <span class="hljs-attribute">-std</span><span class="hljs-subst">=</span>c99 <span class="hljs-attribute">-Wall</span> prompt<span class="hljs-built_in">.</span>c <span class="hljs-attribute">-o</span> prompt
+<pre><code class="lang-shell">cc -std=c99 -Wall prompt.c -o prompt
 </code></pre>
 <p>After compiling this you should try to run it. You can use <code>Ctrl+c</code> to quit the program when you are done. If everything is correct your program should run something like this.</p>
-<pre><code class="lang-lispy">Lispy Version <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>
+<pre><code class="lang-lispy">Lispy Version 0.0.0.0.1
 Press Ctrl+c to Exit
 
 lispy&gt; hello
-No Yo<span class="hljs-string">u're a hello
+No You&#39;re a hello
 lispy&gt; my name is Dan
-No You'</span>re a my name <span class="hljs-keyword">is</span> Dan
+No You&#39;re a my name is Dan
 lispy&gt; Stop being so rude!
-No Yo<span class="hljs-string">u're a Stop being so rude!
-lispy&gt;</span>
+No You&#39;re a Stop being so rude!
+lispy&gt;
 </code></pre>
 <h2 id="editing-input">Editing input</h2>
 <p>If you&#39;re working on Linux or Mac you&#39;ll notice some weird behaviour when you use the arrow keys to attempt to edit your input.</p>
-<pre><code class="lang-lispy">Lispy <span class="hljs-keyword">Version</span> <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span><span class="hljs-number">.3</span>
-Press Ctrl+c to <span class="hljs-keyword">Exit</span>
+<pre><code class="lang-lispy">Lispy Version 0.0.0.0.3
+Press Ctrl+c to Exit
 
-lispy&gt; hel^[[<span class="hljs-keyword">D</span>^[[<span class="hljs-keyword">C</span>
+lispy&gt; hel^[[D^[[C
 </code></pre>
 <p>Using the arrow keys is creating these weird characters <code>^[[D</code> or <code>^[[C</code>, rather than moving the cursor around in the input. What we really want is to be able to move around on the line, deleting and editing the input in case we make a mistake.</p>
 <p>On Windows this behaviour is the default. On Linux and Mac it is provided by a library called <code>editline</code>. On Linux and Mac we need to replace our calls to <code>fputs</code> and <code>fgets</code> with calls to functions this library provides.</p>
@@ -409,14 +415,14 @@ lispy&gt; hel^[[<span class="hljs-keyword">D</span>^[[<span class="hljs-keyword"
 <p>Unlike <code>fgets</code>, the <code>readline</code> function strips the trailing newline character from the input, so we need to add this to our <code>printf</code> function. We also need to delete the input given to us by the <code>readline</code> function using <code>free</code>. This is because unlike <code>fgets</code>, which writes to some existing buffer, the <code>readline</code> function allocates new memory when it is called. When to free memory is something we cover in depth in later chapters.</p>
 <h2 id="compiling-with-editline">Compiling with Editline</h2>
 <p>If you try to compile this right away with the previous command you&#39;ll get an error. This is because you first need to install the <code>editline</code> library on your computer.</p>
-<pre><code>fatal error: editline/readline.h: No such <span class="hljs-built_in">file</span> <span class="hljs-operator">or</span> <span class="hljs-built_in">directory</span> <span class="hljs-comment">#include &lt;editline/readline.h&gt;</span>
+<pre><code>fatal error: editline/readline.h: No such file or directory #include &lt;editline/readline.h&gt;
 </code></pre><p>On <strong>Linux</strong> this can be done using the command <code>sudo apt-get install libedit-dev</code>. On Fedora or similar you can use the command <code>su -c &quot;yum install libedit-dev*&quot;</code></p>
 <p>On <strong>Mac</strong> the <code>editline</code> library should have been installed alongside the <em>Command Line Tools</em>. If you get an error about the history header not being found you can either try removing that line of code or installing the <code>readline</code> library, which can be used as a drop-in replacement. This can be installed using Homebrew or MacPorts.</p>
 <p>Once you have installed this you can try to compile it again. This time you&#39;ll get a different error.</p>
-<pre><code>undefined reference to <span class="hljs-smartquote">`readline'</span>
-undefined reference to <span class="hljs-smartquote">`add_history'</span>
+<pre><code>undefined reference to `readline&#39;
+undefined reference to `add_history&#39;
 </code></pre><p>This means that you haven&#39;t <em>linked</em> your program to <code>editline</code>. This <em>linking</em> process allows the compiler to directly embed calls to <code>editline</code> in your program. You can make it link by adding the flag <code>-ledit</code> to your compile command, just before the output flag.</p>
-<pre><code class="lang-shell">cc <span class="hljs-attribute">-std</span><span class="hljs-subst">=</span>c99 <span class="hljs-attribute">-Wall</span> prompt<span class="hljs-built_in">.</span>c <span class="hljs-attribute">-ledit</span> <span class="hljs-attribute">-o</span> prompt
+<pre><code class="lang-shell">cc -std=c99 -Wall prompt.c -ledit -o prompt
 </code></pre>
 <p>Hopefully now you should be able to <em>compile</em> and <em>link</em> your program with <code>editline</code>. Run it and check that now you can edit inputs as you type them in.</p>
 <div class="alert alert-warning">
@@ -656,24 +662,25 @@ int main(int argc, char** argv) {
   <li class="list-group-item">&rsaquo; If <code>_WIN32</code> is defined on windows, what is defined for Linux or Mac?</li>
 </ul>
 </div>
+                    
+                    </section>
                 
-                </section>
-            
+                </div>
             </div>
-
-            <div class="page-footer">
-    
-        
-            
-            <a href="./languages.html" class="navigation-link next">Next</a>
-            
-        
-    
-</div>
         </div>
+
+        
+        <a href="./basics.html" class="navigation navigation-prev"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./languages.html" class="navigation navigation-next"><i class="fa fa-angle-right"></i></a>
+        
     </div>
 </div>
 
+        
+        <link rel="stylesheet" href="gitbook/style.css">
+        
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-javascript.js"></script>

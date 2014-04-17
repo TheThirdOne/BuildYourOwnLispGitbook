@@ -3,12 +3,12 @@
     <head prefix="og: http://ogp.me/ns# book: http://ogp.me/ns/book#">
         
         <meta charset="UTF-8">
-        <title>Functions | Build Your Own Lisp</title>
+        <title>Functions | Introduction</title>
 
         <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
         <meta name="robots" content="index, follow">
         <meta name="author" content="TheThirdOne">
-        <meta name="description" content="Learn C and make a Lisp Dialect">
+        <meta name="description" content="In this book you&#39;ll learn the C programming language, and at the same time learn how to build *your very own programming language*, a minimal Lisp, in under 1000 lines of code! We&#39;ll be using a library to do some of the initial work, so I&#39;m cheating a little bit on the line count, but the rest of the code will be completely original, and you really will create a powerful little Lisp by the end.">
         <meta name="keywords" content="gitbook,github" >
         <meta name="generator" content="www.gitbook.io">
 
@@ -19,8 +19,8 @@
         <link rel="prev" href="./variables.html" />
         
 
-        <meta property="og:title" content="Functions | Build Your Own Lisp">
-        <meta property="og:site_name" content="Build Your Own Lisp">
+        <meta property="og:title" content="Functions | Introduction">
+        <meta property="og:site_name" content="Introduction">
         <meta property="og:type" content="book">
         <meta property="og:locale" content="en_US">
 
@@ -32,35 +32,39 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
         <link rel="shortcut icon" href="gitbook/images/favicon.ico" type="image/x-icon">
-
-        
-        <link rel="stylesheet" href="gitbook/style.css">
-        
         
     </head>
     <body>
         
-<div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="11">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="11" data-basepath="." data-revision="1397765575020">
     <div class="book-header">
     <!-- Actions Left -->
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook" target="_blank" class="btn pull-left"><i class="fa fa-github-alt"></i></a>
+    
     <a href="#" class="btn pull-left toggle-summary"><i class="fa fa-align-justify"></i></a>
+    <a href="#" class="btn pull-left toggle-search"><i class="fa fa-search"></i></a>
 
     <!-- Actions Right -->
     <a href="#" target="_blank" class="btn pull-right" data-sharing="google-plus"><i class="fa fa-google-plus"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="facebook"><i class="fa fa-facebook"></i></a>
     <a href="#" target="_blank" class="btn pull-right" data-sharing="twitter"><i class="fa fa-twitter"></i></a>
 
+    
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/stargazers" target="_blank" class="btn pull-right count-star"><i class="fa fa-star-o"></i> Star (<span>-</span>)</a>
     <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/watchers" target="_blank" class="btn pull-right count-watch"><i class="fa fa-eye"></i> Watch (<span>-</span>)</a>
-
+    
 
     <!-- Title -->
-    <h1><a href="./README.html" >Build Your Own Lisp</a></h1>
+    <h1><a href="./" >Introduction</a></h1>
 </div>
 
     <div class="book-summary">
+    <div class="book-search">
+        <input type="text" placeholder="Search" class="form-control" />
+    </div>
     <ul class="summary">
+        
         <li>
             <a href="https://github.com/TheThirdOne" target="blank">About the author</a>
         </li>
@@ -71,158 +75,159 @@
             <a href="https://github.com/TheThirdOne/BuildYourOwnLispGitbook/edit/master/functions.md" target="blank">Edit and Contribute</a>
         </li>
         <li class="divider"></li>
-        <li data-level="0">
-            <a href="./README.html"><i class="fa fa-check"></i> Introduction</a>
+        
+        <li data-level="0" data-path="index.html">
+            <a href="./"><i class="fa fa-check"></i> Introduction</a>
         </li>
         
-            <li  data-level="1">
+            <li  data-level="1" data-path="installation.html">
                 
                 <a href="./installation.html">
-                    <i class="fa fa-check"></i> <b>1)</b> Installation
+                    <i class="fa fa-check"></i> <b>1.</b> Installation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="2">
+            <li  data-level="2" data-path="basics.html">
                 
                 <a href="./basics.html">
-                    <i class="fa fa-check"></i> <b>2)</b> Basics
+                    <i class="fa fa-check"></i> <b>2.</b> Basics
                 </a>
                 
                 
             </li>
         
-            <li  data-level="3">
+            <li  data-level="3" data-path="interactive_prompt.html">
                 
                 <a href="./interactive_prompt.html">
-                    <i class="fa fa-check"></i> <b>3)</b> Interactive Prompt
+                    <i class="fa fa-check"></i> <b>3.</b> Interactive Prompt
                 </a>
                 
                 
             </li>
         
-            <li  data-level="4">
+            <li  data-level="4" data-path="languages.html">
                 
                 <a href="./languages.html">
-                    <i class="fa fa-check"></i> <b>4)</b> Languages
+                    <i class="fa fa-check"></i> <b>4.</b> Languages
                 </a>
                 
                 
             </li>
         
-            <li  data-level="5">
+            <li  data-level="5" data-path="parsing.html">
                 
                 <a href="./parsing.html">
-                    <i class="fa fa-check"></i> <b>5)</b> Parsing
+                    <i class="fa fa-check"></i> <b>5.</b> Parsing
                 </a>
                 
                 
             </li>
         
-            <li  data-level="6">
+            <li  data-level="6" data-path="evaluation.html">
                 
                 <a href="./evaluation.html">
-                    <i class="fa fa-check"></i> <b>6)</b> Evaluation
+                    <i class="fa fa-check"></i> <b>6.</b> Evaluation
                 </a>
                 
                 
             </li>
         
-            <li  data-level="7">
+            <li  data-level="7" data-path="error_handling.html">
                 
                 <a href="./error_handling.html">
-                    <i class="fa fa-check"></i> <b>7)</b> Error Handling
+                    <i class="fa fa-check"></i> <b>7.</b> Error Handling
                 </a>
                 
                 
             </li>
         
-            <li  data-level="8">
+            <li  data-level="8" data-path="s_expressions.html">
                 
                 <a href="./s_expressions.html">
-                    <i class="fa fa-check"></i> <b>8)</b> S-Expressions
+                    <i class="fa fa-check"></i> <b>8.</b> S-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="9">
+            <li  data-level="9" data-path="q_expressions.html">
                 
                 <a href="./q_expressions.html">
-                    <i class="fa fa-check"></i> <b>9)</b> Q-Expressions
+                    <i class="fa fa-check"></i> <b>9.</b> Q-Expressions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="10">
+            <li  data-level="10" data-path="variables.html">
                 
                 <a href="./variables.html">
-                    <i class="fa fa-check"></i> <b>10)</b> Variables
+                    <i class="fa fa-check"></i> <b>10.</b> Variables
                 </a>
                 
                 
             </li>
         
-            <li  data-level="11">
+            <li  data-level="11" data-path="functions.html">
                 
                 <a href="./functions.html">
-                    <i class="fa fa-check"></i> <b>11)</b> Functions
+                    <i class="fa fa-check"></i> <b>11.</b> Functions
                 </a>
                 
                 
             </li>
         
-            <li  data-level="12">
+            <li  data-level="12" data-path="conditionals.html">
                 
                 <a href="./conditionals.html">
-                    <i class="fa fa-check"></i> <b>12)</b> Conditionals
+                    <i class="fa fa-check"></i> <b>12.</b> Conditionals
                 </a>
                 
                 
             </li>
         
-            <li  data-level="13">
+            <li  data-level="13" data-path="strings.html">
                 
                 <a href="./strings.html">
-                    <i class="fa fa-check"></i> <b>13)</b> Strings
+                    <i class="fa fa-check"></i> <b>13.</b> Strings
                 </a>
                 
                 
             </li>
         
-            <li  data-level="14">
+            <li  data-level="14" data-path="standard_library.html">
                 
                 <a href="./standard_library.html">
-                    <i class="fa fa-check"></i> <b>14)</b> Standard Library
+                    <i class="fa fa-check"></i> <b>14.</b> Standard Library
                 </a>
                 
                 
             </li>
         
-            <li  data-level="15">
+            <li  data-level="15" data-path="bonus_projects.html">
                 
                 <a href="./bonus_projects.html">
-                    <i class="fa fa-check"></i> <b>15)</b> Bonus Projects
+                    <i class="fa fa-check"></i> <b>15.</b> Bonus Projects
                 </a>
                 
                 
             </li>
         
-            <li  data-level="16">
+            <li  data-level="16" data-path="faq.html">
                 
                 <a href="./faq.html">
-                    <i class="fa fa-check"></i> <b>16)</b> FAQ
+                    <i class="fa fa-check"></i> <b>16.</b> FAQ
                 </a>
                 
                 
             </li>
         
-            <li  data-level="17">
+            <li  data-level="17" data-path="credits.html">
                 
                 <a href="./credits.html">
-                    <i class="fa fa-check"></i> <b>17)</b> Credits
+                    <i class="fa fa-check"></i> <b>17.</b> Credits
                 </a>
                 
                 
@@ -231,15 +236,16 @@
     </ul>
 </div>
 
-    <div class="book-body" tabindex="-1">
-        <div class="page-wrapper">
-            <div class="book-progress">
+    <div class="book-body">
+        <div class="body-inner">
+            <div class="page-wrapper" tabindex="-1">
+                <div class="book-progress">
     <div class="bar">
         <div class="inner" style="width: 17.647058823529413%;min-width: 11.764705882352942%;"></div>
     </div>
     <div class="chapters">
     
-        <a href="./README.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
+        <a href="./index.html" title="Introduction" class="chapter done new-chapter" data-progress="0" style="left: 0%;"></a>
     
         <a href="./installation.html" title="Installation" class="chapter done new-chapter" data-progress="1" style="left: 5.882352941176471%;"></a>
     
@@ -278,11 +284,11 @@
     </div>
 </div>
 
-            <div class="page-inner">
-            
-                <section class="normal" id="section-gitbook_9">
+                <div class="page-inner">
                 
-                    <h1 id="functions">Functions</h1>
+                    <section class="normal" id="section-gitbook_1">
+                    
+                        <h1 id="functions">Functions</h1>
 <h2 id="what-is-a-function-">What is a Function?</h2>
 <p>Functions are the essence of all programming. Back in the early days of computer science they represented a naive dream. The idea was that we could reduce computation into these smaller and smaller bits of re-usable code. Given enough time, and a proper structure for libraries, eventually we would have written code required for all computational needs. No longer would people have to write their own functions, and programming would consist of an easy job of stitching together components.</p>
 <p>This dream hasn&#39;t come true yet, but it persists, no matter how flawed. Each new programming technique, or paradigm, that comes along shakes up this idea a little. They promise better re-use of code. Better abstractions, and an easier life for all.</p>
@@ -306,16 +312,16 @@
 <p>We are going to use all of the previous ideas to add user defined functions to our language. Lisp is already well suited to this sort of playing around, and using these concepts it won&#39;t take much work for us to implement functions.</p>
 <p>The first step will be to write a builtin function that can create user defined functions. Here is one idea as to how it can be specified. The first argument could be a list of symbols, just like our <code>def</code> function. These symbols we call the <em>formal arguments</em>, also known as the <em>unbound variables</em>. They act as the inputs to our <em>partial computation</em>. The second argument could be another list. When running the function this is going to be evaluated with our builtin <code>eval</code> function.</p>
 <p>This function we&#39;ll call just <code>\</code>, (a homage to The Lambda Calculus as the <code>\</code> character looks a little bit like a lambda). To create a function which takes two inputs and adds them together, we would then write something like this.</p>
-<pre><code class="lang-lispy">\ <span class="hljs-list">{x y}</span> <span class="hljs-list">{+ x y}</span>
+<pre><code class="lang-lispy">\ {x y} {+ x y}
 </code></pre>
 <p>We can call the function by putting it as the first argument in a normal S-Expression</p>
-<pre><code class="lang-lispy">(\ <span class="hljs-list">{x y}</span> <span class="hljs-list">{+ x y}</span>) <span class="hljs-number">10</span> <span class="hljs-number">20</span>
+<pre><code class="lang-lispy">(\ {x y} {+ x y}) 10 20
 </code></pre>
 <p>If we want to name this function we can pass it to our existing builtin <code>def</code> like any other value and store it in the environment.</p>
-<pre><code class="lang-lispy">def <span class="hljs-list">{add-together}</span> (\ <span class="hljs-list">{x y}</span> <span class="hljs-list">{+ x y}</span>)
+<pre><code class="lang-lispy">def {add-together} (\ {x y} {+ x y})
 </code></pre>
 <p>Then we can call it by refering to it by name.</p>
-<pre><code class="lang-lispy"><span class="hljs-built_in">add</span>-together <span class="hljs-number">10</span> <span class="hljs-number">20</span>
+<pre><code class="lang-lispy">add-together 10 20
 </code></pre>
 <h2 id="function-type">Function Type</h2>
 <p>To store a function as an <code>lval</code> we need to think exactly what it consists of.</p>
@@ -600,20 +606,20 @@ lenv_add_builtin(e, <span class="hljs-string">"="</span>,   builtin_put);
 lval* result = lval_call(e, f, v);
 </code></pre>
 <p>Try defining some functions and test out how partial evaluation works.</p>
-<pre><code class="lang-lispy">lispy&gt; \ <span class="hljs-list">{x y}</span> <span class="hljs-list">{+ x y}</span>
-(\ <span class="hljs-list">{x y}</span> <span class="hljs-list">{+ x y}</span>)
-lispy&gt; (\ <span class="hljs-list">{x y}</span> <span class="hljs-list">{+ x y}</span>) <span class="hljs-number">10</span> <span class="hljs-number">20</span>
-<span class="hljs-number">30</span>
-lispy&gt; def <span class="hljs-list">{add-mul}</span> (\ <span class="hljs-list">{x y}</span> <span class="hljs-list">{+ x (* x y)}</span>)
+<pre><code class="lang-lispy">lispy&gt; \ {x y} {+ x y}
+(\ {x y} {+ x y})
+lispy&gt; (\ {x y} {+ x y}) 10 20
+30
+lispy&gt; def {add-mul} (\ {x y} {+ x (* x y)})
 ()
-lispy&gt; add-mul <span class="hljs-number">10</span> <span class="hljs-number">20</span>
-<span class="hljs-number">210</span>
-lispy&gt; add-mul <span class="hljs-number">10</span>
-(\ <span class="hljs-list">{y}</span> <span class="hljs-list">{+ x (* x y)}</span>)
-lispy&gt; def <span class="hljs-list">{add-mul-10}</span> (add-mul <span class="hljs-number">10</span>)
+lispy&gt; add-mul 10 20
+210
+lispy&gt; add-mul 10
+(\ {y} {+ x (* x y)})
+lispy&gt; def {add-mul-10} (add-mul 10)
 ()
-lispy&gt; add-mul-<span class="hljs-number">10</span> <span class="hljs-number">50</span>
-<span class="hljs-number">510</span>
+lispy&gt; add-mul-10 50
+510
 lispy&gt;
 </code></pre>
 <h2 id="variable-arguments">Variable Arguments</h2>
@@ -665,13 +671,13 @@ lispy&gt;
 
 <p>Lambdas are clearly a simple and powerful way of defining functions. But the syntax is a little clumsy. There are a lot of brackets and symbols involved. Here is an interesting idea. We can try to write a function that defines a function itself, using in some way nicer syntax.</p>
 <p>Essentially what we want is a function that can perform two steps at once. First creating a new function and then defining it some name. We could let the user supply the name and the formal arguments altogether and then separate these out for them and use them in the definition. Here is a function that does that. It takes as input some arguments and some body. It takes the head of the arguments to be the function name and the rest to be the formals to the function body.</p>
-<pre><code class="lang-lispy">{args body} {<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-params">(head args)</span> <span class="hljs-params">(\ <span class="hljs-params">(tail args)</span> body)</span>}</span>
+<pre><code class="lang-lispy">{args body} {def (head args) (\ (tail args) body)}
 </code></pre>
 <p>We can name this function something like <code>fun</code> by passing it to <code>def</code> as usual.</p>
-<pre><code class="lang-lispy">def <span class="hljs-list">{fun}</span> (\ <span class="hljs-list">{args body}</span> <span class="hljs-list">{def (head args) (\ (tail args) body)}</span>)
+<pre><code class="lang-lispy">def {fun} (\ {args body} {def (head args) (\ (tail args) body)})
 </code></pre>
 <p>This means that we can now define functions in a much simpler and nicer way. To define our previously mentioned <code>add-together</code> we can do the following. Functions that can define functions. That is certainly something we could never do in C. How cool is that!</p>
-<pre><code class="lang-lispy">fun <span class="hljs-list">{add-together x y}</span> <span class="hljs-list">{+ x y}</span>
+<pre><code class="lang-lispy">fun {add-together x y} {+ x y}
 </code></pre>
 <div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
   <img src="img/curry.png" alt="curry"/>
@@ -682,22 +688,22 @@ lispy&gt;
 <p>At the moment functions like <code>+</code> take a variable number of arguments. In some situations that&#39;s great, but what if we instead had a list of arguments we wished to pass it. In this situation it is rendered somewhat useless.</p>
 <p>Again we can try to create a function to solve this problem. If we can create a list in the format we wish to use for our expression we can use <code>eval</code> to treat it as such. In the situation of <code>+</code> we could append this function to the front of the list and then perform the evaluation.</p>
 <p>We can define a function <code>unpack</code> that does this. It takes as input some function and some list and appends the function to the front of the list, before evaluating it.</p>
-<pre><code class="lang-lispy">fun {<span class="hljs-keyword">unpack</span> f xs} {<span class="hljs-keyword">eval</span> (<span class="hljs-keyword">join</span> (list f) xs)}
+<pre><code class="lang-lispy">fun {unpack f xs} {eval (join (list f) xs)}
 </code></pre>
 <p>In some situations we might be faced with the opposite dilemma. We may have a function that takes as input some list, but we wish to call it using variable arguments. In this case the solution is even simpler. We use the fact that our <code>&amp;;</code> syntax for variable arguments packs up variable arguments into a list for us.</p>
-<pre><code class="lang-lispy">fun <span class="hljs-list">{pack f &amp;; xs}</span> <span class="hljs-list">{f xs}</span>
+<pre><code class="lang-lispy">fun {pack f &amp;; xs} {f xs}
 </code></pre>
 <p>In some languages this is called <em>currying</em> and <em>uncurrying</em> respectively. This is named after <em>Haskell Curry</em> and unfortunately has nothing to do with our favourite spicy food.</p>
-<pre><code class="lang-lispy"><span class="hljs-tag">lispy</span>&gt; <span class="hljs-tag">uncurry</span> <span class="hljs-tag">head</span> 5 6 7
-<span class="hljs-rules">{<span class="hljs-rule">5}</span></span>
-<span class="hljs-tag">lispy</span>&gt; <span class="hljs-tag">curry</span> + <span class="hljs-rules">{<span class="hljs-rule">5 6 7}</span></span>
+<pre><code class="lang-lispy">lispy&gt; uncurry head 5 6 7
+{5}
+lispy&gt; curry + {5 6 7}
 18
 </code></pre>
 <p>Because of the way our <em>partial evaluation</em> works we don&#39;t need to think of <em>currying</em> with a specific set of arguments. We can think of functions themselves being in <em>curried</em> or <em>uncurried</em> form.</p>
-<pre><code class="lang-lispy">lispy&gt; def <span class="hljs-list">{add-unpacked}</span> (curry +)
+<pre><code class="lang-lispy">lispy&gt; def {add-unpacked} (curry +)
 ()
-lispy&gt; add-unpacked <span class="hljs-list">{5 6 7}</span>
-<span class="hljs-number">18</span>
+lispy&gt; add-unpacked {5 6 7}
+18
 </code></pre>
 <p>Have a play around and see what other interesting and powerful functions you can try to come up with. You might be a bit limited for now. In the next chapter well add conditionals which will really start to make our language more complete. But that doesn&#39;t mean you won&#39;t be able to come up with some other interesting ideas now. Our Lisp really is getting richer!</p>
 <h2 id="reference">Reference</h2>
@@ -1444,24 +1450,25 @@ int main(int argc, char** argv) {
     <li class="list-group-item">&rsaquo; Change variable arguments so at least one extra argument must be supplied before it is evaluated.</li>
   </ul>
 </div>
+                    
+                    </section>
                 
-                </section>
-            
+                </div>
             </div>
-
-            <div class="page-footer">
-    
-        
-            
-            <a href="./conditionals.html" class="navigation-link next">Next</a>
-            
-        
-    
-</div>
         </div>
+
+        
+        <a href="./variables.html" class="navigation navigation-prev"><i class="fa fa-angle-left"></i></a>
+        
+        
+        <a href="./conditionals.html" class="navigation navigation-next"><i class="fa fa-angle-right"></i></a>
+        
     </div>
 </div>
 
+        
+        <link rel="stylesheet" href="gitbook/style.css">
+        
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/mode-javascript.js"></script>
