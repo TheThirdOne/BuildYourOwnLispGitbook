@@ -198,10 +198,7 @@ lispy> / 10 2
 Plumbing
 --------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/plumbing.png" alt="plumbing"/>
-  <small>Plumbing &bull; Harder than you think</small>
-</div>
+![plumbing](img/plumbing.png "Plumbing &bull; Harder than you think")
 
 Some of you who have gotten this far in the book may feel uncomfortable with how it is progressing. You may feel you've managed to follow instructions well enough, but don't have a clear understanding of all of the underlying mechanisms going on behind the scenes.
 

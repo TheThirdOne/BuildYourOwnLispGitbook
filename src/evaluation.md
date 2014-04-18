@@ -9,10 +9,7 @@ Now we can read input, and we have it structured internally, but we are still un
 
 This internal structure is what we saw printed out by the program in the previous chapter. It is called an *Abstract Syntax Tree*, and it represents the structure of the program based on the input entered by the user. At the leaves of this tree are numbers and operators - the actual data to be processed. At the branches are the rules used to produce this part of the tree - the information on how to traverse and evaluate it.
 
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/tree.png" alt="tree"/>
-  <small>Abstract Christmas Tree &bull; A seasonal variation</small>
-</div>
+![tree](img/tree.png "Abstract Christmas Tree &bull; A seasonal variation")
 
 Before working out exactly how we are going to do this traversal, lets see exactly how this structure is defined internally. If we peek inside `mpc.h` we can have a look at the definition of `mpc_ast_t`, which is the data structure we got from the parse.
 
@@ -61,10 +58,7 @@ Recursion
 
 There is a funny thing about this tree structure. It refers to itself. Each of its children are themselves trees again, and the children of those children are trees yet again. Just like our languages, and re-write rules, data in this structure contains repeated substructures, that resemble their parents.
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/recursion.png" alt="recursion"/>
-  <small>Recursion &bull; Dangerous in a fire.</small>
-</div>
+![recursion](img/recursion.png "Recursion &bull; Dangerous in a fire")
 
 This pattern of repeated substructures could go on and on. Clearly if we want a function which can work on all possible trees we can't look just a couple of nodes down, we have to define it to work on trees of any depth.
 

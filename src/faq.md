@@ -1,10 +1,7 @@
 Frequently Asked Questions
 ==========================
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/me.png" alt="me"/>
-  <small>Me &bull; Drinking a beer.</small>
-</div>
+![me](img/me.png "Me &bull; Drinking a beer")
 
 
 Who are you?

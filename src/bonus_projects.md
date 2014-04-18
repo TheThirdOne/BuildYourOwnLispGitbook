@@ -25,11 +25,7 @@ As well as adding support for native types it would be good to give users the ab
 
 This task may be interesting to anyone who has a specific idea of how they would like to develop the language, and what they want a final design to look like.
 
-
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/list.png" alt="list"/>
-  <small>Important List &bull; Play! BE HAPPY and go home.</small>
-</div>
+![list](img/list.png "Important List &bull; Play! BE HAPPY and go home")
 
 List Literal
 ------------
@@ -84,10 +80,7 @@ Garbage Collection
 
 Almost all other implementations of Lisps assign variables differently to ours. They do not store a copy of a value in the environment, but actually a pointer, or reference, to it directly. Because pointers are used, rather than copies, just like in C, there is much less overhead required when using large data structures.
 
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/garbage.png" alt="garbage"/>
-  <small>Garbage Collection &bull; Pick up that can.</small>
-</div>
+![garbage](img/garbage.png "Garbage Collection &bull; Pick up that can.")
 
 If we store pointers to values, rather than copies, we need to ensure that the data pointed to is not deleted before some other value tries to make use of it. Instead we want it to get deleted when there are no longer any references to it. One method to do this, called *Mark and Sweep*, is to monitor those values that are in the environment, as well as every value that has been allocated. When a variable is put into the environment it, and everything it references, is *marked*. Then, when we wish to free memory, we can then iterate over every value that has been allocated, and delete any that are not marked.
 
@@ -113,11 +106,7 @@ When our language tries to lookup a variable that has been undefined it throws a
 
 This could be a difficult task to get exactly right, but should be interesting to anyone who wants to make their programming language more safe to use, and less bug-prone.
 
-
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/static.png" alt="static"/>
-  <small>Static Electricity &bull; A hair-raising alternative.</small>
-</div>
+![static](img/static.png "Static Electricity &bull; A hair-raising alternative")
 
 Static Typing
 -------------

@@ -6,10 +6,7 @@ Doing it yourself
 
 We&#39;ve come quite far now. Your knowledge of C should be good enough for you to stand on your own feet a little more. If you're feeling confident, this chapter is a perfect opportunity to stretch your wings out, and attempt something on your own. It is a fairly short chapter and essentially consists of adding a couple of new builtin functions to deal with comparison and ordering.
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/pug.png" alt="pug"/>
-  <small>Pug &bull; **if** pug is asleep **then** pug is cute.</small>
-</div>
+![pug](img/pug.png "Pug &bull; if pug is asleep, then pug is cute")
 
 If you're feeling positive, go ahead and try to implement comparison and ordering into your language now. Define some new builtin functions for *greater than*, *less than*, *equal to*, and all the other comparison operators we use in C. Try to define an `if` function that tests for some condition and then either evaluate some code, or some other code, depending on the result. Once you've finished come back and compare your work to mine. Observe the differences and decide which parts you prefer.
 

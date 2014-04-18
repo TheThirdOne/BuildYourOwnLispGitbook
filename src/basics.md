@@ -5,11 +5,8 @@ Basics
 Overview
 ---------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/programs.png" alt="programs"/>
-  <small>Programs &bull; Useful for the theatre.</small>
-</div>
-
+![programs](img/programs.png "Programs &bull; Useful for the theatre")
+  
 In this chapter I've prepared a quick overview of the basic features of C. There are very few *features* in C, and the syntax is relatively simple. But this doesn't mean it is easy. All the depth hides below the surface. Because of this we're going to cover the *features* and *syntax* fairly quickly now, and see them in greater depth as we continue.
 
 The goal of this chapter is get everyone on the same page. People totally new to C should therefore read it in some consideration, and take some time over it, while those with some existing experience may find it easier to skim and return to later as required.
@@ -113,10 +110,7 @@ float length = sqrt(p.x * p.x + p.y * p.y);
 Pointers
 ---------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/pointer.png" alt="pointer"/>
-  <small>Pointer &bull; A short haired one</small>
-</div>
+![pointer](img/pointer.png "Pointer &bull; A short haired one")
 
 A pointer is a variation on a normal type where the type name is suffixed with an asterisk. For example we could declare a *pointer to an integer* by writing `int*`. We already saw a pointer type `char** argv`. This is a *pointer to pointers to characters*, and is used as input to `main` function.
 

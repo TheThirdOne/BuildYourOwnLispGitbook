@@ -5,10 +5,7 @@ Strings
 Libraries
 ---------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/string.png" alt="string"/>
-  <small>String &bull; How long is it.</small>
-</div>
+![string](img/string.png "String &bull; How long is i")
 
 Our Lisp is finally pretty functional. We should be able to write almost any functions we want. We can build some quite complex constructs using it, and even do some cool things that can't be done in lots of other heavyweight and popular languages!
 

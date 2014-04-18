@@ -1,13 +1,10 @@
 S-Expressions
 =============
 
+Lists and Lisps
+---------------
 
-Lists and Lisps</h2> <hr/>
-
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/lisp.png" alt="lisp"/>
-  <small>ALL CAPS &bull; SO RIGHT YET SO WRONG.</small>
-</div>
+![lisp](img/lisp.png "ALL CAPS &bull; SO RIGHT YET SO WRONG")
 
 Lisps are famous for having little distinction between data and code. They use the same structures to represent both. This allows them to do many powerful things which other languages cannot do. If we want this power for our programming language we're going to have to separate out the process of *reading* in input, and *evaluating* that input we have stored.
 
@@ -18,7 +15,8 @@ To store the program we will need to create an internal list structure that is b
 By introducing S-Expressions we'll finally be entering the world of Lisp.
 
 
-Pointers</h2> <hr/>
+Pointers
+--------
 
 In C no concept of lists can be explored without dealing properly with pointers. Pointers are a famously misunderstood aspect of C. They are difficult to teach because while being conceptually very simple, they come with a lot of new terminology, and often no clear use-case. This makes them appear far more monstrous than they are. Luckily for us, we have a couple ideal use-cases, both of which are extremely typical in C, and will likely end up being how you use pointers 90% of the time.
 
@@ -45,30 +43,27 @@ To create a pointer to some data, we need to get its index, or *address*. To get
 Finally to get the data at an address, called *dereferencing*, we use the `*` operator on the left hand size of a variable. To get the data at the field of a pointer to a struct we use the arrow `->`. This you saw in chapter 7.
 
 
-The Stack &amp; The Heap</h2> <hr/>
+The Stack &amp; The Heap
+------------------------
 
 I said that memory can be visualized of as one long list of bytes. Actually it is better to imagine it split into two sections. These sections are called *The Stack* and *The Heap*.
 
 Some of you may have heard tales of these mysterious locations, such as *"the stack grows down but the heap grows up"*, or *"there can be many stacks, but only one heap"*. These sorts of things don't matter much. Dealing with the stack and the heap in C can be complex, but it doesn't have to be a mystery. In essence they are just two sections of memory used for two different tasks.
 
-<h3>The Stack</h3>
+The Stack
+---------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/building.png" alt="building"/>
-  <small>The Stack &bull; Like what you do with bricks.</small>
-</div>
-
+![building](img/building.png "The Stack &bull; Like what you do with bricks")
+  
 The Stack is the memory where your program lives. It is where all of your temporary variables and data structures exist as you manipulate and edit them. Each time you call a function a new area of the stack is put aside for it to use. Into this area are put local variables, copies of any arguments passed to the function, as well as some bookkeeping data such as who the caller was, and what to do when finished. When the function is done the area it used is unallocated, ready for use again by someone else.
 
 I like to think of the stack as a building site. Each time we need to do something new we corner off a section of space, enough for our tools and materials, and set to work. We can still go to other parts of the site, or go off-site, if we need certain things, but all our work is done in this section. Once we are done with some task, we take what we've constructed to a new place and clean up that section of the space we've been using to make it.
 
 
-<h3>The Heap</h3>
+The Heap
+--------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/storage.png" alt="storage"/>
-  <small>The Heap &bull; U LOCK. KEEP KEY.</small>
-</div>
+![storage](img/storage.png "The Heap &bull; U LOCK. KEEP KEY")
 
 The Heap is a section of memory put aside for storage of objects with a longer lifespan. Memory in this area has to be manually allocated and deallocated. To allocate new memory the `malloc` function is used. This function takes as input the number of bytes required, and returns back a pointer to a new block of memory with that many bytes set aside.
 
@@ -79,7 +74,8 @@ Using the Heap is trickier than the Stack because it requires the programmer to 
 I Imagine the Heap like a huge U-Store-It. We can call up the reception with `malloc` and request a number of boxes. With these boxes we can do what we want, and we know they will persist no matter how messy the building site gets. We can take things to and from the U-Store-It and the building site. It is useful to store materials and large objects which we only need to retrieve once in a while. The only problem is we need to remember to call the receptionist again with `free` when we are done. Otherwise soon we'll have requested all the boxes, have no space, and run up a huge bill.
 
 
-Parsing Expressions</h2> <hr/>
+Parsing Expressions
+-------------------
 
 Because we're now thinking in S-Expressions, and not Polish Notation we need to update our parser. The syntax for S-Expressions is simple. It is just a number of other Expressions between parenthesis, where an Expression can be a Number, Operator, or other S-Expression . We can modify our existing parse rules to reflect this. We also are going to rename our `operator` rule to `symbol`. This is in anticipation of adding more operators, variables and functions later.
 
@@ -108,7 +104,8 @@ mpc_cleanup(5, Number, Symbol, Sexpr, Expr, Lispy);
 ```
 
 
-Expression Structure</h2> <hr/>
+Expression Structure
+--------------------
 
 We need a way to store S-Expressions internally as `lval`. This means we'll also need to store internally *Symbols* and *Numbers*. We're going to add two new `lval` types to the enumeration. The first new type is `LVAL_SYM`, which we're going to use to represent operators such as `+`. The second new type is `LVAL_SEXPR` which we're going to use to represent S-Expressions.
 
@@ -157,7 +154,8 @@ typedef struct lval {
   Our new definition of `lval` needs to contain a reference to itself. This means we have to slightly change how it is defined. Before we open the curly brackets we can put the name of the struct, and then refer to this inside using `struct lval`. Even though a struct can refer to its own type, it must only contain pointers to its own type, not its own type directly. Otherwise the size of the struct would refer to itself, and grow infinite in size when you tried to calculate it!
 </div>
 
-Constructors &amp; Destructors</h2> <hr/>
+Constructors &amp; Destructors
+------------------------------
 
 We can change our `lval` construction functions to return pointers to an `lval`, rather than one directly. This will make keeping track of `lval` variables easier. For this we need to use `malloc` with the `sizeof` function to allocate enough space for the `lval` struct, and then to fill in the fields with the relevant information using the arrow operator `->`.
 
@@ -244,7 +242,8 @@ void lval_del(lval* v) {
 ```
 
 
-Reading Expressions</h2> <hr/>
+Reading Expressions
+-------------------
 
 First we are going to *read* in the program and construct an `lval*` that represents it all. Then we are going to *evaluate* this `lval*` to get the result of our program. This first stage should convert the *abstract syntax tree* into an S-Expression, and the second stage should evaluate this S-Expression using our normal Lisp rules.
 
@@ -300,7 +299,8 @@ lval* lval_read(mpc_ast_t* t) {
 }
 ```
 
-Printing Expressions</h2> <hr/>
+Printing Expressions
+--------------------
 
 We are so close to trying out all of our new changes! We need to modify our print function to print out S-Expressions types. Using this we can double check that the *reading* phase is working correctly by printing out the S-Expressions we read in and verifying they match those we input.
 
@@ -364,7 +364,8 @@ lispy>
 ```
 
 
-Evaluating Expressions</h2> <hr/>
+Evaluating Expressions
+----------------------
 
 The behaviour of our evaluation function is largely the same as before. We need to adapt it to deal with `lval*` and our more relaxed definition of what constitutes an expression. We can think of our evaluation function as a kind of transformer. It takes in some `lval*` and transforms it in some way to some new `lval*`. In some cases it can just return exactly the same thing. In other cases it may modify the input `lval*` and the return it. In many cases it will delete the input, and return something completely different. If we are going to return something new we must always remember to delete the `lval*` we get as input.
 
@@ -524,7 +525,8 @@ lispy>
 ```
 
 
-Reference</h2> <hr/>
+Reference
+---------
 
 <div class="panel-group alert alert-warning" id="accordion">
   <div class="panel panel-default">
@@ -864,7 +866,8 @@ int main(int argc, char** argv) {
   </div>
 </div>
 
-Bonus Marks</h2> <hr/>
+Bonus Marks
+-----------
 
 <div class="alert alert-warning">
   <ul class="list-group">

@@ -4,10 +4,7 @@ Standard Library
 Minimalism
 ----------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/library.png" alt="library"/>
-  <small>Library &bull; Built with just leather, paper, wood, and ink.</small>
-</div>
+![library](img/library.png "Library &bull; Built with just leather, paper, wood, and ink")
 
 The Lisp we've built has been purposefully minimal. We've only added the fewest number of core structures and builtins. If we chose these carefully, as we did, then it should allow us to add in everything else required to the language.
 

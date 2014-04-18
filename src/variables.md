@@ -5,10 +5,7 @@ Variables
 Immutability
 ------------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/turtle.png" alt="turtle"/>
-  <small>Teenage Ninja Turtle &bull; Not Immutable.</small>
-</div>
+![turtle](img/turtle.png "Teenage Ninja Turtle &bull; Not Immutable")
 
 In the previous chapters we've learnt a lot, and made great progress on the infrastructure of our language.
 
@@ -471,10 +468,7 @@ Error Reporting
 
 So far our error reporting kind of sucks. We can report when an error occurs, and give a vague notion of what was the problem was, but we don't give the user much information about what exactly has gone wrong. For example if there is an unbound symbol we should be able to report exactly which symbol was unbound. This can help the user track down errors, typos, and other trivial problems.
 
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/eclipses.png" alt="eclipses"/>
-  <small>Eclipses &bull; Like ellipsis.</small>
-</div>
+![eclipses](img/eclipses.png "Eclipses &bull; Like ellipsis")
 
 Wouldn't it be great if we could write a function that can report errors in a similar way to how `printf` works. It would be ideal if we could pass in strings, integers, and other data to make our error messages richer.
 
@@ -484,7 +478,7 @@ We'll modify `lval_err` to act in the same way as `printf`, taking in a format s
 
 To declare that a function takes variables arguments in the type signature you use the special syntax of ellipsis `...`, which represent the rest of the arguments.
 
-<code data-language='c'>lval* lval_err(char* fmt, ...);`
+`lval* lval_err(char* fmt, ...);`
 
 Then, inside the function there are some standard library functions we can use to examine what the caller has passed in.
 

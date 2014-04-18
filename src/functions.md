@@ -8,10 +8,7 @@ Functions are the essence of all programming. Back in the early days of computer
 
 This dream hasn't come true yet, but it persists, no matter how flawed. Each new programming technique, or paradigm, that comes along shakes up this idea a little. They promise better re-use of code. Better abstractions, and an easier life for all.
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/bananas.png" alt="bananas"/>
-  <small>Bananaphone &bull; Another naive dream.</small>
-</div>
+![bananas](img/bananas.png "Bananaphone &bull; Another naive dream")
 
 In reality what each paradigm delivers is simply *different* abstractions. There has always been a trade-off. For each higher level of thinking about programming, some piece is thrown away. And this means, no matter how well you decide what to keep and what to leave, occasionally someone will need that piece that has been lost. But through all of this, one way or the other, functions have always persisted, and continually proven to be effective.
 
@@ -21,10 +18,7 @@ One way to think about functions is as description of some computation you want 
 
 Another way to think about functions is as a black box that takes some input and produces some output. This idea is subtly different from the former. It is more algebraic, and doesn't talk about *computation* or *commands*. This idea is a mathematical concept, and is not tied to some particular machine, or language. In some situations this idea is exceptionally useful. It allows us to think about functions without worrying about their internals, or how they are computed exactly. We can then combine and compose them together without worry of something subtle going wrong. This is the core idea behind an abstraction, and is what allows layers of complexity to work together with each other rather than conflict. This idea's strength can also be its downfall. Because it does not mention anything about computation it does not deal with a number of real world concerns. *"How long will this function take to run?"*, *"Is this function efficient?"*, *"Will it modify the state of my program? If so how?"*.
 
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/black_box.png" alt="black_box"/>
-  <small>Black Box &bull; Your typical function.</small>
-</div>
+![black_box](img/black_box.png "Black Box &bull; Your typical function")
 
 A third method is to think of functions as *partial computations*. Like the Mathematical model they can take some inputs. These values are required before it can complete the computation. This is why it is called *partial*. But like the computational model, the body of the function consists of a computation specified in some language of commands. These inputs are called *unbound variables*, and to finish the computation one simply supplies them. Like fitting a cog into a machine which was before spinning aimlessly, this completes all that is needed for the computation to run, and the machine runs. The output of these *partial computations* is itself a variable with an unknown value. This output can be placed as input to a new function, and so one function relies on another.
 
@@ -180,12 +174,7 @@ lval* builtin_lambda(lenv* e, lval* a) {
 }
 ```
 
-
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/playgroup.png" alt="playgroup"/>
-  <small>Playgroup &bull; Your typical parent environment.</small>
-</div>
-
+![playgroup](img/playgroup.png "Playgroup &bull; Your typical parent environment")
 
 Parent Environment
 ------------------
@@ -517,10 +506,7 @@ This means that we can now define functions in a much simpler and nicer way. To 
 fun {add-together x y} {+ x y}
 ```
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/curry.png" alt="curry"/>
-  <small>Currying &bull; Not as good as it sounds.</small>
-</div>
+![curry](img/curry.png "Currying &bull; Not as good as it sounds")
 
 Currying
 --------

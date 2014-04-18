@@ -236,10 +236,7 @@ lval* builtin_tail(lval* a) {
 Macros
 ------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/strawberry.png" alt="strawberry"/>
-  <small>Strawberry &bull; A delicious macro.</small>
-</div>
+![strawberry](img/strawberry.png "Strawberry &bull; A delicious macro")
 
 These `head` and `tail` functions do the correct thing, but the code pretty unclear, and long. There is so much error checking that the functionality is hard to see. One method we can use to clean it up is to use a *Macro*.
 

@@ -5,10 +5,7 @@ An Interactive Prompt
 Read, Evaluate, Print
 ---------------------
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/reptile.png" alt="reptile"/>
-  <small>Reptile &bull; Sort of like REPL</small>
-</div>
+![reptile](img/reptile.png "Reptile &bull; Sort of like REPL")
 
 As we build our programming language we'll need some way to interact with it. C uses a compiler, where you can change the program, recompile and run it. It'd be good if we could do something better, and interact with the language dynamically. Then we test its behaviour under a number of conditions very quickly. For this we can built something called an *interactive prompt*.
 
@@ -212,10 +209,7 @@ The C Preprocessor
 
 For such a small project it might be okay that we have to program differently depending on what operating system we are using, but if I want to send my source code to a friend on different operating system to give me a hand with the programming, it is going to cause problem. In an ideal world I'd wish for my source code to be able to compile no matter where, or on what computer, it is being compiled. This is a general problem in C, and it is called *portability*. There is not always an easy or correct solution.
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/octopus.png" alt="octopus"/>
-  <small>Octopus &bull; Sort of like Octothorpe</small>
-</div>
+![octopus](img/octopus.png "Octopus &bull; Sort of like Octothorpe")
 
 But C does provide a mechanism to help, called *the preprocessor*.
 

@@ -5,10 +5,7 @@ Installation
 Setup
 -----
 
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/cattop.png" alt="capttop"/>
-  <small>Cat &bull; Install at own risk.</small>
-</div>
+![capttop](img/cattop.png "Cat &bull; Install at own risk")
 
 Before we can start programming in C we'll need to install a couple of things, and set up our environment so that we have everything we need. Because C is such a universal language this should hopefully be fairly simple. Essentially we need to install two main things. A *text editor* and a *compiler*.
 
@@ -94,10 +91,7 @@ If there are some problems with your C program the compilation process may fail.
 
 Sometimes the error message from the compiler will make sense, but if you are having trouble understanding it try searching online for it. You should see if you can find a concise explanation of what it means, and work out how to correct it. Remember this: there are many people before you who have struggled with exactly the same problems.
 
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/smash.png" alt="smash"/>
-  <small>Rage &bull; A poor debugging technique</small>
-</div>
+![smash](img/smash.png "Rage &bull; A poor debugging technique")
 
 Sometimes there will be many compiler errors stemming from one source. Always work through compiler errors from first to last.
 
