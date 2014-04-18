@@ -36,7 +36,7 @@
     </head>
     <body>
         
-    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="3" data-basepath="." data-revision="1397765575020">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="3" data-basepath="." data-revision="1397798441758">
     <div class="book-header">
     <!-- Actions Left -->
     
@@ -290,11 +290,7 @@
                     
                         <h1 id="an-interactive-prompt">An Interactive Prompt</h1>
 <h2 id="read-evaluate-print">Read, Evaluate, Print</h2>
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/reptile.png" alt="reptile"/>
-  <small>Reptile &bull; Sort of like REPL</small>
-</div>
-
+<p><img src="img/reptile.png" alt="reptile" title="Reptile &bull; Sort of like REPL"></p>
 <p>As we build our programming language we&#39;ll need some way to interact with it. C uses a compiler, where you can change the program, recompile and run it. It&#39;d be good if we could do something better, and interact with the language dynamically. Then we test its behaviour under a number of conditions very quickly. For this we can built something called an <em>interactive prompt</em>.</p>
 <p>This is a program that prompts the user for some input, and when supplied with it, replies back with some message. Using this will be the easiest way to test our programming language and see how it acts. This system is also called a <em>REPL</em>, which stands for <em>read</em>-<em>evaluate</em>-<em>print</em> <em>loop</em>. It is a common way of interacting with a programming language which you may have used before in languages such as <em>Python</em>.</p>
 <p>Before building a full <em>REPL</em> we&#39;ll start with something simpler. We are going to make a system that prompts the user, and echoes any input straight back. If we make this we can later extend it to parse the user input and evaluate it, as if it were an actual Lisp program.</p>
@@ -434,11 +430,7 @@ undefined reference to `add_history&#39;
 
 <h2 id="the-c-preprocessor">The C Preprocessor</h2>
 <p>For such a small project it might be okay that we have to program differently depending on what operating system we are using, but if I want to send my source code to a friend on different operating system to give me a hand with the programming, it is going to cause problem. In an ideal world I&#39;d wish for my source code to be able to compile no matter where, or on what computer, it is being compiled. This is a general problem in C, and it is called <em>portability</em>. There is not always an easy or correct solution.</p>
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/octopus.png" alt="octopus"/>
-  <small>Octopus &bull; Sort of like Octothorpe</small>
-</div>
-
+<p><img src="img/octopus.png" alt="octopus" title="Octopus &bull; Sort of like Octothorpe"></p>
 <p>But C does provide a mechanism to help, called <em>the preprocessor</em>.</p>
 <p>The preprocessor is a program that runs before the compiler. It has a number of purposes, and we&#39;ve been actually using it already without knowing. Any line that starts with a octothorpe <code>#</code> character (hash to you and me) is a preprocessor command. We&#39;ve been using it to <em>include</em> header files, giving us access to functions from the standard library and others.</p>
 <p>Another use of the preprocessor is to detect which operating system the code is being compiled on, and to use this to emit different code.</p>

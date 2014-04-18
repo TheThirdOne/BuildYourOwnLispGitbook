@@ -36,7 +36,7 @@
     </head>
     <body>
         
-    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="15" data-basepath="." data-revision="1397765575020">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="15" data-basepath="." data-revision="1397798441758">
     <div class="book-header">
     <!-- Actions Left -->
     
@@ -298,11 +298,7 @@
 <h2 id="user-defined-types">User Defined Types</h2>
 <p>As well as adding support for native types it would be good to give users the ability to add their own new types, just like how we use structs in C. The syntax or method you use to do this would be up to you. This is a really essential part making our language usable for any reasonably sized project.</p>
 <p>This task may be interesting to anyone who has a specific idea of how they would like to develop the language, and what they want a final design to look like.</p>
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/list.png" alt="list"/>
-  <small>Important List &bull; Play! BE HAPPY and go home.</small>
-</div>
-
+<p><img src="img/list.png" alt="list" title="Important List &bull; Play! BE HAPPY and go home"></p>
 <h2 id="list-literal">List Literal</h2>
 <p>Some lisps use square brackets <code>[]</code> to give a literal notation for lists of evaluated values lists. This syntactic sugar for writing something like <code>list 100 (+ 10 20) 300</code>. Instead it lets you write <code>[100 (+ 10 20) 300]</code>. In some situations this is clearly nicer, but it does use up the <code>[]</code> characters which could possibly be used for more interesting purposes.</p>
 <p>This should be a simple addition for people looking to try out adding extra syntax.</p>
@@ -324,11 +320,7 @@
 <p>This can be tricky to implement correctly, but conceptually does not need to be complex. If you want a quick method for getting large gains in performance looking into this might interest you.</p>
 <h2 id="garbage-collection">Garbage Collection</h2>
 <p>Almost all other implementations of Lisps assign variables differently to ours. They do not store a copy of a value in the environment, but actually a pointer, or reference, to it directly. Because pointers are used, rather than copies, just like in C, there is much less overhead required when using large data structures.</p>
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/garbage.png" alt="garbage"/>
-  <small>Garbage Collection &bull; Pick up that can.</small>
-</div>
-
+<p><img src="img/garbage.png" alt="garbage" title="Garbage Collection &bull; Pick up that can."></p>
 <p>If we store pointers to values, rather than copies, we need to ensure that the data pointed to is not deleted before some other value tries to make use of it. Instead we want it to get deleted when there are no longer any references to it. One method to do this, called <em>Mark and Sweep</em>, is to monitor those values that are in the environment, as well as every value that has been allocated. When a variable is put into the environment it, and everything it references, is <em>marked</em>. Then, when we wish to free memory, we can then iterate over every value that has been allocated, and delete any that are not marked.</p>
 <p>This is called <em>Garbage Collection</em> and is an integral part to many programming languages. As with pool allocation, implementing a <em>Garbage Collector</em> does not need to be complicated, but it does need to be done carefully, in particularly if you wish to make it efficient. Implementing this would be essential to making this language practical for working with large amounts of data. A particularly good tutorial on implementing a garbage collector in C can be found <a href="http://journal.stuffwithstuff.com/2013/12/08/babys-first-garbage-collector/">here</a>.</p>
 <p>This should interest anyone who is concerned with the language&#39;s performance and wishes to change the semantics of how variables are stored and modified in the language.</p>
@@ -339,11 +331,7 @@
 <h2 id="lexical-scoping">Lexical Scoping</h2>
 <p>When our language tries to lookup a variable that has been undefined it throws an error. It would be better if it could tell us which variables are undefined before evaluating the program. This would let us avoid typos and other annoying bugs. Finding these issues before the program is run is called <em>lexical scoping</em>, and uses the rules for variable definition to try and infer which variables are defined and which aren&#39;t at each point in the program, without doing any evaluation.</p>
 <p>This could be a difficult task to get exactly right, but should be interesting to anyone who wants to make their programming language more safe to use, and less bug-prone.</p>
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/static.png" alt="static"/>
-  <small>Static Electricity &bull; A hair-raising alternative.</small>
-</div>
-
+<p><img src="img/static.png" alt="static" title="Static Electricity &bull; A hair-raising alternative"></p>
 <h2 id="static-typing">Static Typing</h2>
 <p>Every value in our program has an associated type with it. This we know before any evaluation has taken place. Our builtin functions also only take certain types as input. We should be able to use this information to infer the types of new user defined functions and values. We can also use this information to check that functions are being called with the correct types before we run the program. This will reduce any errors stemming from calling functions with incorrect types before evaluation. This checking is called <em>static typing</em>.</p>
 <p>Type systems are a really interesting and fundamental part of computer science. They are currently the best method we know of detecting errors before running a program. Anyone interesting in programming language safety and type systems should find this project really interesting.</p>

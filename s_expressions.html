@@ -36,7 +36,7 @@
     </head>
     <body>
         
-    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="8" data-basepath="." data-revision="1397765575020">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="8" data-basepath="." data-revision="1397798441758">
     <div class="book-header">
     <!-- Actions Left -->
     
@@ -289,17 +289,13 @@
                     <section class="normal" id="section-gitbook_15">
                     
                         <h1 id="s-expressions">S-Expressions</h1>
-<p>Lists and Lisps</h2> <hr/></p>
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/lisp.png" alt="lisp"/>
-  <small>ALL CAPS &bull; SO RIGHT YET SO WRONG.</small>
-</div>
-
+<h2 id="lists-and-lisps">Lists and Lisps</h2>
+<p><img src="img/lisp.png" alt="lisp" title="ALL CAPS &bull; SO RIGHT YET SO WRONG"></p>
 <p>Lisps are famous for having little distinction between data and code. They use the same structures to represent both. This allows them to do many powerful things which other languages cannot do. If we want this power for our programming language we&#39;re going to have to separate out the process of <em>reading</em> in input, and <em>evaluating</em> that input we have stored.</p>
 <p>The final result of this chapter will only differ slightly in behaviour from the previous chapter. This is because we are going to spend time changing how things work internally. This is called <em>re-factoring</em> and it will make our life a lot easier later on. Like preparation for a meal, just because we&#39;re not putting food onto plates it doesn&#39;t mean we&#39;re wasting time. Sometimes the anticipation is even better than eating!</p>
 <p>To store the program we will need to create an internal list structure that is built up recursively of numbers, symbols, and other lists. In Lisp, this structure is commonly called an S-Expression standing for <em>Symbolic Expression</em>. We will extend our <code>lval</code> structure to be able to represent it. The evaluation behaviour of S-Expressions is the behaviour typical of Lisps, that we are used to so far. To evaluate an S-Expression we look at the first item in the list, and take this to be the operator. We then look at all the other items in the list, and take these as operands to get the result.</p>
 <p>By introducing S-Expressions we&#39;ll finally be entering the world of Lisp.</p>
-<p>Pointers</h2> <hr/></p>
+<h2 id="pointers">Pointers</h2>
 <p>In C no concept of lists can be explored without dealing properly with pointers. Pointers are a famously misunderstood aspect of C. They are difficult to teach because while being conceptually very simple, they come with a lot of new terminology, and often no clear use-case. This makes them appear far more monstrous than they are. Luckily for us, we have a couple ideal use-cases, both of which are extremely typical in C, and will likely end up being how you use pointers 90% of the time.</p>
 <p>The reason we need pointers in C is because of how function calling works. When you call a function in C the arguments are always passed <em>by value</em>. This means <em>a copy</em> of them is passed to the function you call. This is true for <code>int</code>, <code>long</code>, <code>char</code>, and user defined <code>struct</code> types such as <code>lval</code>. Most of the time this is great but occasionally it can cause issues.</p>
 <p>A common problem is if we have a large struct containing many other sub structs we wish to pass around. Every time we call a function we must create another copy of it. Suddenly the amount of data that needs to be copied around just to call a function can become huge!</p>
@@ -312,30 +308,20 @@
 <p>We can declare pointer types by suffixing existing ones with the the <code>*</code> character. We&#39;ve seen some examples of this already with <code>mpc_parser_t*</code>, <code>mpc_ast_t*</code>, or <code>char*</code>.</p>
 <p>To create a pointer to some data, we need to get its index, or <em>address</em>. To get the address of a some data we use the <em>address of</em> operator <code>&amp;</code>. Again you&#39;ve seen this before when we passed in a pointer to <code>mpc_parse</code> so it would output into our <code>mpc_result_t</code>.</p>
 <p>Finally to get the data at an address, called <em>dereferencing</em>, we use the <code>*</code> operator on the left hand size of a variable. To get the data at the field of a pointer to a struct we use the arrow <code>-&gt;</code>. This you saw in chapter 7.</p>
-<p>The Stack &amp; The Heap</h2> <hr/></p>
+<h2 id="the-stack-amp-the-heap">The Stack &amp; The Heap</h2>
 <p>I said that memory can be visualized of as one long list of bytes. Actually it is better to imagine it split into two sections. These sections are called <em>The Stack</em> and <em>The Heap</em>.</p>
 <p>Some of you may have heard tales of these mysterious locations, such as <em>&quot;the stack grows down but the heap grows up&quot;</em>, or <em>&quot;there can be many stacks, but only one heap&quot;</em>. These sorts of things don&#39;t matter much. Dealing with the stack and the heap in C can be complex, but it doesn&#39;t have to be a mystery. In essence they are just two sections of memory used for two different tasks.</p>
-<h3>The Stack</h3>
-
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/building.png" alt="building"/>
-  <small>The Stack &bull; Like what you do with bricks.</small>
-</div>
-
+<h2 id="the-stack">The Stack</h2>
+<p><img src="img/building.png" alt="building" title="The Stack &bull; Like what you do with bricks"></p>
 <p>The Stack is the memory where your program lives. It is where all of your temporary variables and data structures exist as you manipulate and edit them. Each time you call a function a new area of the stack is put aside for it to use. Into this area are put local variables, copies of any arguments passed to the function, as well as some bookkeeping data such as who the caller was, and what to do when finished. When the function is done the area it used is unallocated, ready for use again by someone else.</p>
 <p>I like to think of the stack as a building site. Each time we need to do something new we corner off a section of space, enough for our tools and materials, and set to work. We can still go to other parts of the site, or go off-site, if we need certain things, but all our work is done in this section. Once we are done with some task, we take what we&#39;ve constructed to a new place and clean up that section of the space we&#39;ve been using to make it.</p>
-<h3>The Heap</h3>
-
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/storage.png" alt="storage"/>
-  <small>The Heap &bull; U LOCK. KEEP KEY.</small>
-</div>
-
+<h2 id="the-heap">The Heap</h2>
+<p><img src="img/storage.png" alt="storage" title="The Heap &bull; U LOCK. KEEP KEY"></p>
 <p>The Heap is a section of memory put aside for storage of objects with a longer lifespan. Memory in this area has to be manually allocated and deallocated. To allocate new memory the <code>malloc</code> function is used. This function takes as input the number of bytes required, and returns back a pointer to a new block of memory with that many bytes set aside.</p>
 <p>When done with the memory at that location it must be released again. To do this the pointer received from <code>malloc</code> should be passed to the <code>free</code> function.</p>
 <p>Using the Heap is trickier than the Stack because it requires the programmer to remember to call <code>free</code> and to call it correctly. If he or she doesn&#39;t, the program may continuously allocate more and more memory. This is called a <em>memory leak</em>. A easy rule to avoid this is to ensure for each <code>malloc</code> there is a corresponding (and only one corresponding) <code>free</code>. If this can always be ensured the program should be handling The Heap correctly.</p>
 <p>I Imagine the Heap like a huge U-Store-It. We can call up the reception with <code>malloc</code> and request a number of boxes. With these boxes we can do what we want, and we know they will persist no matter how messy the building site gets. We can take things to and from the U-Store-It and the building site. It is useful to store materials and large objects which we only need to retrieve once in a while. The only problem is we need to remember to call the receptionist again with <code>free</code> when we are done. Otherwise soon we&#39;ll have requested all the boxes, have no space, and run up a huge bill.</p>
-<p>Parsing Expressions</h2> <hr/></p>
+<h2 id="parsing-expressions">Parsing Expressions</h2>
 <p>Because we&#39;re now thinking in S-Expressions, and not Polish Notation we need to update our parser. The syntax for S-Expressions is simple. It is just a number of other Expressions between parenthesis, where an Expression can be a Number, Operator, or other S-Expression . We can modify our existing parse rules to reflect this. We also are going to rename our <code>operator</code> rule to <code>symbol</code>. This is in anticipation of adding more operators, variables and functions later.</p>
 <pre><code class="lang-c">mpc_parser_t* Number = mpc_new(<span class="hljs-string">"number"</span>);
 mpc_parser_t* Symbol = mpc_new(<span class="hljs-string">"symbol"</span>);
@@ -356,7 +342,7 @@ mpca_lang(MPC_LANG_DEFAULT,
 <p>We should also remember to cleanup these rules on exit.</p>
 <pre><code class="lang-c">mpc_cleanup(<span class="hljs-number">5</span>, Number, Symbol, Sexpr, Expr, Lispy);
 </code></pre>
-<p>Expression Structure</h2> <hr/></p>
+<h2 id="expression-structure">Expression Structure</h2>
 <p>We need a way to store S-Expressions internally as <code>lval</code>. This means we&#39;ll also need to store internally <em>Symbols</em> and <em>Numbers</em>. We&#39;re going to add two new <code>lval</code> types to the enumeration. The first new type is <code>LVAL_SYM</code>, which we&#39;re going to use to represent operators such as <code>+</code>. The second new type is <code>LVAL_SEXPR</code> which we&#39;re going to use to represent S-Expressions.</p>
 <pre><code class="lang-c"><span class="hljs-comment">/* Add SYM and SEXPR as possible lval types. */</span>
 <span class="hljs-keyword">enum</span> { LVAL_ERR, LVAL_NUM, LVAL_SYM, LVAL_SEXPR };
@@ -395,7 +381,7 @@ mpca_lang(MPC_LANG_DEFAULT,
   Our new definition of <code>lval</code> needs to contain a reference to itself. This means we have to slightly change how it is defined. Before we open the curly brackets we can put the name of the struct, and then refer to this inside using <code>struct lval</code>. Even though a struct can refer to its own type, it must only contain pointers to its own type, not its own type directly. Otherwise the size of the struct would refer to itself, and grow infinite in size when you tried to calculate it!
 </div>
 
-<p>Constructors &amp; Destructors</h2> <hr/></p>
+<h2 id="constructors-amp-destructors">Constructors &amp; Destructors</h2>
 <p>We can change our <code>lval</code> construction functions to return pointers to an <code>lval</code>, rather than one directly. This will make keeping track of <code>lval</code> variables easier. For this we need to use <code>malloc</code> with the <code>sizeof</code> function to allocate enough space for the <code>lval</code> struct, and then to fill in the fields with the relevant information using the arrow operator <code>-&gt;</code>.</p>
 <p>When we construct an <code>lval</code> its fields may contain pointers to other things that have been allocated on the heap. This means we need to be careful. Whenever we are done with an <code>lval</code> we also need to delete the things it points to on the heap. We will have to make a rule to ourselves. Whenever we free the memory allocated for an <code>lval</code>, we also free all the things it points to.</p>
 <pre><code class="lang-c"><span class="hljs-comment">/* Construct a pointer to a new Number lval */</span>
@@ -472,7 +458,7 @@ lval* lval_sexpr(<span class="hljs-keyword">void</span>) {
   <span class="hljs-built_in">free</span>(v);
 }
 </code></pre>
-<p>Reading Expressions</h2> <hr/></p>
+<h2 id="reading-expressions">Reading Expressions</h2>
 <p>First we are going to <em>read</em> in the program and construct an <code>lval*</code> that represents it all. Then we are going to <em>evaluate</em> this <code>lval*</code> to get the result of our program. This first stage should convert the <em>abstract syntax tree</em> into an S-Expression, and the second stage should evaluate this S-Expression using our normal Lisp rules.</p>
 <p>To complete the first stage we can recursively look at each node of the tree, and construct different <code>lval*</code> types depending on the <code>tag</code> and <code>contents</code> fields of the node.</p>
 <p>If the given node is tagged as a <code>number</code> or <code>symbol</code>, then we use our constructors to return an <code>lval*</code> directly for those types. If the given node is the <code>root</code>, or an <code>sexpr</code>, then we create an empty S-Expression <code>lval</code> and slowly add each valid sub-expression contained in the tree.</p>
@@ -521,7 +507,7 @@ lval* lval_read(mpc_ast_t* t) {
   <span class="hljs-keyword">return</span> x;
 }
 </code></pre>
-<p>Printing Expressions</h2> <hr/></p>
+<h2 id="printing-expressions">Printing Expressions</h2>
 <p>We are so close to trying out all of our new changes! We need to modify our print function to print out S-Expressions types. Using this we can double check that the <em>reading</em> phase is working correctly by printing out the S-Expressions we read in and verifying they match those we input.</p>
 <p>To print out S-Expressions we can create another function that loops over all the sub-expressions of an expression and prints these individually separated by spaces, just like how they are input.</p>
 <pre><code class="lang-c"><span class="hljs-keyword">void</span> lval_expr_print(lval* v, <span class="hljs-keyword">char</span> open, <span class="hljs-keyword">char</span> close) {
@@ -573,7 +559,7 @@ lispy&gt; *     55     101  (+ 0 0 0)
 (* 55 101 (+ 0 0 0))
 lispy&gt;
 </code></pre>
-<p>Evaluating Expressions</h2> <hr/></p>
+<h2 id="evaluating-expressions">Evaluating Expressions</h2>
 <p>The behaviour of our evaluation function is largely the same as before. We need to adapt it to deal with <code>lval*</code> and our more relaxed definition of what constitutes an expression. We can think of our evaluation function as a kind of transformer. It takes in some <code>lval*</code> and transforms it in some way to some new <code>lval*</code>. In some cases it can just return exactly the same thing. In other cases it may modify the input <code>lval*</code> and the return it. In many cases it will delete the input, and return something completely different. If we are going to return something new we must always remember to delete the <code>lval*</code> we get as input.</p>
 <p>For S-Expressions we first evaluate all the children of the S-Expression. If any of these children are errors we return the first error we encounter using a function we&#39;ll define later called <code>lval_take</code>.</p>
 <p>If the S-Expression has no children we just return it directly. This corresponds to the empty expression, denoted by <code>()</code>. We also check for single expressions. These are expressions with only one child such as <code>(5)</code>. In this case we return the single expression contained within the parenthesis.</p>
@@ -707,7 +693,7 @@ lispy&gt; (/ ())
 Error: Cannot operator on non number!
 lispy&gt;
 </code></pre>
-<p>Reference</h2> <hr/></p>
+<h2 id="reference">Reference</h2>
 <div class="panel-group alert alert-warning" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
@@ -1044,7 +1030,7 @@ int main(int argc, char** argv) {
   </div>
 </div>
 
-<p>Bonus Marks</h2> <hr/></p>
+<h2 id="bonus-marks">Bonus Marks</h2>
 <div class="alert alert-warning">
   <ul class="list-group">
     <li class="list-group-item">&rsaquo; Give an example of a variable in our program that lives on <em>The Stack</em>.</li>

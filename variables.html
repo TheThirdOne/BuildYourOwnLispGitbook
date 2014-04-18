@@ -36,7 +36,7 @@
     </head>
     <body>
         
-    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="10" data-basepath="." data-revision="1397765575020">
+    <div class="book" data-github="TheThirdOne/BuildYourOwnLispGitbook" data-level="10" data-basepath="." data-revision="1397798441758">
     <div class="book-header">
     <!-- Actions Left -->
     
@@ -290,11 +290,7 @@
                     
                         <h1 id="variables">Variables</h1>
 <h2 id="immutability">Immutability</h2>
-<div class='pull-right alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/turtle.png" alt="turtle"/>
-  <small>Teenage Ninja Turtle &bull; Not Immutable.</small>
-</div>
-
+<p><img src="img/turtle.png" alt="turtle" title="Teenage Ninja Turtle &bull; Not Immutable"></p>
 <p>In the previous chapters we&#39;ve learnt a lot, and made great progress on the infrastructure of our language.</p>
 <p>Already we can do a number of cool things that other languages can&#39;t, such as putting code inside of lists. Now is the time to start adding in the <em>features</em> which will make our language practical. The first one of these is going to be <em>variables</em>.</p>
 <p>They&#39;re called variables, but it&#39;s a misleading name, because our variables won&#39;t vary. Our variables are <em>immutable</em> meaning they cannot change. Everything in our language so far has acted like it is <em>immutable</em>. When we evaluate an expression we have imagined that the old thing has been deleted and a new thing returned. In implementation often it is easier for us to reuse the data from the old thing to build the new thing, but conceptually it is a good way to think about how our language works.</p>
@@ -645,16 +641,12 @@ lispy&gt;
 </code></pre>
 <h2 id="error-reporting">Error Reporting</h2>
 <p>So far our error reporting kind of sucks. We can report when an error occurs, and give a vague notion of what was the problem was, but we don&#39;t give the user much information about what exactly has gone wrong. For example if there is an unbound symbol we should be able to report exactly which symbol was unbound. This can help the user track down errors, typos, and other trivial problems.</p>
-<div class='pull-left alert alert-warning' style="margin: 15px; text-align: center;">
-  <img src="img/eclipses.png" alt="eclipses"/>
-  <small>Eclipses &bull; Like ellipsis.</small>
-</div>
-
+<p><img src="img/eclipses.png" alt="eclipses" title="Eclipses &bull; Like ellipsis"></p>
 <p>Wouldn&#39;t it be great if we could write a function that can report errors in a similar way to how <code>printf</code> works. It would be ideal if we could pass in strings, integers, and other data to make our error messages richer.</p>
 <p>The <code>printf</code> function is a special function in C because it takes a variable number of arguments. We can create our own <em>variable argument</em> functions, which is what we&#39;re going to do to make our error reporting better.</p>
 <p>We&#39;ll modify <code>lval_err</code> to act in the same way as <code>printf</code>, taking in a format string, and after that a variable number of arguments to match into this string.</p>
 <p>To declare that a function takes variables arguments in the type signature you use the special syntax of ellipsis <code>...</code>, which represent the rest of the arguments.</p>
-<p><code data-language='c'>lval<em> lval_err(char</em> fmt, ...);`</p>
+<p><code>lval* lval_err(char* fmt, ...);</code></p>
 <p>Then, inside the function there are some standard library functions we can use to examine what the caller has passed in.</p>
 <p>The first step is to create a <code>va_list</code> struct and initialise it with <code>va_start</code>, passing in the last named argument. For other purposes it is possible to examine each argument passed in using <code>va_arg</code>, but we are going to pass our whole variable argument list directly to the <code>vsnprintf</code> function. This function acts like <code>printf</code> but instead writes to a string and takes in a <code>va_list</code>. Once we are done with our variable arguments, we shoulder call <code>va_end</code> to cleanup any resources used.</p>
 <p>The <code>vsnprintf</code> function outputs to a string, which we need to allocate some first. Because we don&#39;t know the size of this string until we&#39;ve run the function we first allocate a buffer <code>512</code> characters big and then reallocate to a smaller buffer once we&#39;ve output to it. If an error message is going to be longer than 512 character it will just get cut off, but hopefully this won&#39;t happen.</p>
