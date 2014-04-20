@@ -96,7 +96,7 @@ lval* lval_lambda(lval* formals, lval* body) {
   /* Set Builtin to Null */
   v->builtin = NULL;
 
-  /* Built new environment */
+  /* Build new environment */
   v->env = lenv_new();
 
   /* Set Formals and Body */
@@ -661,7 +661,7 @@ lval* lval_lambda(lval* formals, lval* body) {
   /* Set Builtin to Null */
   v->builtin = NULL;
 
-  /* Built new environment */
+  /* Build new environment */
   v->env = lenv_new();
 
   /* Set Formals and Body */
