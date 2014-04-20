@@ -361,7 +361,7 @@ lval* lval_call(lenv* e, lval* f, lval* a) {
     /* Pop the next argument from the list */
     lval* val = lval_pop(a, 0);
 
-    /* Bind a copy into the function';s environment */
+    /* Bind a copy into the function's environment */
     lenv_put(f->env, sym, val);
 
     /* Delete symbol and value */
