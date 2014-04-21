@@ -349,7 +349,7 @@ lval* lval_call(lenv* e, lval* f, lval* a) {
   /* While arguments still remain to be processed */
   while (a->count) {
 
-    /* If we';ve ran out of formal arguments to bind */
+    /* If we've ran out of formal arguments to bind */
     if (f->formals->count == 0) {
       lval_del(a); return lval_err("Function passed too many arguments. Got %i, Expected %i.", given, total);
     }
