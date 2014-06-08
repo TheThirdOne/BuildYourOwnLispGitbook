@@ -9,7 +9,7 @@ module.exports = function (grunt) {
         'gitbook': {
             development: {
                 dest: path.join(__dirname, ".grunt/gitbook"),
-                input: "./src",
+                input: "./",
                 title: "Build Your Own Lisp",
                 description: "Learn C and make a Lisp Dialect",
                 github: "TheThirdOne/BuildYourOwnLispGitbook"
