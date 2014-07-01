@@ -9,9 +9,9 @@ Who are you?
 
 Hello, my name is Daniel Holden. I'm from the UK, and currently studying for a PhD at Edinburgh University. My research is in data driven tools for character animation.
 
-You may know me from one of my other projects such as [Corange](http://libcello.org">libCello</a> or <a href="). As well as hacking on C, I enjoy graphics, game development, and theory of computation.
+You may know me from one of my other projects such as [Cello](http://libcello.org) or [Corange](https://github.com/orangeduck/Corangea). As well as hacking on C, I enjoy graphics, game development, and theory of computation.
 
-You can find my personal website [here](http://theorangeduck.com/">here</a>. Or you can follow me on twitter <a href="https://twitter.com/anorangeduck).
+You can find my personal website [here](http://theorangeduck.com/). Or you can follow me on [twitter](https://twitter.com/anorangeduck).
 
 
 Why don't you teach arrays in this book?
@@ -29,7 +29,7 @@ In this book I write the syntax for pointers in a left-handed way `int* x;`, rat
 
 Ultimately this distinction is one of personal preference, but the vast majority of C code, as well as the C standards, are written using the right-handed style. This is clearly the default, and most correct way to write pointers, and so my choice might seem odd.
 
-I picked the left-handed version because I believe it is easier to teach to beginners. Having the asterisk on the left hand side emphasises *the type*. It is clearer to read, and makes it obvious that the asterisk is not a weird operator or modification to the variable. With the omission of arrays, and multi-variable declarations, this notation is also almost entirely consistent within this book, and when not, it is noted. K&amp;R themselves have [confusion](http://blog.golang.org/gos-declaration-syntax">admitted</a> the <a href="http://cm.bell-labs.com/cm/cs/who/dmr/chist.html) of the right-handed syntax, made worse by historical baggage and rogue compiler implementations of the early years. For a learning resource I believe picking the left-handed version was the best approach.
+I picked the left-handed version because I believe it is easier to teach to beginners. Having the asterisk on the left hand side emphasises *the type*. It is clearer to read, and makes it obvious that the asterisk is not a weird operator or modification to the variable. With the omission of arrays, and multi-variable declarations, this notation is also almost entirely consistent within this book, and when not, it is noted. K&amp;R themselves have [admitted](http://blog.golang.org/gos-declaration-syntax) the [confusion](http://cm.bell-labs.com/cm/cs/who/dmr/chist.html) of the right-handed syntax, made worse by historical baggage and rogue compiler implementations of the early years. For a learning resource I believe picking the left-handed version was the best approach.
 
 Once comfortable with the method behind C's declaration syntax, I encourage programmers to migrate toward the right-handed version.
 
