@@ -79,7 +79,7 @@ Before we can run this program we need to compile it. This will produce the actu
 
 This compiles the code in `hello_world.c`, reporting any warnings, and outputs the program to a new file called `hello_world`. We use the `-std=c99` flag to tell the compiler which *version* or *standard* of C we are programming with. This lets the compiler ensure our code is standardized, so that people with different operating systems or compilers will be able to use our code.
 
-If successful you should see the output file in the current directory. This can be run by typing `hello_world` (or just `hello_world` on Windows). If everything is correct you should see a friendly `Hello, world!` message appear.
+If successful you should see the output file in the current directory. This can be run by typing `./hello_world` (or just `hello_world` on Windows). If everything is correct you should see a friendly `Hello, world!` message appear.
 
 **Congratulations!** You've just compiled and run your first C program.
 
