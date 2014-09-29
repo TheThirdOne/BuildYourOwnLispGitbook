@@ -390,7 +390,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="strings.c">strings.c</a>
+  <a href="src/strings.c">strings.c</a>
 </div>
 
 

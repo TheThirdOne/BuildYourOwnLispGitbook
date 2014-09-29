@@ -173,8 +173,8 @@ This chapter is about theory, so if you are going to try some of the bonus marks
 Reference
 ---------
 
-<div class="panel-group alert alert-warning" id="accordion">=
-  <a href="src/doge_code.c">doge_code.c</a>
+<div class="panel-group alert alert-warning" id="accordion">
+  <a href="src/doge_code.c">doge_code.c</a><br/>
   <a href="src/doge_grammar.c">doge_grammar.c</a>
 </div>
 

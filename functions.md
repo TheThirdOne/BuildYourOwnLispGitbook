@@ -551,7 +551,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="functions.c">functions.c</a>
+  <a href="src/functions.c">functions.c</a>
 </div>
 
 

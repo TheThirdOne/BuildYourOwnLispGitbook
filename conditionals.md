@@ -212,7 +212,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="conditionals.c">conditionals.c</a>
+  <a href="src/conditionals.c">conditionals.c</a>
 </div>
 
 Bonus Marks

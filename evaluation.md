@@ -202,7 +202,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="evaluation.c">evaluation.c</a>
+  <a href="src/evaluation.c">evaluation.c</a>
 </div>
 
 Bonus Marks

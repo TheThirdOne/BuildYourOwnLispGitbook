@@ -177,7 +177,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="parsing.c">parsing.c</a>
+  <a href="src/parsing.c">parsing.c</a>
 </div>
 
 

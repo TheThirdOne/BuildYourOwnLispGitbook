@@ -529,7 +529,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="s_expressions.c">s_expressions.c</a>
+  <a href="src/s_expressions.c">s_expressions.c</a>
 </div>
 
 Bonus Marks

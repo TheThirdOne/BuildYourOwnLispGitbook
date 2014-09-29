@@ -374,7 +374,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="prelude.lspy">prelude.lspy</a>
+  <a href="src/prelude.lspy">prelude.lspy</a>
 </div>
 
 

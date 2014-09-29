@@ -217,7 +217,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="error_handling.c">error_handling.c</a>
+  <a href="src/error_handling.c">error_handling.c</a>
 </div>
 
 Bonus Marks

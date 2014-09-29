@@ -576,7 +576,7 @@ Reference
 ---------
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <a href="variables.c">variables.c</a>
+  <a href="src/variables.c">variables.c</a>
 </div>
 
 Bonus Marks

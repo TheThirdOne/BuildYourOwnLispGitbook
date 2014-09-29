@@ -124,27 +124,7 @@ Reference
 </div>
 
 <div class="panel-group alert alert-warning" id="accordion">
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h4 class="panel-title">
-        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-          hello_world.c
-        </a>
-      </h4>
-    </div>
-    <div id="collapseOne" class="panel-collapse collapse">
-      <div class="panel-body">
-```c
-#include <stdio.h>
-
-int main(int argc, char** argv) {
-  puts("Hello, world!");
-  return 0;
-}
-```
-      </div>
-    </div>
-  </div>
+  <a href="src/hello_world.c">hello_world.c</a>
 </div>
 
 
